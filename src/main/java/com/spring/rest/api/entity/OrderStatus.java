@@ -1,9 +1,9 @@
 package com.spring.rest.api.entity;
 
 public enum OrderStatus {
-    UNDER_CONSIDERATION("НА РАССМОТРЕНИИ"),
-    REFUSAL("ОТКАЗАНО"),
-    CONFIRMED("ПРИНЯТО");
+    UNDER_CONSIDERATION("Under consideration"),
+    REFUSAL("Refusal"),
+    CONFIRMED("Confirmed");
 
     String abbreviation;
 
@@ -11,7 +11,7 @@ public enum OrderStatus {
         this.abbreviation = abbreviation;
     }
 
-    public String getAbbreviation(){
+    public String getAbbreviation() {
         return this.abbreviation;
     }
 }

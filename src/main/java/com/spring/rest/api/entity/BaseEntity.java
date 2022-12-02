@@ -1,17 +1,17 @@
 package com.spring.rest.api.entity;
 
-import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
+@MappedSuperclass
 public abstract class BaseEntity {
 
     @Id
