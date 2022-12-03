@@ -9,7 +9,7 @@ public interface CarService {
 
     ResponseEntity<?> findById(Long id);
 
-    ResponseEntity<?> findAll();
+    ResponseEntity<?> findAllNotMarkedAsDeleted();
 
     ResponseEntity<?> findAllNotMarkAsDeleted();
 
@@ -19,7 +19,7 @@ public interface CarService {
 
     ResponseEntity<String> delete(Long id);
 
-    ResponseEntity<String> setIsDeletedTrue(Long id);
+    ResponseEntity<String> markCarAsDeleted(Long id);
 
 
 }

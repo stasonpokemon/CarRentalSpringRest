@@ -6,6 +6,7 @@ import com.spring.rest.api.entity.dto.CarDTO;
 import com.spring.rest.api.exception.CarNotFoundException;
 import com.spring.rest.api.repo.CarRepository;
 import com.spring.rest.api.service.CarService;
+import com.spring.rest.api.util.CarUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,7 +44,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public ResponseEntity<?> findAll() {
+    public ResponseEntity<?> findAllNotMarkedAsDeleted() {
         ResponseEntity<?> response;
         try {
             List<CarDTO> carsDTO = carRepository.findAll().stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
@@ -72,12 +73,33 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public ResponseEntity<?> save(CarDTO carDTO) {
-        return null;
+        ResponseEntity<?> response;
+        try {
+            Car car = modelMapper.map(carDTO, Car.class);
+            car.setDeleted(false);
+            car.setCreatedAt(LocalDateTime.now());
+            car.setUpdatedAt(LocalDateTime.now());
+            Car savedCar = carRepository.save(car);
+            response = new ResponseEntity<CarDTO>(modelMapper.map(savedCar, CarDTO.class), HttpStatus.OK);
+        } catch (Exception e) {
+            response = new ResponseEntity<String>("Unable to create car", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
     }
 
     @Override
     public ResponseEntity<?> update(Long id, CarDTO carDTO) {
-        return null;
+        ResponseEntity<?> response;
+        try {
+            Car car = findCarByIdOrThrowException(id);
+            CarUtil.getInstance().copyNotNullFieldsFromCarDTOToCar(carDTO, car);
+            response = new ResponseEntity<CarDTO>(modelMapper.map(car, CarDTO.class), HttpStatus.RESET_CONTENT);
+        } catch (CarNotFoundException carNotFoundException) {
+            throw carNotFoundException;
+        } catch (Exception e) {
+            response = new ResponseEntity<String>("Unable to update car", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
     }
 
     @Override
@@ -88,8 +110,8 @@ public class CarServiceImpl implements CarService {
             response = new ResponseEntity<String>(new StringBuilder()
                     .append("Car with id = ")
                     .append(id)
-                    .append(" was deleted").toString(), HttpStatus.OK);
-        } catch (CarNotFoundException carNotFoundException){
+                    .append(" was deleted from database").toString(), HttpStatus.OK);
+        } catch (CarNotFoundException carNotFoundException) {
             throw carNotFoundException;
         } catch (Exception e) {
             response = new ResponseEntity<String>("Unable to delete car", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -98,17 +120,24 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public ResponseEntity<String> setIsDeletedTrue(Long id) {
+    public ResponseEntity<String> markCarAsDeleted(Long id) {
         ResponseEntity<String> response;
         try {
             Car car = findCarByIdOrThrowException(id);
-            car .setDeleted(true);
+            if (car.isDeleted() == true){
+                response = new ResponseEntity<String>(new StringBuilder()
+                        .append("Car with id = ")
+                        .append(id)
+                        .append(" already marked as deleted").toString(), HttpStatus.OK);
+                return response;
+            }
+            car.setDeleted(true);
             car.setUpdatedAt(LocalDateTime.now());
             response = new ResponseEntity<String>(new StringBuilder()
                     .append("Car with id = ")
                     .append(id)
-                    .append(" was marked as deleted").toString(), HttpStatus.OK);
-        } catch (CarNotFoundException carNotFoundException){
+                    .append(" was marked as deleted").toString(), HttpStatus.RESET_CONTENT);
+        } catch (CarNotFoundException carNotFoundException) {
             throw carNotFoundException;
         } catch (Exception e) {
             response = new ResponseEntity<String>("Unable to mark car as deleted", HttpStatus.INTERNAL_SERVER_ERROR);
