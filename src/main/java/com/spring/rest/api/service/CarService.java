@@ -2,6 +2,7 @@ package com.spring.rest.api.service;
 
 
 import com.spring.rest.api.entity.dto.CarDTO;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 
 public interface CarService {
@@ -9,9 +10,11 @@ public interface CarService {
 
     ResponseEntity<?> findById(Long id);
 
-    ResponseEntity<?> findAllNotMarkedAsDeleted();
+    ResponseEntity<?> findAll(String[] sort);
 
-    ResponseEntity<?> findAllNotMarkAsDeleted();
+    ResponseEntity<?> findAllNotMarkAsDeleted(String[] sort);
+
+    ResponseEntity<?> findAllFreeNotMarkAsDeleted(String[] sort);
 
     ResponseEntity<?> save(CarDTO carDTO);
 

@@ -4,17 +4,20 @@ package com.spring.rest.api.service.impl;
 import com.spring.rest.api.entity.Car;
 import com.spring.rest.api.entity.dto.CarDTO;
 import com.spring.rest.api.exception.CarNotFoundException;
+import com.spring.rest.api.exception.SortParametersNotValidException;
 import com.spring.rest.api.repo.CarRepository;
 import com.spring.rest.api.service.CarService;
 import com.spring.rest.api.util.CarUtil;
+import com.spring.rest.api.util.CommonUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,13 +47,18 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public ResponseEntity<?> findAllNotMarkedAsDeleted() {
+    public ResponseEntity<?> findAll(String[] sort) {
         ResponseEntity<?> response;
         try {
-            List<CarDTO> carsDTO = carRepository.findAll().stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
+            List<Order> orders = CommonUtil.getInstance().getOrdersFromRequest(sort, Car.class);
+            List<CarDTO> carsDTO = carRepository.findAll(Sort.by(orders)).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
+            if (carsDTO.isEmpty()) {
+                response = new ResponseEntity<String>("There isn't cars", HttpStatus.NO_CONTENT);
+                return response;
+            }
             response = new ResponseEntity<List<CarDTO>>(carsDTO, HttpStatus.OK);
-        } catch (CarNotFoundException carNotFoundException) {
-            throw carNotFoundException;
+        } catch (SortParametersNotValidException sortParametersNotValidException) {
+            throw sortParametersNotValidException;
         } catch (Exception e) {
             response = new ResponseEntity<String>("Unable to get all cars", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -58,15 +66,39 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public ResponseEntity<?> findAllNotMarkAsDeleted() {
+    public ResponseEntity<?> findAllNotMarkAsDeleted(String[] sort) {
         ResponseEntity<?> response;
         try {
-            List<CarDTO> carsDTO = carRepository.findAllByDeleted(false).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
+            List<Order> orders = CommonUtil.getInstance().getOrdersFromRequest(sort, Car.class);
+            List<CarDTO> carsDTO = carRepository.findAllByDeleted(false, Sort.by(orders)).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
+            if (carsDTO.isEmpty()) {
+                response = new ResponseEntity<String>("There isn't cars not mark as deleted", HttpStatus.NO_CONTENT);
+                return response;
+            }
             response = new ResponseEntity<List<CarDTO>>(carsDTO, HttpStatus.OK);
-        } catch (CarNotFoundException carNotFoundException) {
-            throw carNotFoundException;
+        } catch (SortParametersNotValidException sortParametersNotValidException) {
+            throw sortParametersNotValidException;
         } catch (Exception e) {
             response = new ResponseEntity<String>("Unable to get all not mark as deleted cars", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
+    }
+
+    @Override
+    public ResponseEntity<?> findAllFreeNotMarkAsDeleted(String[] sort) {
+        ResponseEntity<?> response;
+        try {
+            List<Order> orders = CommonUtil.getInstance().getOrdersFromRequest(sort, Car.class);
+            List<CarDTO> carsDTO = carRepository.findAllByEmploymentStatusAndDeleted(true, false, Sort.by(orders)).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
+            if (carsDTO.isEmpty()) {
+                response = new ResponseEntity<String>("There isn't free cars not mark as deleted", HttpStatus.NO_CONTENT);
+                return response;
+            }
+            response = new ResponseEntity<List<CarDTO>>(carsDTO, HttpStatus.OK);
+        } catch (SortParametersNotValidException sortParametersNotValidException) {
+            throw sortParametersNotValidException;
+        } catch (Exception e) {
+            response = new ResponseEntity<String>("Unable to get all free and not mark as deleted cars", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -77,8 +109,6 @@ public class CarServiceImpl implements CarService {
         try {
             Car car = modelMapper.map(carDTO, Car.class);
             car.setDeleted(false);
-            car.setCreatedAt(LocalDateTime.now());
-            car.setUpdatedAt(LocalDateTime.now());
             Car savedCar = carRepository.save(car);
             response = new ResponseEntity<CarDTO>(modelMapper.map(savedCar, CarDTO.class), HttpStatus.OK);
         } catch (Exception e) {
@@ -124,7 +154,7 @@ public class CarServiceImpl implements CarService {
         ResponseEntity<String> response;
         try {
             Car car = findCarByIdOrThrowException(id);
-            if (car.isDeleted() == true){
+            if (car.isDeleted() == true) {
                 response = new ResponseEntity<String>(new StringBuilder()
                         .append("Car with id = ")
                         .append(id)
@@ -132,7 +162,6 @@ public class CarServiceImpl implements CarService {
                 return response;
             }
             car.setDeleted(true);
-            car.setUpdatedAt(LocalDateTime.now());
             response = new ResponseEntity<String>(new StringBuilder()
                     .append("Car with id = ")
                     .append(id)

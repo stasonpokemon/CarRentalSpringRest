@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -27,6 +29,8 @@ public class OrderDTO {
 
     private LocalDateTime orderDate;
 
+    @NotNull(message = "Please fill the rental period")
+    @Min(value = 1, message = "Rental period should be greater than 1")
     private Integer rentalPeriod;
 
     private Refund refund;

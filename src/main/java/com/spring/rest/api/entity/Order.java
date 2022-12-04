@@ -1,6 +1,7 @@
 package com.spring.rest.api.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -25,6 +26,7 @@ public class Order extends BaseEntity {
     private LocalDateTime orderDate;
 
     @NotNull(message = "Please fill the rental period")
+    @Min(value = 1, message = "Rental period should be greater than 1")
     @Column(name = "rental_period")
     private Integer rentalPeriod;
 

@@ -17,7 +17,7 @@ import java.util.Date;
 @Table(name = "cars")
 @Data
 public class Car extends BaseEntity {
-    
+
     @NotBlank(message = "Please fill the producer")
     @Length(max = 2048, message = "Producer too long. Max length is 2048")
     @Column(name = "producer")
@@ -28,7 +28,7 @@ public class Car extends BaseEntity {
     @Column(name = "model")
     private String model;
 
-    @NotBlank(message = "Please fill the release date")
+    @NotNull(message = "Please fill the release date")
     @Column(name = "release_date")
     private Date releaseDate;
 

@@ -53,7 +53,7 @@ create table users
     created_at      TIMESTAMP                               NOT NULL,
     updated_at      TIMESTAMP                               NOT NULL,
     CONSTRAINT user_pk PRIMARY KEY (id),
-    CONSTRAINT user_passport_fk FOREIGN KEY (passport_id) REFERENCES passports (id)
+    CONSTRAINT user_passport_fk FOREIGN KEY (passport_id) REFERENCES passports (id) ON DELETE CASCADE
 );
 
 create table user_role
