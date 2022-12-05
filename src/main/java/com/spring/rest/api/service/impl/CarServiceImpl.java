@@ -3,7 +3,7 @@ package com.spring.rest.api.service.impl;
 
 import com.spring.rest.api.entity.Car;
 import com.spring.rest.api.entity.dto.CarDTO;
-import com.spring.rest.api.exception.CarNotFoundException;
+import com.spring.rest.api.exception.EntityNotFoundException;
 import com.spring.rest.api.exception.SortParametersNotValidException;
 import com.spring.rest.api.repo.CarRepository;
 import com.spring.rest.api.service.CarService;
@@ -33,13 +33,14 @@ public class CarServiceImpl implements CarService {
     private ModelMapper modelMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<?> findById(Long id) {
         ResponseEntity<?> response;
         try {
             CarDTO carDTO = modelMapper.map(findCarByIdOrThrowException(id), CarDTO.class);
             response = new ResponseEntity<CarDTO>(carDTO, HttpStatus.OK);
-        } catch (CarNotFoundException carNotFoundException) {
-            throw carNotFoundException;
+        } catch (EntityNotFoundException entityNotFoundException) {
+            throw entityNotFoundException;
         } catch (Exception e) {
             response = new ResponseEntity<String>("Unable to get car", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -47,6 +48,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<?> findAll(String[] sort) {
         ResponseEntity<?> response;
         try {
@@ -66,6 +68,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<?> findAllNotMarkAsDeleted(String[] sort) {
         ResponseEntity<?> response;
         try {
@@ -85,6 +88,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<?> findAllFreeNotMarkAsDeleted(String[] sort) {
         ResponseEntity<?> response;
         try {
@@ -123,9 +127,9 @@ public class CarServiceImpl implements CarService {
         try {
             Car car = findCarByIdOrThrowException(id);
             CarUtil.getInstance().copyNotNullFieldsFromCarDTOToCar(carDTO, car);
-            response = new ResponseEntity<CarDTO>(modelMapper.map(car, CarDTO.class), HttpStatus.RESET_CONTENT);
-        } catch (CarNotFoundException carNotFoundException) {
-            throw carNotFoundException;
+            response = new ResponseEntity<CarDTO>(modelMapper.map(car, CarDTO.class), HttpStatus.OK);
+        } catch (EntityNotFoundException entityNotFoundException) {
+            throw entityNotFoundException;
         } catch (Exception e) {
             response = new ResponseEntity<String>("Unable to update car", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -141,8 +145,8 @@ public class CarServiceImpl implements CarService {
                     .append("Car with id = ")
                     .append(id)
                     .append(" was deleted from database").toString(), HttpStatus.OK);
-        } catch (CarNotFoundException carNotFoundException) {
-            throw carNotFoundException;
+        } catch (EntityNotFoundException entityNotFoundException) {
+            throw entityNotFoundException;
         } catch (Exception e) {
             response = new ResponseEntity<String>("Unable to delete car", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -165,9 +169,9 @@ public class CarServiceImpl implements CarService {
             response = new ResponseEntity<String>(new StringBuilder()
                     .append("Car with id = ")
                     .append(id)
-                    .append(" was marked as deleted").toString(), HttpStatus.RESET_CONTENT);
-        } catch (CarNotFoundException carNotFoundException) {
-            throw carNotFoundException;
+                    .append(" was marked as deleted").toString(), HttpStatus.OK);
+        } catch (EntityNotFoundException entityNotFoundException) {
+            throw entityNotFoundException;
         } catch (Exception e) {
             response = new ResponseEntity<String>("Unable to mark car as deleted", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -176,7 +180,7 @@ public class CarServiceImpl implements CarService {
 
 
     private Car findCarByIdOrThrowException(Long id) {
-        return carRepository.findById(id).orElseThrow(() -> new CarNotFoundException(new StringBuilder()
+        return carRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(new StringBuilder()
                 .append("Car with id = ")
                 .append(id)
                 .append(" not found").toString()));

@@ -1,7 +1,9 @@
 package com.spring.rest.api.util;
 
+import com.spring.rest.api.exception.EntityNotValidException;
 import com.spring.rest.api.exception.SortParametersNotValidException;
 import org.springframework.data.domain.Sort;
+import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,5 +61,14 @@ public class CommonUtil {
                     .append(field).toString());
         }
         return true;
+    }
+
+    public void checkBindingResultOrThrowException(BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMessage = new StringBuilder();
+            bindingResult.getFieldErrors().forEach(fieldError ->
+                    errorMessage.append(fieldError.getField()).append(" - ").append(fieldError.getDefaultMessage()).append("; "));
+            throw new EntityNotValidException(errorMessage.toString());
+        }
     }
 }

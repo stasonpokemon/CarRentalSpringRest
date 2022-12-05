@@ -2,7 +2,7 @@ package com.spring.rest.api.util;
 
 import com.spring.rest.api.entity.Car;
 import com.spring.rest.api.entity.dto.CarDTO;
-import com.spring.rest.api.exception.CarNotValidException;
+import com.spring.rest.api.exception.EntityNotValidException;
 import org.springframework.validation.BindingResult;
 
 public class CarUtil {
@@ -41,12 +41,4 @@ public class CarUtil {
         }
     }
 
-    public void checkBindingResultOrThrowException(BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            StringBuilder errorMessage = new StringBuilder();
-            bindingResult.getFieldErrors().forEach(fieldError ->
-                    errorMessage.append(fieldError.getField()).append(" - ").append(fieldError.getDefaultMessage()).append("; "));
-            throw new CarNotValidException(errorMessage.toString());
-        }
-    }
 }

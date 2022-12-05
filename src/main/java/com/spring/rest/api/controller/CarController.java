@@ -2,17 +2,13 @@ package com.spring.rest.api.controller;
 
 import com.spring.rest.api.entity.dto.CarDTO;
 import com.spring.rest.api.service.CarService;
-import com.spring.rest.api.util.CarUtil;
+import com.spring.rest.api.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @RestController
@@ -40,7 +36,7 @@ public class CarController {
     @PostMapping
     public ResponseEntity<?> createCar(@RequestBody @Valid CarDTO carDTO,
                                        BindingResult bindingResult) {
-        CarUtil.getInstance().checkBindingResultOrThrowException(bindingResult);
+        CommonUtil.getInstance().checkBindingResultOrThrowException(bindingResult);
         return carService.save(carDTO);
     }
 

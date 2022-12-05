@@ -1,13 +1,12 @@
 package com.spring.rest.api.entity;
 
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -18,19 +17,15 @@ import java.util.Set;
 @Data
 public class User extends BaseEntity {
 
-    //    @NotBlank(message = "Please fill the username")
-    @Min(value = 3, message = "Username must be more than 3 symbols")
-    @Column(name = "username")
+
+    @Column(name = "username", unique = true)
     private String username;
 
-    //    @NotBlank(message = "Please fill the password")
-    @Min(value = 6, message = "Password must be more than 6 symbols")
+
     @Column(name = "password")
     private String password;
 
-    @NotBlank(message = "Please fill the email")
-    @Email(message = "Please fill the correct email")
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "activation_code")
@@ -43,7 +38,7 @@ public class User extends BaseEntity {
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "passport_id")
-    private ClientPassport passport;
+    private Passport passport;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();

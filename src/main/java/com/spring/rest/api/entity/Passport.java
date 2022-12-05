@@ -2,9 +2,12 @@ package com.spring.rest.api.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.Date;
 
@@ -12,27 +15,26 @@ import java.util.Date;
 @Entity
 @Table(name = "passports")
 @Data
-public class ClientPassport extends BaseEntity{
+@ToString(of = {"name"})
+public class Passport extends BaseEntity{
 
-    @NotBlank(message = "Please fill the name")
     @Column(name = "name")
     private String name;
 
-    @NotBlank(message = "Please fill the surname")
     @Column(name = "surname")
     private String surname;
 
-    @NotBlank(message = "Please fill the patronymic")
     @Column(name = "patronymic")
     private String patronymic;
 
-    @NotBlank(message = "Please fill the birthday")
     @Column(name = "birthday")
     private Date birthday;
 
-    @NotBlank(message = "Please fill the address")
     @Column(name = "address")
     private String address;
+
+    @OneToOne(mappedBy = "passport", fetch = FetchType.EAGER)
+    private User user;
 
 
 

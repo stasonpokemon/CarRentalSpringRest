@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientPassportDTO {
+public class PassportDTO {
 
     @NotBlank(message = "Please fill the name")
     private String name;
@@ -22,7 +22,7 @@ public class ClientPassportDTO {
     @NotBlank(message = "Please fill the patronymic")
     private String patronymic;
 
-    @NotBlank(message = "Please fill the birthday")
+    @NotNull(message = "Please fill the birthday")
     private Date birthday;
 
     @NotBlank(message = "Please fill the address")

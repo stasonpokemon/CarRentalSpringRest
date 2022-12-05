@@ -25,8 +25,6 @@ public class Order extends BaseEntity {
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
-    @NotNull(message = "Please fill the rental period")
-    @Min(value = 1, message = "Rental period should be greater than 1")
     @Column(name = "rental_period")
     private Integer rentalPeriod;
 
