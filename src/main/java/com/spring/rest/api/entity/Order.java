@@ -1,24 +1,27 @@
 package com.spring.rest.api.entity;
 
-import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
+import com.spring.rest.api.util.PostgreSQLEnumType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "orders")
 @Data
+// This annotation for connect jpa with postgres enum
+@TypeDef(name = "enum_type", typeClass = PostgreSQLEnumType.class)
 public class Order extends BaseEntity {
 
     @Column(name = "price")
     private double price;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
+    @Type(type = "enum_type")
     @Column(name = "order_status")
     private OrderStatus orderStatus;
 

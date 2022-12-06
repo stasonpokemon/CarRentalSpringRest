@@ -29,7 +29,7 @@ public class UserDTO {
 
     private PassportDTO passport;
 
-    private List<OrderDTO> orders = new ArrayList<>();
+
 
 
 }

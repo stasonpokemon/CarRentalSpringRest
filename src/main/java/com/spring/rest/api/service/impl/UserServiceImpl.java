@@ -3,7 +3,6 @@ package com.spring.rest.api.service.impl;
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.Role;
 import com.spring.rest.api.entity.User;
-import com.spring.rest.api.entity.dto.OrderDTO;
 import com.spring.rest.api.entity.dto.PassportDTO;
 import com.spring.rest.api.entity.dto.UserDTO;
 import com.spring.rest.api.exception.EntityNotFoundException;
@@ -223,27 +222,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
-    public User findUserByIdOrThrowException(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(new StringBuilder()
+    @Override
+    public User findUserByIdOrThrowException(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(new StringBuilder()
                 .append("User with id = ")
-                .append(id)
+                .append(userId)
                 .append(" not found").toString()));
     }
 
     @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
+    @Override
     public Passport findPassportByUserOrThrowException(User user) {
-        Passport passport = Optional.ofNullable(user.getPassport()).orElseThrow(() -> new EntityNotFoundException(new StringBuilder()
-                .append("Passport by userId = ")
+        return Optional.ofNullable(user.getPassport()).orElseThrow(() -> new EntityNotFoundException(new StringBuilder()
+                .append("Passport with id = ")
                 .append(user.getId())
                 .append(" not found").toString()));
-        return passport;
     }
 
     private UserDTO userToUserDTO(User user) {
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-        if (!user.getOrders().isEmpty()) {
-            userDTO.setOrders(user.getOrders().stream().map(order -> modelMapper.map(order, OrderDTO.class)).collect(Collectors.toList()));
-        }
+//        if (!user.getOrders().isEmpty()) {
+//            userDTO.setOrders(user.getOrders().stream().map(order -> modelMapper.map(order, OrderDTO.class)).collect(Collectors.toList()));
+//        }
         if (user.getPassport() != null) {
             userDTO.setPassport(modelMapper.map(user.getPassport(), PassportDTO.class));
         }

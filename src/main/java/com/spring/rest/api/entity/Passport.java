@@ -1,14 +1,10 @@
 package com.spring.rest.api.entity;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.persistence.*;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
@@ -18,19 +14,19 @@ import java.util.Date;
 @ToString(of = {"name"})
 public class Passport extends BaseEntity{
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "surname")
+    @Column(name = "surname", nullable = false)
     private String surname;
 
     @Column(name = "patronymic")
     private String patronymic;
 
-    @Column(name = "birthday")
+    @Column(name = "birthday", nullable = false)
     private Date birthday;
 
-    @Column(name = "address")
+    @Column(name = "address", nullable = false)
     private String address;
 
     @OneToOne(mappedBy = "passport", fetch = FetchType.EAGER)

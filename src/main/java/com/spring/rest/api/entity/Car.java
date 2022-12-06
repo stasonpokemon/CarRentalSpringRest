@@ -1,15 +1,12 @@
 package com.spring.rest.api.entity;
 
 
-import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)

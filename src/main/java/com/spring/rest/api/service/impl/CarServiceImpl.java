@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -179,7 +180,9 @@ public class CarServiceImpl implements CarService {
     }
 
 
-    private Car findCarByIdOrThrowException(Long id) {
+    @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
+    @Override
+    public Car findCarByIdOrThrowException(Long id) {
         return carRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(new StringBuilder()
                 .append("Car with id = ")
                 .append(id)
