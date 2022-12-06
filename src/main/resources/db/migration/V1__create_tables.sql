@@ -84,9 +84,9 @@ create table orders
 );
 
 
-INSERT INTO users(id, username, password, active, email, created_at, updated_at)
-VALUES (1, 'admin', '11111111', true, 'stasonpokemon@icloud.com', now(), now()),
-       (2, 'user', '11111111', true, 'egorgus123@gmail.com', now(), now());
+INSERT INTO users(username, password, active, email, created_at, updated_at)
+VALUES ('admin', '11111111', true, 'stasonpokemon@icloud.com', now(), now()),
+       ('user', '11111111', true, 'egorgus123@gmail.com', now(), now());
 
 INSERT INTO user_role(user_id, roles)
 VALUES (1, 'ADMIN'),

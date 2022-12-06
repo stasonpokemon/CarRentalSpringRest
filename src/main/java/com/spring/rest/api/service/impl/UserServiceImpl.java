@@ -9,18 +9,22 @@ import com.spring.rest.api.entity.dto.UserDTO;
 import com.spring.rest.api.exception.EntityNotFoundException;
 import com.spring.rest.api.exception.SortParametersNotValidException;
 import com.spring.rest.api.repo.UserRepository;
+import com.spring.rest.api.service.MailSenderService;
 import com.spring.rest.api.service.UserService;
 import com.spring.rest.api.util.CommonUtil;
 import com.spring.rest.api.util.PassportUtil;
+import com.spring.rest.api.util.tread.MailSenderThread;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +42,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private MailSenderService mailSenderService;
+
+    @Value("${server.port}")
+    private String SERVER_PORT;
 
     @Override
     @Transactional(readOnly = true)
@@ -138,14 +148,23 @@ public class UserServiceImpl implements UserService {
             return new ResponseEntity<String>("There is user with the same email", HttpStatus.BAD_REQUEST);
         }
         ResponseEntity<?> response;
+        User user = modelMapper.map(userDTO, User.class);
         try {
-            User user = modelMapper.map(userDTO, User.class);
             user.setActive(false);
             user.setActivationCode(UUID.randomUUID().toString());
             user.setRoles(Collections.singleton(Role.USER));
             response = new ResponseEntity<UserDTO>(userToUserDTO(userRepository.save(user)), HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<String>("Unable to save registered user", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        // Send activation code to user email
+        if (!StringUtils.isEmpty(user.getEmail())) {
+            String message = String.format("Hello, %s! \n Welcome to car rental website. Please, visit next link for activate your profile: http://localhost:%s/registration/activate/%s!",
+                    user.getUsername(),
+                    SERVER_PORT,
+                    user.getActivationCode()
+            );
+            new MailSenderThread(mailSenderService, user.getEmail(), "Activation code", message).start();
         }
         return response;
     }

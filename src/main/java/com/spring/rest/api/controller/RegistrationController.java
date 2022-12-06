@@ -19,13 +19,13 @@ public class RegistrationController {
 
     @PostMapping()
     public ResponseEntity<?> saveRegisteredUser(@RequestBody @Valid UserDTO userDTO,
-                                                BindingResult bindingResult){
+                                                BindingResult bindingResult) {
         CommonUtil.getInstance().checkBindingResultOrThrowException(bindingResult);
         return userService.saveRegisteredUser(userDTO);
     }
 
-    @PatchMapping("/activate/{code}")
-    public ResponseEntity<?> activateUser(@PathVariable("code") String activateCode){
+    @GetMapping("/activate/{code}")
+    public ResponseEntity<?> activateUser(@PathVariable("code") String activateCode) {
         return userService.activateUser(activateCode);
     }
 }
