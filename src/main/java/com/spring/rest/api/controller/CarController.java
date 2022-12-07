@@ -29,8 +29,8 @@ public class CarController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findCar(@PathVariable(name = "id") Long id) {
-        return carService.findById(id);
+    public ResponseEntity<?> findCar(@PathVariable(name = "id") Long carId) {
+        return carService.findById(carId);
     }
 
     @PostMapping
@@ -41,13 +41,18 @@ public class CarController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateCar(@PathVariable("id") Long id,
+    public ResponseEntity<?> updateCar(@PathVariable("id") Long carId,
                                        @RequestBody CarDTO carDTO) {
-        return carService.update(id, carDTO);
+        return carService.update(carId, carDTO);
+    }
+
+    @PatchMapping("/{id}/fix")
+    public ResponseEntity<?> fixBrokenCar(@PathVariable("id") Long carId){
+        return carService.fixBrokenCar(carId);
     }
 
     @PatchMapping("/{id}/remove")
-    public ResponseEntity<String> markCarAsDeleted(@PathVariable("id") Long id) {
-        return carService.markCarAsDeleted(id);
+    public ResponseEntity<String> markCarAsDeleted(@PathVariable("id") Long carId) {
+        return carService.markCarAsDeleted(carId);
     }
 }

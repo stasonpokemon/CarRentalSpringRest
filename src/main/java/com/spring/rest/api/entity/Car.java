@@ -39,5 +39,6 @@ public class Car extends BaseEntity {
     @Column(name = "is_deleted")
     private boolean deleted;
 
-
+    @Column(name = "is_broken")
+    private boolean broken;
 }

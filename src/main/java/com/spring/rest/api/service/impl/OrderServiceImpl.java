@@ -174,7 +174,10 @@ public class OrderServiceImpl implements OrderService {
             Refund refund = modelMapper.map(refundDTO, Refund.class);
             if (!refund.isDamaged()) {
                 order.getCar().setEmploymentStatus(true);
+                refund.setPrice(0);
+                refund.setDamageDescription("");
             } else {
+                order.getCar().setBroken(true);
                 order.getCar().setDamageStatus(refund.getDamageDescription());
             }
             order.setRefund(refund);

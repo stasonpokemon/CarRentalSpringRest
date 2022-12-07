@@ -56,8 +56,8 @@ public class CarServiceImpl implements CarService {
             List<Order> orders = CommonUtil.getInstance().getOrdersFromRequest(sort, Car.class);
             List<CarDTO> carsDTO = carRepository.findAll(Sort.by(orders)).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
             if (carsDTO.isEmpty()) {
-                response = new ResponseEntity<String>("There isn't cars", HttpStatus.NO_CONTENT);
-                return response;
+                return new ResponseEntity<String>("There isn't cars", HttpStatus.OK);
+
             }
             response = new ResponseEntity<List<CarDTO>>(carsDTO, HttpStatus.OK);
         } catch (SortParametersNotValidException sortParametersNotValidException) {
@@ -76,8 +76,7 @@ public class CarServiceImpl implements CarService {
             List<Order> orders = CommonUtil.getInstance().getOrdersFromRequest(sort, Car.class);
             List<CarDTO> carsDTO = carRepository.findAllByDeleted(false, Sort.by(orders)).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
             if (carsDTO.isEmpty()) {
-                response = new ResponseEntity<String>("There isn't cars not mark as deleted", HttpStatus.NO_CONTENT);
-                return response;
+                return new ResponseEntity<String>("There isn't cars not mark as deleted", HttpStatus.OK);
             }
             response = new ResponseEntity<List<CarDTO>>(carsDTO, HttpStatus.OK);
         } catch (SortParametersNotValidException sortParametersNotValidException) {
@@ -96,8 +95,7 @@ public class CarServiceImpl implements CarService {
             List<Order> orders = CommonUtil.getInstance().getOrdersFromRequest(sort, Car.class);
             List<CarDTO> carsDTO = carRepository.findAllByEmploymentStatusAndDeleted(true, false, Sort.by(orders)).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
             if (carsDTO.isEmpty()) {
-                response = new ResponseEntity<String>("There isn't free cars not mark as deleted", HttpStatus.NO_CONTENT);
-                return response;
+                return new ResponseEntity<String>("There isn't free cars not mark as deleted", HttpStatus.OK);
             }
             response = new ResponseEntity<List<CarDTO>>(carsDTO, HttpStatus.OK);
         } catch (SortParametersNotValidException sortParametersNotValidException) {
@@ -138,11 +136,42 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    public ResponseEntity<?> fixBrokenCar(Long carId) {
+        ResponseEntity<?> response;
+        try {
+            Car car = findCarByIdOrThrowException(carId);
+            if (car.isDeleted()) {
+                return new ResponseEntity<String>(new StringBuilder()
+                        .append("Unable to fix car. Car with id = ")
+                        .append(carId)
+                        .append(" is deleted").toString(), HttpStatus.OK);
+            }
+            if (!car.isBroken()) {
+                return new ResponseEntity<String>(new StringBuilder()
+                        .append("Unable to fix car. Car with id = ")
+                        .append(carId)
+                        .append(" already fixed").toString(), HttpStatus.OK);
+            }
+            car.setBroken(false);
+            car.setDamageStatus("");
+            car.setEmploymentStatus(true);
+            response = new ResponseEntity<CarDTO>(modelMapper.map(car, CarDTO.class), HttpStatus.OK);
+        } catch (EntityNotFoundException entityNotFoundException) {
+            throw entityNotFoundException;
+        } catch (Exception e) {
+            response = new ResponseEntity<String>("Unable to fix car", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
+
+    }
+
+
+    @Override
     public ResponseEntity<String> markCarAsDeleted(Long id) {
         ResponseEntity<String> response;
         try {
             Car car = findCarByIdOrThrowException(id);
-            if (car.isDeleted() == true) {
+            if (car.isDeleted()) {
                 response = new ResponseEntity<String>(new StringBuilder()
                         .append("Car with id = ")
                         .append(id)
@@ -150,6 +179,7 @@ public class CarServiceImpl implements CarService {
                 return response;
             }
             car.setDeleted(true);
+            car.setEmploymentStatus(false);
             response = new ResponseEntity<String>(new StringBuilder()
                     .append("Car with id = ")
                     .append(id)
@@ -171,5 +201,6 @@ public class CarServiceImpl implements CarService {
                 .append(id)
                 .append(" not found").toString()));
     }
+
 
 }

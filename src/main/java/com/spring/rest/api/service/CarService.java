@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CarService {
 
 
-    ResponseEntity<?> findById(Long id);
+    ResponseEntity<?> findById(Long carId);
 
     ResponseEntity<?> findAll(String[] sort);
 
@@ -21,9 +21,11 @@ public interface CarService {
 
     ResponseEntity<?> save(CarDTO carDTO);
 
-    ResponseEntity<?> update(Long id, CarDTO carDTO);
+    ResponseEntity<?> update(Long carId, CarDTO carDTO);
 
-    ResponseEntity<String> markCarAsDeleted(Long id);
+    ResponseEntity<String> markCarAsDeleted(Long carId);
 
-    Car findCarByIdOrThrowException(Long id);
+    Car findCarByIdOrThrowException(Long carId);
+
+    ResponseEntity<?> fixBrokenCar(Long carId);
 }

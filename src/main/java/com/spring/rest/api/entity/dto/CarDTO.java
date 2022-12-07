@@ -1,5 +1,6 @@
 package com.spring.rest.api.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,5 +39,9 @@ public class CarDTO {
 
     @NotBlank(message = "Please fill the image link")
     private String imageLink;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private boolean broken;
+
 
 }
