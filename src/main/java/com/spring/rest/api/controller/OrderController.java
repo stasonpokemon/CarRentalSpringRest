@@ -1,6 +1,8 @@
 package com.spring.rest.api.controller;
 
 import com.spring.rest.api.entity.Order;
+import com.spring.rest.api.entity.Refund;
+import com.spring.rest.api.entity.dto.RefundDTO;
 import com.spring.rest.api.service.OrderService;
 import com.spring.rest.api.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,4 +37,24 @@ public class OrderController {
         CommonUtil.getInstance().checkBindingResultOrThrowException(bindingResult);
         return orderService.createOrder(order, userId, carId);
     }
+
+    @PatchMapping("/{orderId}/accept")
+    public ResponseEntity<?> acceptOrder(@PathVariable("orderId") Long orderId) {
+        return orderService.acceptOrder(orderId);
+    }
+
+    @PatchMapping("/{orderId}/cancel")
+    public ResponseEntity<?> cancelOrder(@PathVariable("orderId") Long orderId) {
+        return orderService.cancelOrder(orderId);
+    }
+
+    @PostMapping("/{orderId}/refund")
+    public ResponseEntity<?> createOrdersRefund(@PathVariable("orderId") Long orderId,
+                                                @RequestBody @Valid RefundDTO refundDTO,
+                                                BindingResult bindingResult) {
+        CommonUtil.getInstance().checkBindingResultOrThrowException(bindingResult);
+        return orderService.createOrdersRefund(orderId, refundDTO);
+    }
+
+
 }

@@ -117,10 +117,10 @@ VALUES ('Audi', 'A7', '01-01-2015', 290, true, 'Without damage',
        ('Maclaren', '720s', ' 01-01-2021', 800, true, 'Without damage',
         'https://avatars.mds.yandex.net/i?id=2935e7d83106b4c9d0e7e3ef32317107-5436885-images-thumbs&n=13', false, now(),
         now()),
-       ('Ferrari', '488 Pista', '01-01-2018', 500, true, 'Without damage',
+       ('Ferrari', '488 Pista', '01-01-2018', 500, false, 'Without damage',
         'https://avatars.mds.yandex.net/i?id=a1a43df466e944e61a1d5b750adf2af2-4407062-images-thumbs&n=13', false, now(),
         now()),
-       ('Nissan', 'GTR', '01-01-2017', 700, true, 'Without damage',
+       ('Nissan', 'GTR', '01-01-2017', 700, false, 'Without damage',
         'https://avatars.mds.yandex.net/i?id=0c11cd4e88b398ed905ce966735cfc58-4954930-images-thumbs&n=13', false, now(),
         now());
 

@@ -1,6 +1,7 @@
 package com.spring.rest.api.controller;
 
 import com.spring.rest.api.entity.dto.PassportDTO;
+import com.spring.rest.api.service.OrderService;
 import com.spring.rest.api.service.UserService;
 import com.spring.rest.api.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,16 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private OrderService orderService;
+
     @GetMapping
     public ResponseEntity<?> findAll(@RequestParam(name = "sort", defaultValue = "id,acs", required = false) String[] sort) {
         return userService.findAll(sort);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findUserById(@PathVariable("id") Long userId){
+    public ResponseEntity<?> findUserById(@PathVariable("id") Long userId) {
         return userService.findUser(userId);
     }
 
@@ -35,6 +39,11 @@ public class UserController {
     @PatchMapping("/{id}/unlock")
     public ResponseEntity<?> unlockUser(@PathVariable("id") Long userId) {
         return userService.unlockUser(userId);
+    }
+
+    @GetMapping("/{id}/orders")
+    public ResponseEntity<?> findUsersOrders(@PathVariable("id") Long userId) {
+        return orderService.findOrdersByUserId(userId);
     }
 
     @GetMapping("/{id}/passport")

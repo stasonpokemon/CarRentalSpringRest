@@ -7,6 +7,7 @@ import com.spring.rest.api.entity.dto.PassportDTO;
 import com.spring.rest.api.entity.dto.UserDTO;
 import com.spring.rest.api.exception.EntityNotFoundException;
 import com.spring.rest.api.exception.SortParametersNotValidException;
+import com.spring.rest.api.repo.OrderRepository;
 import com.spring.rest.api.repo.UserRepository;
 import com.spring.rest.api.service.MailSenderService;
 import com.spring.rest.api.service.UserService;
@@ -38,6 +39,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -241,9 +245,6 @@ public class UserServiceImpl implements UserService {
 
     private UserDTO userToUserDTO(User user) {
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-//        if (!user.getOrders().isEmpty()) {
-//            userDTO.setOrders(user.getOrders().stream().map(order -> modelMapper.map(order, OrderDTO.class)).collect(Collectors.toList()));
-//        }
         if (user.getPassport() != null) {
             userDTO.setPassport(modelMapper.map(user.getPassport(), PassportDTO.class));
         }

@@ -23,8 +23,6 @@ public interface CarService {
 
     ResponseEntity<?> update(Long id, CarDTO carDTO);
 
-    ResponseEntity<String> delete(Long id);
-
     ResponseEntity<String> markCarAsDeleted(Long id);
 
     Car findCarByIdOrThrowException(Long id);

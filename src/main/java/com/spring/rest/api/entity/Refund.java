@@ -14,7 +14,7 @@ public class Refund extends BaseEntity{
 
 
     @Column(name = "damage_status")
-    private boolean damageStatus;
+    private boolean damaged;
 
     @Column(name = "damage_description")
     private String damageDescription;

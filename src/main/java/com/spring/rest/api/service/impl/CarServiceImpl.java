@@ -138,23 +138,6 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public ResponseEntity<String> delete(Long id) {
-        ResponseEntity<String> response;
-        try {
-            carRepository.delete(findCarByIdOrThrowException(id));
-            response = new ResponseEntity<String>(new StringBuilder()
-                    .append("Car with id = ")
-                    .append(id)
-                    .append(" was deleted from database").toString(), HttpStatus.OK);
-        } catch (EntityNotFoundException entityNotFoundException) {
-            throw entityNotFoundException;
-        } catch (Exception e) {
-            response = new ResponseEntity<String>("Unable to delete car", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return response;
-    }
-
-    @Override
     public ResponseEntity<String> markCarAsDeleted(Long id) {
         ResponseEntity<String> response;
         try {

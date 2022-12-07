@@ -5,8 +5,6 @@ import com.spring.rest.api.entity.User;
 import com.spring.rest.api.entity.dto.PassportDTO;
 import com.spring.rest.api.entity.dto.UserDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface UserService {
 
@@ -31,4 +29,5 @@ public interface UserService {
     User findUserByIdOrThrowException(Long userId);
 
     Passport findPassportByUserOrThrowException(User user);
+
 }

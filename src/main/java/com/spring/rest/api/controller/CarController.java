@@ -50,9 +50,4 @@ public class CarController {
     public ResponseEntity<String> markCarAsDeleted(@PathVariable("id") Long id) {
         return carService.markCarAsDeleted(id);
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteFromDB(@PathVariable("id") Long id) {
-        return carService.delete(id);
-    }
 }
