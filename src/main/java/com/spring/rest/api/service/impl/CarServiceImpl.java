@@ -8,11 +8,10 @@ import com.spring.rest.api.exception.SortParametersNotValidException;
 import com.spring.rest.api.repo.CarRepository;
 import com.spring.rest.api.service.CarService;
 import com.spring.rest.api.util.CarUtil;
-import com.spring.rest.api.util.CommonUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -50,16 +49,15 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findAll(String[] sort) {
+    public ResponseEntity<?> findAll(Pageable pageable) {
         ResponseEntity<?> response;
         try {
-            List<Order> orders = CommonUtil.getInstance().getOrdersFromRequest(sort, Car.class);
-            List<CarDTO> carsDTO = carRepository.findAll(Sort.by(orders)).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
+            List<CarDTO> carsDTO = carRepository.findAll(pageable).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
+
             if (carsDTO.isEmpty()) {
                 return new ResponseEntity<String>("There isn't cars", HttpStatus.OK);
-
             }
-            response = new ResponseEntity<List<CarDTO>>(carsDTO, HttpStatus.OK);
+            response = new ResponseEntity<PageImpl<CarDTO>>(new PageImpl<CarDTO>(carsDTO), HttpStatus.OK);
         } catch (SortParametersNotValidException sortParametersNotValidException) {
             throw sortParametersNotValidException;
         } catch (Exception e) {
@@ -70,15 +68,14 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findAllNotMarkAsDeleted(String[] sort) {
+    public ResponseEntity<?> findAllNotMarkAsDeleted(Pageable pageable) {
         ResponseEntity<?> response;
         try {
-            List<Order> orders = CommonUtil.getInstance().getOrdersFromRequest(sort, Car.class);
-            List<CarDTO> carsDTO = carRepository.findAllByDeleted(false, Sort.by(orders)).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
+            List<CarDTO> carsDTO = carRepository.findAllByDeleted(false, pageable).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
             if (carsDTO.isEmpty()) {
                 return new ResponseEntity<String>("There isn't cars not mark as deleted", HttpStatus.OK);
             }
-            response = new ResponseEntity<List<CarDTO>>(carsDTO, HttpStatus.OK);
+            response = new ResponseEntity<PageImpl<CarDTO>>(new PageImpl<CarDTO>(carsDTO), HttpStatus.OK);
         } catch (SortParametersNotValidException sortParametersNotValidException) {
             throw sortParametersNotValidException;
         } catch (Exception e) {
@@ -89,15 +86,14 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findAllFreeNotMarkAsDeleted(String[] sort) {
+    public ResponseEntity<?> findAllFreeNotMarkAsDeleted(Pageable pageable) {
         ResponseEntity<?> response;
         try {
-            List<Order> orders = CommonUtil.getInstance().getOrdersFromRequest(sort, Car.class);
-            List<CarDTO> carsDTO = carRepository.findAllByEmploymentStatusAndDeleted(true, false, Sort.by(orders)).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
+            List<CarDTO> carsDTO = carRepository.findAllByEmploymentStatusAndDeleted(true, false, pageable).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
             if (carsDTO.isEmpty()) {
                 return new ResponseEntity<String>("There isn't free cars not mark as deleted", HttpStatus.OK);
             }
-            response = new ResponseEntity<List<CarDTO>>(carsDTO, HttpStatus.OK);
+            response = new ResponseEntity<PageImpl<CarDTO>>(new PageImpl<CarDTO>(carsDTO), HttpStatus.OK);
         } catch (SortParametersNotValidException sortParametersNotValidException) {
             throw sortParametersNotValidException;
         } catch (Exception e) {

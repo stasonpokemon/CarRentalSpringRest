@@ -18,6 +18,9 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,16 +73,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findAll(String[] sort) {
+    public ResponseEntity<?> findAll(Pageable pageable) {
         ResponseEntity<?> response;
         try {
-            List<Sort.Order> orders = CommonUtil.getInstance().getOrdersFromRequest(sort, User.class);
-            List<UserDTO> usersDTO = userRepository.findAll(Sort.by(orders)).stream().map(this::userToUserDTO).collect(Collectors.toList());
+            List<UserDTO> usersDTO = userRepository.findAll(pageable).stream().map(this::userToUserDTO).collect(Collectors.toList());
             if (usersDTO.isEmpty()) {
                 response = new ResponseEntity<String>("There is no users", HttpStatus.NO_CONTENT);
                 return response;
             }
-            response = new ResponseEntity<List<UserDTO>>(usersDTO, HttpStatus.OK);
+            response = new ResponseEntity<Page<UserDTO>>(new PageImpl<UserDTO>(usersDTO), HttpStatus.OK);
         } catch (SortParametersNotValidException sortParametersNotValidException) {
             throw sortParametersNotValidException;
         } catch (Exception e) {

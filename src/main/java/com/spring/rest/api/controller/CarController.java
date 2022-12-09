@@ -4,6 +4,9 @@ import com.spring.rest.api.entity.dto.CarDTO;
 import com.spring.rest.api.service.CarService;
 import com.spring.rest.api.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +22,13 @@ public class CarController {
     private CarService carService;
 
     @GetMapping("/all")
-    public ResponseEntity<?> findAll(@RequestParam(name = "sort", defaultValue = "id,asc", required = false) String[] sort) {
-        return carService.findAll(sort);
+    public ResponseEntity<?> findAll(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable) {
+        return carService.findAll(pageable);
     }
 
     @GetMapping
-    public ResponseEntity<?> findAllNotMarkedAsDeleted(@RequestParam(name = "sort", defaultValue = "id,asc", required = false) String[] sort) {
-        return carService.findAllNotMarkAsDeleted(sort);
+    public ResponseEntity<?> findAllNotMarkedAsDeleted(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable) {
+        return carService.findAllNotMarkAsDeleted(pageable);
     }
 
     @GetMapping("/{id}")
@@ -47,7 +50,7 @@ public class CarController {
     }
 
     @PatchMapping("/{id}/fix")
-    public ResponseEntity<?> fixBrokenCar(@PathVariable("id") Long carId){
+    public ResponseEntity<?> fixBrokenCar(@PathVariable("id") Long carId) {
         return carService.fixBrokenCar(carId);
     }
 

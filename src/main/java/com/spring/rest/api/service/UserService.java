@@ -4,11 +4,12 @@ import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.User;
 import com.spring.rest.api.entity.dto.PassportDTO;
 import com.spring.rest.api.entity.dto.UserDTO;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
 
-    ResponseEntity<?> findAll(String[] sort);
+    ResponseEntity<?> findAll(Pageable pageable);
 
     ResponseEntity<?> blockUser(Long userId);
 

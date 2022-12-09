@@ -1,11 +1,13 @@
 package com.spring.rest.api.controller;
 
 import com.spring.rest.api.entity.Order;
-import com.spring.rest.api.entity.Refund;
 import com.spring.rest.api.entity.dto.RefundDTO;
 import com.spring.rest.api.service.OrderService;
 import com.spring.rest.api.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +22,18 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping
-    public ResponseEntity<?> findAll(@RequestParam(name = "sort", defaultValue = "id,acs", required = false) String[] sort) {
-        return orderService.findAll(sort);
+    public ResponseEntity<?> findAll(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable) {
+        return orderService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") Long orderId) {
         return orderService.findById(orderId);
+    }
+
+    @GetMapping("/{id}/refund")
+    public ResponseEntity<?> findOrdersRefund(@PathVariable("id") Long orderId) {
+        return orderService.findOrdersRefund(orderId);
     }
 
     @PostMapping("/{userId}/{carId}")

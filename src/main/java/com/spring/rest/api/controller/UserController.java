@@ -5,6 +5,9 @@ import com.spring.rest.api.service.OrderService;
 import com.spring.rest.api.service.UserService;
 import com.spring.rest.api.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +25,8 @@ public class UserController {
     private OrderService orderService;
 
     @GetMapping
-    public ResponseEntity<?> findAll(@RequestParam(name = "sort", defaultValue = "id,acs", required = false) String[] sort) {
-        return userService.findAll(sort);
+    public ResponseEntity<?> findAll(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable) {
+        return userService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
@@ -42,8 +45,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}/orders")
-    public ResponseEntity<?> findUsersOrders(@PathVariable("id") Long userId) {
-        return orderService.findOrdersByUserId(userId);
+    public ResponseEntity<?> findUsersOrders(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable,
+                                             @PathVariable("id") Long userId) {
+        return orderService.findOrdersByUserId(userId, pageable);
     }
 
     @GetMapping("/{id}/passport")

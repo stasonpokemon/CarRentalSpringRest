@@ -8,6 +8,7 @@ import com.spring.rest.api.entity.dto.UserDTO;
 import com.spring.rest.api.exception.EntityNotFoundException;
 import com.spring.rest.api.exception.SortParametersNotValidException;
 import com.spring.rest.api.repo.OrderRepository;
+import com.spring.rest.api.repo.RefundRepository;
 import com.spring.rest.api.service.CarService;
 import com.spring.rest.api.service.OrderService;
 import com.spring.rest.api.service.UserService;
@@ -15,6 +16,9 @@ import com.spring.rest.api.util.CommonUtil;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,27 +45,10 @@ public class OrderServiceImpl implements OrderService {
     private CarService carService;
 
     @Autowired
+    private RefundRepository refundRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
-
-
-    @Override
-    @Transactional(readOnly = true)
-    public ResponseEntity<?> findAll(String[] sort) {
-        ResponseEntity<?> response;
-        try {
-            List<Sort.Order> sortOrders = CommonUtil.getInstance().getOrdersFromRequest(sort, Order.class);
-            List<OrderDTO> ordersDTO = orderRepository.findAll(Sort.by(sortOrders)).stream().map(this::orderToOrderDTO).collect(Collectors.toList());
-            if (ordersDTO.isEmpty()) {
-                return new ResponseEntity<String>("There are no orders", HttpStatus.OK);
-            }
-            response = new ResponseEntity<List<OrderDTO>>(ordersDTO, HttpStatus.OK);
-        } catch (SortParametersNotValidException sortParametersNotValidException) {
-            throw sortParametersNotValidException;
-        } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to get all orders", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return response;
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -77,6 +64,47 @@ public class OrderServiceImpl implements OrderService {
         }
         return response;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> findAll(Pageable pageable) {
+        ResponseEntity<?> response;
+        try {
+            List<OrderDTO> ordersDTO = orderRepository.findAll(pageable).stream().map(this::orderToOrderDTO).collect(Collectors.toList());
+            if (ordersDTO.isEmpty()) {
+                return new ResponseEntity<String>("There are no orders", HttpStatus.OK);
+            }
+            response = new ResponseEntity<Page<OrderDTO>>(new PageImpl<OrderDTO>(ordersDTO), HttpStatus.OK);
+        } catch (SortParametersNotValidException sortParametersNotValidException) {
+            throw sortParametersNotValidException;
+        } catch (Exception exception) {
+            response = new ResponseEntity<String>("Unable to get all orders", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> findOrdersByUserId(Long userId, Pageable pageable) {
+        ResponseEntity<?> response;
+        try {
+            User user = userService.findUserByIdOrThrowException(userId);
+            if (user.getOrders().isEmpty()) {
+                return new ResponseEntity<String>(new StringBuilder()
+                        .append("User with id = ")
+                        .append(userId)
+                        .append(" hasn't orders").toString(), HttpStatus.OK);
+            }
+            List<OrderDTO> ordersDTO = orderRepository.findAllByUserId(userId, pageable).stream().map(this::orderToOrderDTO).collect(Collectors.toList());
+            response = new ResponseEntity<Page<OrderDTO>>(new PageImpl<OrderDTO>(ordersDTO), HttpStatus.OK);
+        } catch (EntityNotFoundException entityNotFoundException) {
+            throw entityNotFoundException;
+        } catch (Exception exception) {
+            response = new ResponseEntity<String>("Unable to get orders", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
+    }
+
 
     @Override
     public ResponseEntity<?> createOrder(Order order, Long userId, Long carId) {
@@ -193,30 +221,25 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public ResponseEntity<?> findOrdersRefund(Long orderId) {
-        return null;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public ResponseEntity<?> findOrdersByUserId(Long userId) {
         ResponseEntity<?> response;
         try {
-            User user = userService.findUserByIdOrThrowException(userId);
-            if (user.getOrders().isEmpty()) {
+            Order order = findOrderByIdOrThrowException(orderId);
+            if (order.getRefund() == null) {
                 return new ResponseEntity<String>(new StringBuilder()
-                        .append("User with id = ")
-                        .append(userId)
-                        .append(" hasn't orders").toString(), HttpStatus.OK);
+                        .append("Order with id = ")
+                        .append(orderId)
+                        .append(" hasn't refund").toString(), HttpStatus.OK);
             }
-            List<OrderDTO> ordersDTO = orderRepository.findAllByUserId(userId).stream().map(order -> orderToOrderDTO(order)).collect(Collectors.toList());
-            response = new ResponseEntity<List<OrderDTO>>(ordersDTO, HttpStatus.OK);
+            RefundDTO refundDTO = modelMapper.map(order.getRefund(), RefundDTO.class);
+            response = new ResponseEntity<RefundDTO>(refundDTO, HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to get orders", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<String>("Unable to get order's refund", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
+
 
     private OrderDTO orderToOrderDTO(Order order) {
         OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);

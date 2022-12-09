@@ -3,21 +3,19 @@ package com.spring.rest.api.service;
 
 import com.spring.rest.api.entity.Car;
 import com.spring.rest.api.entity.dto.CarDTO;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface CarService {
 
 
     ResponseEntity<?> findById(Long carId);
 
-    ResponseEntity<?> findAll(String[] sort);
+    ResponseEntity<?> findAll(Pageable pageable);
 
-    ResponseEntity<?> findAllNotMarkAsDeleted(String[] sort);
+    ResponseEntity<?> findAllNotMarkAsDeleted(Pageable pageable);
 
-    ResponseEntity<?> findAllFreeNotMarkAsDeleted(String[] sort);
+    ResponseEntity<?> findAllFreeNotMarkAsDeleted(Pageable pageable);
 
     ResponseEntity<?> save(CarDTO carDTO);
 
