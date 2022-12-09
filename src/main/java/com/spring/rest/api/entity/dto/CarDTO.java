@@ -21,7 +21,7 @@ public class CarDTO {
     private String producer;
 
     @NotBlank(message = "Please fill the model")
-    @Length(max = 2048, message = "Model too long. Max length is 2048")
+    @Length(max = 255, message = "Model too long. Max length is 2048")
     private String model;
 
     @NotNull(message = "Please fill the release date")
@@ -34,6 +34,7 @@ public class CarDTO {
     @NotNull(message = "Employment status can't be null")
     private boolean employmentStatus;
 
+    @Length(max = 1000, message = "Damage status too long. Max length is 1000")
     @NotBlank(message = "Please fill the damage status")
     private String damageStatus;
 

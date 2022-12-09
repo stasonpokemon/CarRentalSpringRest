@@ -2,10 +2,7 @@ package com.spring.rest.api.entity.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.spring.rest.api.entity.Car;
 import com.spring.rest.api.entity.OrderStatus;
-import com.spring.rest.api.entity.Refund;
-import com.spring.rest.api.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

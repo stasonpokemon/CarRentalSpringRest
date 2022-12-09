@@ -11,7 +11,6 @@ import com.spring.rest.api.repo.OrderRepository;
 import com.spring.rest.api.repo.UserRepository;
 import com.spring.rest.api.service.MailSenderService;
 import com.spring.rest.api.service.UserService;
-import com.spring.rest.api.util.CommonUtil;
 import com.spring.rest.api.util.PassportUtil;
 import com.spring.rest.api.util.tread.MailSenderThread;
 import lombok.extern.log4j.Log4j2;
@@ -21,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,9 +40,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     @Autowired
     private ModelMapper modelMapper;
