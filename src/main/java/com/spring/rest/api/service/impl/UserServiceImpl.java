@@ -7,7 +7,7 @@ import com.spring.rest.api.entity.dto.PassportDTO;
 import com.spring.rest.api.entity.dto.UserDTO;
 import com.spring.rest.api.exception.EntityNotFoundException;
 import com.spring.rest.api.exception.SortParametersNotValidException;
-import com.spring.rest.api.repo.OrderRepository;
+import com.spring.rest.api.repo.PassportRepository;
 import com.spring.rest.api.repo.UserRepository;
 import com.spring.rest.api.service.MailSenderService;
 import com.spring.rest.api.service.UserService;
@@ -40,6 +40,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PassportRepository passportRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -114,7 +117,9 @@ public class UserServiceImpl implements UserService {
                         .append(userId)
                         .append(" already has passport").toString(), HttpStatus.OK);
             }
-            user.setPassport(modelMapper.map(passportDTO, Passport.class));
+            Passport passport = modelMapper.map(passportDTO, Passport.class);
+            passport.setUser(user);
+            passportRepository.save(passport);
             response = new ResponseEntity<PassportDTO>(passportDTO, HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;

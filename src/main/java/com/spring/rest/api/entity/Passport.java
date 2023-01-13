@@ -29,7 +29,8 @@ public class Passport extends BaseEntity{
     @Column(name = "address", nullable = false)
     private String address;
 
-    @OneToOne(mappedBy = "passport", fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     private User user;
 
 

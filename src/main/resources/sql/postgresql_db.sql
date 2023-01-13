@@ -139,3 +139,6 @@ insert into orders(order_date, order_status, price, rental_period, car_id, user_
                    updated_at)
 VALUES (now(), 'UNDER_CONSIDERATION', 1000, 2, 7, 2, now(), now()),
        (now(), 'UNDER_CONSIDERATION', 1400, 2, 8, 2, now(), now());
+
+select * from users;
+select * from passports;
