@@ -1,10 +1,6 @@
 package com.spring.rest.api.controller;
 
 import com.spring.rest.api.entity.dto.PassportDTO;
-import com.spring.rest.api.service.OrderService;
-import com.spring.rest.api.service.UserService;
-import com.spring.rest.api.util.CommonUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -14,59 +10,35 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@RestController
 @RequestMapping("/users")
-public class UserController {
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private OrderService orderService;
+public interface UserController {
 
     @GetMapping
-    public ResponseEntity<?> findAll(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable) {
-        return userService.findAll(pageable);
-    }
+    ResponseEntity<?> findAll(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable);
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findUserById(@PathVariable("id") Long userId) {
-        return userService.findUser(userId);
-    }
+    ResponseEntity<?> findUserById(@PathVariable("id") Long userId);
 
     @PatchMapping("/{id}/block")
-    public ResponseEntity<?> blockUser(@PathVariable("id") Long userId) {
-        return userService.blockUser(userId);
-    }
+    ResponseEntity<?> blockUser(@PathVariable("id") Long userId);
 
     @PatchMapping("/{id}/unlock")
-    public ResponseEntity<?> unlockUser(@PathVariable("id") Long userId) {
-        return userService.unlockUser(userId);
-    }
+    ResponseEntity<?> unlockUser(@PathVariable("id") Long userId);
 
     @GetMapping("/{id}/orders")
-    public ResponseEntity<?> findUsersOrders(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable,
-                                             @PathVariable("id") Long userId) {
-        return orderService.findOrdersByUserId(userId, pageable);
-    }
+    ResponseEntity<?> findUsersOrders(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable,
+                                      @PathVariable("id") Long userId);
 
     @GetMapping("/{id}/passport")
-    public ResponseEntity<?> findUsersPassport(@PathVariable("id") Long userId) {
-        return userService.findPassportByUserId(userId);
-    }
+    ResponseEntity<?> findUsersPassport(@PathVariable("id") Long userId);
 
     @PostMapping("/{id}/passport")
-    public ResponseEntity<?> createPassportForUser(@PathVariable("id") Long userId,
-                                                   @RequestBody @Valid PassportDTO passportDTO,
-                                                   BindingResult bindingResult) {
-        CommonUtil.getInstance().checkBindingResultOrThrowException(bindingResult);
-        return userService.createPassportForUser(userId, passportDTO);
-    }
+    ResponseEntity<?> createPassportForUser(@PathVariable("id") Long userId,
+                                            @RequestBody @Valid PassportDTO passportDTO,
+                                            BindingResult bindingResult);
 
     @PatchMapping("/{id}/passport")
-    public ResponseEntity<?> editUsersPassport(@PathVariable("id") Long userId,
-                                               @RequestBody PassportDTO passportDTO) {
-        return userService.updateUsersPassport(userId, passportDTO);
-    }
+    ResponseEntity<?> editUsersPassport(@PathVariable("id") Long userId,
+                                        @RequestBody PassportDTO passportDTO);
 
 }

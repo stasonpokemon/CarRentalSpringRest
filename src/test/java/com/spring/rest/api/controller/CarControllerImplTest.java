@@ -2,7 +2,7 @@ package com.spring.rest.api.controller;
 
 import org.junit.jupiter.api.Test;
 
-class CarControllerTest {
+class CarControllerImplTest {
 
 
 
