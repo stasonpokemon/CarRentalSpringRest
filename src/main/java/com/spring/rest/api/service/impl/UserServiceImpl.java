@@ -38,20 +38,24 @@ import java.util.stream.Collectors;
 @Log4j2
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PassportRepository passportRepository;
+    private final PassportRepository passportRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    private MailSenderService mailSenderService;
+    private final MailSenderService mailSenderService;
 
     @Value("${server.port}")
     private String SERVER_PORT;
+
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, PassportRepository passportRepository, ModelMapper modelMapper, MailSenderService mailSenderService) {
+        this.userRepository = userRepository;
+        this.passportRepository = passportRepository;
+        this.modelMapper = modelMapper;
+        this.mailSenderService = mailSenderService;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -59,11 +63,11 @@ public class UserServiceImpl implements UserService {
         ResponseEntity<?> response;
         try {
             UserDTO userDTO = userToUserDTO(findUserByIdOrThrowException(userId));
-            response = new ResponseEntity<UserDTO>(userDTO, HttpStatus.OK);
+            response = new ResponseEntity<>(userDTO, HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception e) {
-            response = new ResponseEntity<String>("Unable to get user", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to get user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -76,14 +80,14 @@ public class UserServiceImpl implements UserService {
         try {
             List<UserDTO> usersDTO = userRepository.findAll(pageable).stream().map(this::userToUserDTO).collect(Collectors.toList());
             if (usersDTO.isEmpty()) {
-                response = new ResponseEntity<String>("There is no users", HttpStatus.NO_CONTENT);
+                response = new ResponseEntity<>("There is no users", HttpStatus.NO_CONTENT);
                 return response;
             }
-            response = new ResponseEntity<Page<UserDTO>>(new PageImpl<UserDTO>(usersDTO), HttpStatus.OK);
+            response = new ResponseEntity<Page<UserDTO>>(new PageImpl<>(usersDTO), HttpStatus.OK);
         } catch (SortParametersNotValidException sortParametersNotValidException) {
             throw sortParametersNotValidException;
         } catch (Exception e) {
-            response = new ResponseEntity<String>("Unable to get all users", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to get all users", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -96,11 +100,11 @@ public class UserServiceImpl implements UserService {
         try {
             User user = findUserByIdOrThrowException(userId);
             Passport passport = findPassportByUserOrThrowException(user);
-            response = new ResponseEntity<PassportDTO>(modelMapper.map(passport, PassportDTO.class), HttpStatus.OK);
+            response = new ResponseEntity<>(modelMapper.map(passport, PassportDTO.class), HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to find passport by userId", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to find passport by userId", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -112,19 +116,16 @@ public class UserServiceImpl implements UserService {
         try {
             User user = findUserByIdOrThrowException(userId);
             if (user.getPassport() != null) {
-                return new ResponseEntity<String>(new StringBuilder()
-                        .append("User with id = ")
-                        .append(userId)
-                        .append(" already has passport").toString(), HttpStatus.OK);
+                return new ResponseEntity<>(String.format("User with id = %s already has passport", userId), HttpStatus.OK);
             }
             Passport passport = modelMapper.map(passportDTO, Passport.class);
             passport.setUser(user);
             passportRepository.save(passport);
-            response = new ResponseEntity<PassportDTO>(passportDTO, HttpStatus.OK);
+            response = new ResponseEntity<>(passportDTO, HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to create passport", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to create passport", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -135,11 +136,11 @@ public class UserServiceImpl implements UserService {
         try {
             Passport passport = findPassportByUserOrThrowException(findUserByIdOrThrowException(userId));
             PassportUtil.getInstance().copyNotNullFieldsFromPassportDTOToPassport(passportDTO, passport);
-            response = new ResponseEntity<PassportDTO>(modelMapper.map(passport, PassportDTO.class), HttpStatus.OK);
+            response = new ResponseEntity<>(modelMapper.map(passport, PassportDTO.class), HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to create passport", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to create passport", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -147,10 +148,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<?> saveRegisteredUser(UserDTO userDTO) {
         if (userRepository.findUserByUsername(userDTO.getUsername()).isPresent()) {
-            return new ResponseEntity<String>("There is user with the same username", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("There is user with the same username", HttpStatus.BAD_REQUEST);
         }
         if (userRepository.findUserByEmail(userDTO.getEmail()).isPresent()) {
-            return new ResponseEntity<String>("There is user with the same email", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("There is user with the same email", HttpStatus.BAD_REQUEST);
         }
         ResponseEntity<?> response;
         User user = modelMapper.map(userDTO, User.class);
@@ -158,9 +159,9 @@ public class UserServiceImpl implements UserService {
             user.setActive(false);
             user.setActivationCode(UUID.randomUUID().toString());
             user.setRoles(Collections.singleton(Role.USER));
-            response = new ResponseEntity<UserDTO>(userToUserDTO(userRepository.save(user)), HttpStatus.OK);
+            response = new ResponseEntity<>(userToUserDTO(userRepository.save(user)), HttpStatus.OK);
         } catch (Exception exception) {
-            return new ResponseEntity<String>("Unable to save registered user", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unable to save registered user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         // Send activation code to user email
         if (!StringUtils.isEmpty(user.getEmail())) {
@@ -181,11 +182,11 @@ public class UserServiceImpl implements UserService {
             User user = userRepository.findUserByActivationCode(activateCode).orElseThrow(() -> new EntityNotFoundException("Activation code is note found"));
             user.setActivationCode(null);
             user.setActive(true);
-            response = new ResponseEntity<String>("User successfully activated", HttpStatus.OK);
+            response = new ResponseEntity<>("User successfully activated", HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to activate user", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to activate user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -197,14 +198,14 @@ public class UserServiceImpl implements UserService {
         try {
             User user = findUserByIdOrThrowException(id);
             if (!user.isActive()) {
-                return new ResponseEntity<String>("User is already blocked", HttpStatus.OK);
+                return new ResponseEntity<>("User is already blocked", HttpStatus.OK);
             }
             user.setActive(false);
-            response = new ResponseEntity<String>("User is blocked", HttpStatus.OK);
+            response = new ResponseEntity<>("User is blocked", HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to block user", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to block user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -215,14 +216,14 @@ public class UserServiceImpl implements UserService {
         try {
             User user = findUserByIdOrThrowException(id);
             if (user.isActive()) {
-                return new ResponseEntity<String>("User is already unlocked", HttpStatus.OK);
+                return new ResponseEntity<>("User is already unlocked", HttpStatus.OK);
             }
             user.setActive(true);
-            response = new ResponseEntity<String>("User is unlocked", HttpStatus.OK);
+            response = new ResponseEntity<>("User is unlocked", HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to unlock user", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to unlock user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -230,19 +231,15 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
     @Override
     public User findUserByIdOrThrowException(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(new StringBuilder()
-                .append("User with id = ")
-                .append(userId)
-                .append(" not found").toString()));
+        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(
+                String.format("User with id = %s not found", userId)));
     }
 
     @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
     @Override
     public Passport findPassportByUserOrThrowException(User user) {
-        return Optional.ofNullable(user.getPassport()).orElseThrow(() -> new EntityNotFoundException(new StringBuilder()
-                .append("Passport with id = ")
-                .append(user.getId())
-                .append(" not found").toString()));
+        return Optional.ofNullable(user.getPassport()).orElseThrow(() -> new EntityNotFoundException(
+                String.format("Passport with id = %s not found", user.getId())));
     }
 
     private UserDTO userToUserDTO(User user) {

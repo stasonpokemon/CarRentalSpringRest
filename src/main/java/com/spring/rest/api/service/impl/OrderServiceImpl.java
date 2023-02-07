@@ -8,18 +8,15 @@ import com.spring.rest.api.entity.dto.UserDTO;
 import com.spring.rest.api.exception.EntityNotFoundException;
 import com.spring.rest.api.exception.SortParametersNotValidException;
 import com.spring.rest.api.repo.OrderRepository;
-import com.spring.rest.api.repo.RefundRepository;
 import com.spring.rest.api.service.CarService;
 import com.spring.rest.api.service.OrderService;
 import com.spring.rest.api.service.UserService;
-import com.spring.rest.api.util.CommonUtil;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,20 +32,21 @@ import java.util.stream.Collectors;
 @Log4j2
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+
+    private final UserService userService;
+
+    private final CarService carService;
+
+    private final ModelMapper modelMapper;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private CarService carService;
-
-    @Autowired
-    private RefundRepository refundRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    public OrderServiceImpl(OrderRepository orderRepository, UserService userService, CarService carService, ModelMapper modelMapper) {
+        this.orderRepository = orderRepository;
+        this.userService = userService;
+        this.carService = carService;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -56,11 +54,11 @@ public class OrderServiceImpl implements OrderService {
         ResponseEntity<?> response;
         try {
             OrderDTO orderDTO = orderToOrderDTO(findOrderByIdOrThrowException(orderId));
-            response = new ResponseEntity<OrderDTO>(orderDTO, HttpStatus.OK);
+            response = new ResponseEntity<>(orderDTO, HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to get order", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to get order", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -72,13 +70,13 @@ public class OrderServiceImpl implements OrderService {
         try {
             List<OrderDTO> ordersDTO = orderRepository.findAll(pageable).stream().map(this::orderToOrderDTO).collect(Collectors.toList());
             if (ordersDTO.isEmpty()) {
-                return new ResponseEntity<String>("There are no orders", HttpStatus.OK);
+                return new ResponseEntity<>("There are no orders", HttpStatus.OK);
             }
-            response = new ResponseEntity<Page<OrderDTO>>(new PageImpl<OrderDTO>(ordersDTO), HttpStatus.OK);
+            response = new ResponseEntity<Page<OrderDTO>>(new PageImpl<>(ordersDTO), HttpStatus.OK);
         } catch (SortParametersNotValidException sortParametersNotValidException) {
             throw sortParametersNotValidException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to get all orders", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to get all orders", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -90,17 +88,15 @@ public class OrderServiceImpl implements OrderService {
         try {
             User user = userService.findUserByIdOrThrowException(userId);
             if (user.getOrders().isEmpty()) {
-                return new ResponseEntity<String>(new StringBuilder()
-                        .append("User with id = ")
-                        .append(userId)
-                        .append(" hasn't orders").toString(), HttpStatus.OK);
+                return new ResponseEntity<>(
+                        String.format("User with id = %s hasn't orders", userId), HttpStatus.OK);
             }
             List<OrderDTO> ordersDTO = orderRepository.findAllByUserId(userId, pageable).stream().map(this::orderToOrderDTO).collect(Collectors.toList());
-            response = new ResponseEntity<Page<OrderDTO>>(new PageImpl<OrderDTO>(ordersDTO), HttpStatus.OK);
+            response = new ResponseEntity<Page<OrderDTO>>(new PageImpl<>(ordersDTO), HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to get orders", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to get orders", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -113,19 +109,15 @@ public class OrderServiceImpl implements OrderService {
             Car car = carService.findCarByIdOrThrowException(carId);
             User user = userService.findUserByIdOrThrowException(userId);
             if (user.getPassport() == null) {
-                return new ResponseEntity<String>("The user must have a passport to create a new order", HttpStatus.OK);
+                return new ResponseEntity<>("The user must have a passport to create a new order", HttpStatus.OK);
             }
             if (car.isDeleted()) {
-                return new ResponseEntity<String>(new StringBuilder()
-                        .append("The car with id = ")
-                        .append(carId)
-                        .append(" is deleted").toString(), HttpStatus.OK);
+                return new ResponseEntity<>(
+                        String.format("The car with id = %s is deleted", carId), HttpStatus.OK);
             }
             if (!car.isEmploymentStatus()) {
-                return new ResponseEntity<String>(new StringBuilder()
-                        .append("The car with id = ")
-                        .append(carId)
-                        .append(" isn't free").toString(), HttpStatus.OK);
+                return new ResponseEntity<>(
+                        String.format("The car with id = %s isn't free", carId), HttpStatus.OK);
             }
             car.setEmploymentStatus(false);
             order.setCar(car);
@@ -134,11 +126,11 @@ public class OrderServiceImpl implements OrderService {
             order.setOrderDate(LocalDateTime.now());
             order.setPrice(((double) order.getRentalPeriod() * car.getPricePerDay()));
             OrderDTO orderDTO = orderToOrderDTO(orderRepository.save(order));
-            response = new ResponseEntity<OrderDTO>(orderDTO, HttpStatus.OK);
+            response = new ResponseEntity<>(orderDTO, HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to create order", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to create order", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return response;
@@ -150,17 +142,15 @@ public class OrderServiceImpl implements OrderService {
         try {
             Order order = findOrderByIdOrThrowException(orderId);
             if (!order.getOrderStatus().equals(OrderStatus.UNDER_CONSIDERATION)) {
-                return new ResponseEntity<String>(new StringBuilder()
-                        .append("Order with id = ")
-                        .append(orderId)
-                        .append(" already accepted or canceled").toString(), HttpStatus.OK);
+                return new ResponseEntity<>(
+                        String.format("Order with id = %s already accepted or canceled", orderId), HttpStatus.OK);
             }
             order.setOrderStatus(OrderStatus.CONFIRMED);
-            response = new ResponseEntity<OrderDTO>(orderToOrderDTO(order), HttpStatus.OK);
+            response = new ResponseEntity<>(orderToOrderDTO(order), HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to cancel order", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to cancel order", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -171,18 +161,16 @@ public class OrderServiceImpl implements OrderService {
         try {
             Order order = findOrderByIdOrThrowException(orderId);
             if (!order.getOrderStatus().equals(OrderStatus.UNDER_CONSIDERATION)) {
-                return new ResponseEntity<String>(new StringBuilder()
-                        .append("Order with id = ")
-                        .append(orderId)
-                        .append(" already accepted or canceled").toString(), HttpStatus.OK);
+                return new ResponseEntity<>(
+                        String.format("Order with id = %s already accepted or canceled", orderId), HttpStatus.OK);
             }
             order.setOrderStatus(OrderStatus.REFUSAL);
             order.getCar().setEmploymentStatus(true);
-            response = new ResponseEntity<OrderDTO>(orderToOrderDTO(order), HttpStatus.OK);
+            response = new ResponseEntity<>(orderToOrderDTO(order), HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to cancel order", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to cancel order", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -193,10 +181,8 @@ public class OrderServiceImpl implements OrderService {
         try {
             Order order = findOrderByIdOrThrowException(orderId);
             if (order.getRefund() != null) {
-                return new ResponseEntity<String>(new StringBuilder()
-                        .append("Order with id = ")
-                        .append(orderId)
-                        .append(" already has refund").toString(), HttpStatus.OK);
+                return new ResponseEntity<>(
+                        String.format("Order with id = %s already has refund", orderId), HttpStatus.OK);
             }
             refundDTO.setRefundDate(LocalDateTime.now());
             Refund refund = modelMapper.map(refundDTO, Refund.class);
@@ -209,11 +195,11 @@ public class OrderServiceImpl implements OrderService {
                 order.getCar().setDamageStatus(refund.getDamageDescription());
             }
             order.setRefund(refund);
-            response = new ResponseEntity<OrderDTO>(orderToOrderDTO(order), HttpStatus.OK);
+            response = new ResponseEntity<>(orderToOrderDTO(order), HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to create order's refund", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to create order's refund", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -225,17 +211,15 @@ public class OrderServiceImpl implements OrderService {
         try {
             Order order = findOrderByIdOrThrowException(orderId);
             if (order.getRefund() == null) {
-                return new ResponseEntity<String>(new StringBuilder()
-                        .append("Order with id = ")
-                        .append(orderId)
-                        .append(" hasn't refund").toString(), HttpStatus.OK);
+                return new ResponseEntity<>(
+                        String.format("Order with id = %s hasn't refund", orderId), HttpStatus.OK);
             }
             RefundDTO refundDTO = modelMapper.map(order.getRefund(), RefundDTO.class);
-            response = new ResponseEntity<RefundDTO>(refundDTO, HttpStatus.OK);
+            response = new ResponseEntity<>(refundDTO, HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception exception) {
-            response = new ResponseEntity<String>("Unable to get order's refund", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to get order's refund", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -258,11 +242,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
     public Order findOrderByIdOrThrowException(Long orderId) {
-        return orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(new StringBuilder()
-                .append("Order with id = ")
-                .append(orderId)
-                .append(" not found").toString()));
-
+        return orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(
+                String.format("Order with id = %s not found", orderId)));
     }
 
 }

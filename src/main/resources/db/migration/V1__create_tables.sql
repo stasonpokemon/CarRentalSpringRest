@@ -4,7 +4,7 @@ create table cars
     damage_status     CHARACTER VARYING(255),
     is_deleted        BOOLEAN                                       NOT NULL,
     employment_status BOOLEAN                                       NOT NULL,
-    img_link          CHARACTER VARYING(1000),
+    img_link          CHARACTER VARYING(1000)                       NOT NULL,
     model             CHARACTER VARYING(255)                        NOT NULL,
     price_per_day     DOUBLE PRECISION CHECK ( price_per_day >= 0 ) NOT NULL,
     producer          CHARACTER VARYING(255)                        NOT NULL,

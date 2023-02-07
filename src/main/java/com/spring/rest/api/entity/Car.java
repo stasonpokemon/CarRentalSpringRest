@@ -1,18 +1,22 @@
 package com.spring.rest.api.entity;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.util.Date;
+import java.time.LocalDate;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "cars")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Car extends BaseEntity {
 
     @Column(name = "producer")
@@ -22,7 +26,7 @@ public class Car extends BaseEntity {
     private String model;
 
     @Column(name = "release_date")
-    private Date releaseDate;
+    private LocalDate releaseDate;
 
     @Column(name = "price_per_day")
     private Double pricePerDay;

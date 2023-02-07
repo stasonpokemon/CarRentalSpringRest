@@ -16,7 +16,7 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ErrorTypeResponseDTO> sortParametersNotValidExceptionHandler(SortParametersNotValidException sortParametersNotValidException) {
-        return new ResponseEntity<ErrorTypeResponseDTO>(ErrorTypeResponseDTO.builder()
+        return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
                 .time(LocalDateTime.now())
                 .message(sortParametersNotValidException.getMessage())
                 .status(HttpStatus.BAD_REQUEST).build(), HttpStatus.BAD_REQUEST);
@@ -24,7 +24,7 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ErrorTypeResponseDTO> entityNotFoundExceptionHandler(EntityNotFoundException entityNotFoundException) {
-        return new ResponseEntity<ErrorTypeResponseDTO>(ErrorTypeResponseDTO.builder()
+        return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
                 .time(LocalDateTime.now())
                 .message(entityNotFoundException.getMessage())
                 .status(HttpStatus.NOT_FOUND).build(), HttpStatus.NOT_FOUND);
@@ -32,7 +32,7 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ErrorTypeResponseDTO> entityNotValidExceptionHandler(EntityNotValidException entityNotValidException) {
-        return new ResponseEntity<ErrorTypeResponseDTO>(ErrorTypeResponseDTO.builder()
+        return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
                 .time(LocalDateTime.now())
                 .message(entityNotValidException.getMessage())
                 .status(HttpStatus.BAD_REQUEST).build(), HttpStatus.BAD_REQUEST);

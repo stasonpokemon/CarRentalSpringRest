@@ -5,7 +5,7 @@ public enum OrderStatus {
     REFUSAL("Refusal"),
     CONFIRMED("Confirmed");
 
-    String abbreviation;
+    final String abbreviation;
 
     OrderStatus(String abbreviation) {
         this.abbreviation = abbreviation;

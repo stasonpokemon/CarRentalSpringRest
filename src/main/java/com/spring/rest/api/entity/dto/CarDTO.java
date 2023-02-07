@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -25,7 +25,7 @@ public class CarDTO {
     private String model;
 
     @NotNull(message = "Please fill the release date")
-    private Date releaseDate;
+    private LocalDate releaseDate;
 
     @NotNull(message = "Please fill the price per day")
     @Min(value = 0, message = "Price per day can't be less than 0")
@@ -34,7 +34,7 @@ public class CarDTO {
     @NotNull(message = "Employment status can't be null")
     private boolean employmentStatus;
 
-    @Length(max = 1000, message = "Damage status too long. Max length is 1000")
+    @Length(max = 255, message = "Damage status too long. Max length is 1000")
     @NotBlank(message = "Please fill the damage status")
     private String damageStatus;
 

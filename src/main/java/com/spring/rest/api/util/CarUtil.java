@@ -2,8 +2,6 @@ package com.spring.rest.api.util;
 
 import com.spring.rest.api.entity.Car;
 import com.spring.rest.api.entity.dto.CarDTO;
-import com.spring.rest.api.exception.EntityNotValidException;
-import org.springframework.validation.BindingResult;
 
 public class CarUtil {
 

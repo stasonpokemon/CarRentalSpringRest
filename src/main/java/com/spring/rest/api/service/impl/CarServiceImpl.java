@@ -26,11 +26,15 @@ import java.util.stream.Collectors;
 @Transactional
 public class CarServiceImpl implements CarService {
 
-    @Autowired
-    private CarRepository carRepository;
+    private final CarRepository carRepository;
+
+    private final ModelMapper modelMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public CarServiceImpl(CarRepository carRepository, ModelMapper modelMapper) {
+        this.carRepository = carRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -38,11 +42,11 @@ public class CarServiceImpl implements CarService {
         ResponseEntity<?> response;
         try {
             CarDTO carDTO = modelMapper.map(findCarByIdOrThrowException(id), CarDTO.class);
-            response = new ResponseEntity<CarDTO>(carDTO, HttpStatus.OK);
+            response = new ResponseEntity<>(carDTO, HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception e) {
-            response = new ResponseEntity<String>("Unable to get car", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to get car", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -55,13 +59,13 @@ public class CarServiceImpl implements CarService {
             List<CarDTO> carsDTO = carRepository.findAll(pageable).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
 
             if (carsDTO.isEmpty()) {
-                return new ResponseEntity<String>("There isn't cars", HttpStatus.OK);
+                return new ResponseEntity<>("There isn't cars", HttpStatus.OK);
             }
-            response = new ResponseEntity<PageImpl<CarDTO>>(new PageImpl<CarDTO>(carsDTO), HttpStatus.OK);
+            response = new ResponseEntity<>(new PageImpl<>(carsDTO), HttpStatus.OK);
         } catch (SortParametersNotValidException sortParametersNotValidException) {
             throw sortParametersNotValidException;
         } catch (Exception e) {
-            response = new ResponseEntity<String>("Unable to get all cars", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to get all cars", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -73,13 +77,13 @@ public class CarServiceImpl implements CarService {
         try {
             List<CarDTO> carsDTO = carRepository.findAllByDeleted(false, pageable).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
             if (carsDTO.isEmpty()) {
-                return new ResponseEntity<String>("There isn't cars not mark as deleted", HttpStatus.OK);
+                return new ResponseEntity<>("There isn't cars not mark as deleted", HttpStatus.OK);
             }
-            response = new ResponseEntity<PageImpl<CarDTO>>(new PageImpl<CarDTO>(carsDTO), HttpStatus.OK);
+            response = new ResponseEntity<>(new PageImpl<>(carsDTO), HttpStatus.OK);
         } catch (SortParametersNotValidException sortParametersNotValidException) {
             throw sortParametersNotValidException;
         } catch (Exception e) {
-            response = new ResponseEntity<String>("Unable to get all not mark as deleted cars", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to get all not mark as deleted cars", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -91,13 +95,13 @@ public class CarServiceImpl implements CarService {
         try {
             List<CarDTO> carsDTO = carRepository.findAllByEmploymentStatusAndDeleted(true, false, pageable).stream().map(car -> modelMapper.map(car, CarDTO.class)).collect(Collectors.toList());
             if (carsDTO.isEmpty()) {
-                return new ResponseEntity<String>("There isn't free cars not mark as deleted", HttpStatus.OK);
+                return new ResponseEntity<>("There isn't free cars not mark as deleted", HttpStatus.OK);
             }
-            response = new ResponseEntity<PageImpl<CarDTO>>(new PageImpl<CarDTO>(carsDTO), HttpStatus.OK);
+            response = new ResponseEntity<>(new PageImpl<>(carsDTO), HttpStatus.OK);
         } catch (SortParametersNotValidException sortParametersNotValidException) {
             throw sortParametersNotValidException;
         } catch (Exception e) {
-            response = new ResponseEntity<String>("Unable to get all free and not mark as deleted cars", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to get all free and not mark as deleted cars", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -109,9 +113,9 @@ public class CarServiceImpl implements CarService {
             Car car = modelMapper.map(carDTO, Car.class);
             car.setDeleted(false);
             Car savedCar = carRepository.save(car);
-            response = new ResponseEntity<CarDTO>(modelMapper.map(savedCar, CarDTO.class), HttpStatus.OK);
+            response = new ResponseEntity<>(modelMapper.map(savedCar, CarDTO.class), HttpStatus.OK);
         } catch (Exception e) {
-            response = new ResponseEntity<String>("Unable to create car", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to create car", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -122,11 +126,11 @@ public class CarServiceImpl implements CarService {
         try {
             Car car = findCarByIdOrThrowException(id);
             CarUtil.getInstance().copyNotNullFieldsFromCarDTOToCar(carDTO, car);
-            response = new ResponseEntity<CarDTO>(modelMapper.map(car, CarDTO.class), HttpStatus.OK);
+            response = new ResponseEntity<>(modelMapper.map(car, CarDTO.class), HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception e) {
-            response = new ResponseEntity<String>("Unable to update car", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to update car", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -137,25 +141,19 @@ public class CarServiceImpl implements CarService {
         try {
             Car car = findCarByIdOrThrowException(carId);
             if (car.isDeleted()) {
-                return new ResponseEntity<String>(new StringBuilder()
-                        .append("Unable to fix car. Car with id = ")
-                        .append(carId)
-                        .append(" is deleted").toString(), HttpStatus.OK);
+                return new ResponseEntity<>(String.format("Unable to fix car. Car with id = %s is deleted", carId), HttpStatus.OK);
             }
             if (!car.isBroken()) {
-                return new ResponseEntity<String>(new StringBuilder()
-                        .append("Unable to fix car. Car with id = ")
-                        .append(carId)
-                        .append(" already fixed").toString(), HttpStatus.OK);
+                return new ResponseEntity<>(String.format("Unable to fix car. Car with id = %s already fixed", carId), HttpStatus.OK);
             }
             car.setBroken(false);
             car.setDamageStatus("");
             car.setEmploymentStatus(true);
-            response = new ResponseEntity<CarDTO>(modelMapper.map(car, CarDTO.class), HttpStatus.OK);
+            response = new ResponseEntity<>(modelMapper.map(car, CarDTO.class), HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception e) {
-            response = new ResponseEntity<String>("Unable to fix car", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to fix car", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
 
@@ -168,22 +166,16 @@ public class CarServiceImpl implements CarService {
         try {
             Car car = findCarByIdOrThrowException(id);
             if (car.isDeleted()) {
-                response = new ResponseEntity<String>(new StringBuilder()
-                        .append("Car with id = ")
-                        .append(id)
-                        .append(" already marked as deleted").toString(), HttpStatus.OK);
+                response = new ResponseEntity<>(String.format("Car with id = %s already marked as deleted", id), HttpStatus.OK);
                 return response;
             }
             car.setDeleted(true);
             car.setEmploymentStatus(false);
-            response = new ResponseEntity<String>(new StringBuilder()
-                    .append("Car with id = ")
-                    .append(id)
-                    .append(" was marked as deleted").toString(), HttpStatus.OK);
+            response = new ResponseEntity<>(String.format("Car with id = %s was marked as deleted", id), HttpStatus.OK);
         } catch (EntityNotFoundException entityNotFoundException) {
             throw entityNotFoundException;
         } catch (Exception e) {
-            response = new ResponseEntity<String>("Unable to mark car as deleted", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("Unable to mark car as deleted", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -192,10 +184,8 @@ public class CarServiceImpl implements CarService {
     @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
     @Override
     public Car findCarByIdOrThrowException(Long id) {
-        return carRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(new StringBuilder()
-                .append("Car with id = ")
-                .append(id)
-                .append(" not found").toString()));
+        return carRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+                String.format("Car with id = %s not found", id)));
     }
 
 
