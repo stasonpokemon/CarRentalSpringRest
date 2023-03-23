@@ -1,17 +1,26 @@
 package com.spring.rest.api.entity;
 
+import java.util.stream.Stream;
+
 public enum OrderStatus {
-    UNDER_CONSIDERATION("Under consideration"),
-    REFUSAL("Refusal"),
-    CONFIRMED("Confirmed");
+    UNDER_CONSIDERATION(0),
+    REFUSAL(1),
+    CONFIRMED(2);
 
-    final String abbreviation;
+    final int number;
 
-    OrderStatus(String abbreviation) {
-        this.abbreviation = abbreviation;
+    OrderStatus(int number) {
+        this.number = number;
     }
 
-    public String getAbbreviation() {
-        return this.abbreviation;
+    public int getNumber() {
+        return this.number;
+    }
+
+    public static OrderStatus of(int number) {
+        return Stream.of(OrderStatus.values())
+                .filter(p -> p.getNumber() == number)
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
