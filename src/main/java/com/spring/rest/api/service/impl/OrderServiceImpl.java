@@ -1,8 +1,10 @@
 package com.spring.rest.api.service.impl;
 
 import com.spring.rest.api.entity.*;
-import com.spring.rest.api.entity.dto.OrderDTO;
-import com.spring.rest.api.entity.dto.RefundDTO;
+import com.spring.rest.api.entity.dto.response.OrderResponseDTO;
+import com.spring.rest.api.entity.dto.response.RefundResponseDTO;
+import com.spring.rest.api.entity.dto.request.CreateOrderRequestDTO;
+import com.spring.rest.api.entity.dto.request.CreateRefundRequestDTO;
 import com.spring.rest.api.entity.mapper.OrderMapper;
 import com.spring.rest.api.entity.mapper.RefundMapper;
 import com.spring.rest.api.exception.NotFoundException;
@@ -48,8 +50,8 @@ public class OrderServiceImpl implements OrderService {
 
         log.info("Finding order by id: {}", orderId);
 
-        OrderDTO orderDTO = orderMapper.orderToOrderDTO(findOrderByIdOrThrowException(orderId));
-        ResponseEntity<?> response = new ResponseEntity<>(orderDTO, HttpStatus.OK);
+        OrderResponseDTO orderResponseDTO = orderMapper.orderToOrderDTO(findOrderByIdOrThrowException(orderId));
+        ResponseEntity<?> response = new ResponseEntity<>(orderResponseDTO, HttpStatus.OK);
 
         log.info("Find order by id: {}", orderId);
 
@@ -64,7 +66,7 @@ public class OrderServiceImpl implements OrderService {
 
         ResponseEntity<?> response;
 
-        List<OrderDTO> ordersDTO = orderRepository.findAll(pageable)
+        List<OrderResponseDTO> ordersDTO = orderRepository.findAll(pageable)
                 .stream()
                 .map(orderMapper::orderToOrderDTO)
                 .collect(Collectors.toList());
@@ -73,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
             return new ResponseEntity<>("There are no orders", HttpStatus.OK);
         }
 
-        response = new ResponseEntity<Page<OrderDTO>>(new PageImpl<>(ordersDTO), HttpStatus.OK);
+        response = new ResponseEntity<Page<OrderResponseDTO>>(new PageImpl<>(ordersDTO), HttpStatus.OK);
 
         log.info("Find all orders");
 
@@ -82,7 +84,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findOrdersByUserId(Long userId, Pageable pageable) {
+    public ResponseEntity<?> findOrdersByUserId(Long userId,
+                                                Pageable pageable) {
 
         log.info("Finding all orders by user id: {}", userId);
 
@@ -95,12 +98,12 @@ public class OrderServiceImpl implements OrderService {
                     String.format("User with id = %s hasn't orders", userId), HttpStatus.OK);
         }
 
-        List<OrderDTO> ordersDTO = orderRepository.findAllByUserId(userId, pageable)
+        List<OrderResponseDTO> ordersDTO = orderRepository.findAllByUserId(userId, pageable)
                 .stream()
                 .map(orderMapper::orderToOrderDTO)
                 .collect(Collectors.toList());
 
-        response = new ResponseEntity<Page<OrderDTO>>(new PageImpl<>(ordersDTO), HttpStatus.OK);
+        response = new ResponseEntity<Page<OrderResponseDTO>>(new PageImpl<>(ordersDTO), HttpStatus.OK);
 
         log.info("Find all orders by user id: {}", userId);
 
@@ -109,9 +112,12 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public ResponseEntity<?> createOrder(Order order, Long userId, Long carId) {
+    public ResponseEntity<?> createOrder(CreateOrderRequestDTO createOrderRequestDTO,
+                                         Long userId,
+                                         Long carId) {
 
-        log.info("Creating new order: {} for user with id: {}", order, userId);
+        log.info("Creating new order: {} for car with id: {} for user with id: {}",
+                createOrderRequestDTO, carId, userId);
 
         ResponseEntity<?> response;
 
@@ -134,15 +140,17 @@ public class OrderServiceImpl implements OrderService {
         }
 
         car.setEmploymentStatus(false);
+
+        Order order = orderMapper.createOrderRequestDTOToOrder(createOrderRequestDTO);
         order.setCar(car);
         order.setUser(user);
         order.setOrderStatus(OrderStatus.UNDER_CONSIDERATION);
         order.setOrderDate(LocalDateTime.now());
         order.setPrice(((double) order.getRentalPeriod() * car.getPricePerDay()));
-        OrderDTO orderDTO = orderMapper.orderToOrderDTO(orderRepository.save(order));
-        response = new ResponseEntity<>(orderDTO, HttpStatus.OK);
+        OrderResponseDTO orderResponseDTO = orderMapper.orderToOrderDTO(orderRepository.save(order));
+        response = new ResponseEntity<>(orderResponseDTO, HttpStatus.OK);
 
-        log.info("Creat new order: {} for user with id: {}", orderDTO, userId);
+        log.info("Creat new order: {} for user with id: {}", orderResponseDTO, userId);
 
         return response;
     }
@@ -193,11 +201,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<?> createOrdersRefund(Long orderId, RefundDTO refundDTO) {
+    public ResponseEntity<?> createOrdersRefund(Long orderId,
+                                                CreateRefundRequestDTO createRefundRequestDTO) {
 
-        log.info("Creating refund: {} for order with id: {}", refundDTO, orderId);
-
-        ResponseEntity<?> response;
+        log.info("Creating refund: {} for order with id: {}", createRefundRequestDTO, orderId);
 
         Order order = findOrderByIdOrThrowException(orderId);
 
@@ -206,9 +213,9 @@ public class OrderServiceImpl implements OrderService {
                     String.format("Order with id = %s already has refund", orderId), HttpStatus.OK);
         }
 
-        refundDTO.setRefundDate(LocalDateTime.now());
+        Refund refund = refundMapper.createRefundRequestDTOToRefund(createRefundRequestDTO);
+        refund.setRefundDate(LocalDateTime.now());
 
-        Refund refund = refundMapper.refundDTOToRefund(refundDTO);
 
         if (!refund.isDamaged()) {
             order.getCar().setEmploymentStatus(true);
@@ -220,9 +227,9 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setRefund(refund);
-        response = new ResponseEntity<>(orderMapper.orderToOrderDTO(order), HttpStatus.OK);
+        ResponseEntity<?> response = new ResponseEntity<>(orderMapper.orderToOrderDTO(order), HttpStatus.OK);
 
-        log.info("Create refund: {} for order with id: {}", refundDTO, orderId);
+        log.info("Create refund: {} for order with id: {}", createRefundRequestDTO, orderId);
 
         return response;
     }
@@ -242,11 +249,11 @@ public class OrderServiceImpl implements OrderService {
                     String.format("Order with id = %s hasn't refund", orderId), HttpStatus.OK);
         }
 
-        RefundDTO refundDTO = refundMapper.refundToRefundDTO(order.getRefund());
+        RefundResponseDTO refundResponseDTO = refundMapper.refundToRefundDTO(order.getRefund());
 
-        response = new ResponseEntity<>(refundDTO, HttpStatus.OK);
+        response = new ResponseEntity<>(refundResponseDTO, HttpStatus.OK);
 
-        log.info("Find order's refund: {} by orderId: {}", refundDTO, orderId);
+        log.info("Find order's refund: {} by orderId: {}", refundResponseDTO, orderId);
 
         return response;
     }

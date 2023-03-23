@@ -1,6 +1,6 @@
 package com.spring.rest.api.controller;
 
-import com.spring.rest.api.entity.dto.UserDTO;
+import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +11,7 @@ public interface RegistrationController {
 
     @PostMapping()
     ResponseEntity<?> saveRegisteredUser(
-            @RequestBody @Valid UserDTO userDTO);
+            @RequestBody @Valid CreateUserRequestDTO createUserRequestDTO);
 
     @GetMapping("/activate/{code}")
     ResponseEntity<?> activateUser(

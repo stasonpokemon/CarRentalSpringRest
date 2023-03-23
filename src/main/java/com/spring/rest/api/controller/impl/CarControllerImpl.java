@@ -1,7 +1,7 @@
 package com.spring.rest.api.controller.impl;
 
 import com.spring.rest.api.controller.CarController;
-import com.spring.rest.api.entity.dto.CarDTO;
+import com.spring.rest.api.entity.dto.request.CreatOrUpdateCarRequestDTO;
 import com.spring.rest.api.service.CarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -31,14 +31,14 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> createCar(CarDTO carDTO) {
-        return carService.save(carDTO);
+    public ResponseEntity<?> createCar(CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO) {
+        return carService.save(creatOrUpdateCarRequestDTO);
     }
 
     @Override
     public ResponseEntity<?> updateCar(Long carId,
-                                       CarDTO carDTO) {
-        return carService.update(carId, carDTO);
+                                       CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO) {
+        return carService.update(carId, creatOrUpdateCarRequestDTO);
     }
 
     @Override

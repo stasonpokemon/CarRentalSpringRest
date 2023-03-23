@@ -1,6 +1,7 @@
-package com.spring.rest.api.entity.dto;
+package com.spring.rest.api.entity.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.spring.rest.api.entity.dto.PassportDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDTO {
+public class UserResponseDTO {
 
     @Length(min = 6, message = "Username must be more than 6 symbols")
     private String username;

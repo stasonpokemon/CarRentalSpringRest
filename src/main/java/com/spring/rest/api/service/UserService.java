@@ -2,8 +2,8 @@ package com.spring.rest.api.service;
 
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.User;
+import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
 import com.spring.rest.api.entity.dto.PassportDTO;
-import com.spring.rest.api.entity.dto.UserDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
@@ -21,7 +21,7 @@ public interface UserService {
 
     ResponseEntity<?> updateUsersPassport(Long userId, PassportDTO passportDTO);
 
-    ResponseEntity<?> saveRegisteredUser(UserDTO userDTO);
+    ResponseEntity<?> saveRegisteredUser(CreateUserRequestDTO createUserRequestDTO);
 
     ResponseEntity<?> activateUser(String activateCode);
 

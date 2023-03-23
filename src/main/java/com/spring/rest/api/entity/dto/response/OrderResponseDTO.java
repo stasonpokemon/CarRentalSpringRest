@@ -1,4 +1,4 @@
-package com.spring.rest.api.entity.dto;
+package com.spring.rest.api.entity.dto.response;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,16 +14,16 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDTO {
+public class OrderResponseDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private CarDTO car;
+    private CarResponseDTO car;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private UserDTO user;
+    private UserResponseDTO user;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private RefundDTO refund;
+    private RefundResponseDTO refund;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private double price;

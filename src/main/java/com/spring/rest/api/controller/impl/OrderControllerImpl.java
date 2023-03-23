@@ -1,8 +1,8 @@
 package com.spring.rest.api.controller.impl;
 
 import com.spring.rest.api.controller.OrderController;
-import com.spring.rest.api.entity.Order;
-import com.spring.rest.api.entity.dto.RefundDTO;
+import com.spring.rest.api.entity.dto.request.CreateOrderRequestDTO;
+import com.spring.rest.api.entity.dto.request.CreateRefundRequestDTO;
 import com.spring.rest.api.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -32,8 +32,9 @@ public class OrderControllerImpl implements OrderController {
 
     @Override
     public ResponseEntity<?> createOrder(Long userId,
-                                         Long carId, Order order) {
-        return orderService.createOrder(order, userId, carId);
+                                         Long carId,
+                                         CreateOrderRequestDTO createOrderRequestDTO) {
+        return orderService.createOrder(createOrderRequestDTO, userId, carId);
     }
 
     @Override
@@ -48,8 +49,8 @@ public class OrderControllerImpl implements OrderController {
 
     @Override
     public ResponseEntity<?> createOrdersRefund(Long orderId,
-                                                RefundDTO refundDTO) {
-        return orderService.createOrdersRefund(orderId, refundDTO);
+                                                CreateRefundRequestDTO createRefundRequestDTO) {
+        return orderService.createOrdersRefund(orderId, createRefundRequestDTO);
     }
 
 

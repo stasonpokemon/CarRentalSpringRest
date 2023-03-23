@@ -3,8 +3,9 @@ package com.spring.rest.api.service.impl;
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.Role;
 import com.spring.rest.api.entity.User;
+import com.spring.rest.api.entity.dto.response.UserResponseDTO;
+import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
 import com.spring.rest.api.entity.dto.PassportDTO;
-import com.spring.rest.api.entity.dto.UserDTO;
 import com.spring.rest.api.entity.mapper.PassportMapper;
 import com.spring.rest.api.entity.mapper.UserMapper;
 import com.spring.rest.api.exception.NotFoundException;
@@ -57,10 +58,10 @@ public class UserServiceImpl implements UserService {
 
         log.info("Finding user by id: {}", userId);
 
-        UserDTO userDTO = userMapper.userToUserDTO(findUserByIdOrThrowException(userId));
-        ResponseEntity<?> response = new ResponseEntity<>(userDTO, HttpStatus.OK);
+        UserResponseDTO userResponseDTO = userMapper.userToUserDTO(findUserByIdOrThrowException(userId));
+        ResponseEntity<?> response = new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
 
-        log.info("Find user: {} by id: {}", userDTO, userId);
+        log.info("Find user: {} by id: {}", userResponseDTO, userId);
 
         return response;
     }
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
 
         log.info("Finding all users");
 
-        List<UserDTO> usersDTO = userRepository.findAll(pageable)
+        List<UserResponseDTO> usersDTO = userRepository.findAll(pageable)
                 .stream()
                 .map(userMapper::userToUserDTO)
                 .collect(Collectors.toList());
@@ -81,7 +82,7 @@ public class UserServiceImpl implements UserService {
             return new ResponseEntity<>("There is no users", HttpStatus.NO_CONTENT);
         }
 
-        ResponseEntity<?> response = new ResponseEntity<Page<UserDTO>>(new PageImpl<>(usersDTO), HttpStatus.OK);
+        ResponseEntity<?> response = new ResponseEntity<Page<UserResponseDTO>>(new PageImpl<>(usersDTO), HttpStatus.OK);
 
         log.info("Find all users: {}", usersDTO);
 
@@ -141,31 +142,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> saveRegisteredUser(UserDTO userDTO) {
+    public ResponseEntity<?> saveRegisteredUser(CreateUserRequestDTO createUserRequestDTO) {
 
-        log.info("Saving registered user: {}", userDTO);
+        log.info("Saving registered user: {}", createUserRequestDTO);
 
-        if (userRepository.findUserByUsername(userDTO.getUsername()).isPresent()) {
+        if (userRepository.findUserByUsername(createUserRequestDTO.getUsername()).isPresent()) {
 
-            log.warn("There is user with username: {}", userDTO.getUsername());
+            log.warn("There is user with username: {}", createUserRequestDTO.getUsername());
 
             return new ResponseEntity<>("There is user with the same username", HttpStatus.BAD_REQUEST);
         }
 
-        if (userRepository.findUserByEmail(userDTO.getEmail()).isPresent()) {
+        if (userRepository.findUserByEmail(createUserRequestDTO.getEmail()).isPresent()) {
 
-            log.warn("There is user with email: {}", userDTO.getEmail());
+            log.warn("There is user with email: {}", createUserRequestDTO.getEmail());
 
             return new ResponseEntity<>("There is user with the same email", HttpStatus.BAD_REQUEST);
         }
 
         ResponseEntity<?> response;
 
-        User user = userMapper.userDTOtoUser(userDTO);
-
+        User user = userMapper.createUserRequestDTOToUser(createUserRequestDTO);
         user.setActive(false);
         user.setActivationCode(UUID.randomUUID().toString());
         user.setRoles(Collections.singleton(Role.USER));
+
         response = new ResponseEntity<>(userMapper.userToUserDTO(userRepository.save(user)), HttpStatus.OK);
 
         log.info("Save registered user: {}", user);
