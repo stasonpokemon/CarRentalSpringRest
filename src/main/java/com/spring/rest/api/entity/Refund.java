@@ -1,6 +1,6 @@
 package com.spring.rest.api.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
