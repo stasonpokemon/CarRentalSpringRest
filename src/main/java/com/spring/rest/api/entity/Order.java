@@ -3,7 +3,7 @@ package com.spring.rest.api.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
