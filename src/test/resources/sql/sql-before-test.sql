@@ -63,6 +63,6 @@ VALUES ('Audi', 'A7', '01-01-2015', 290, true, 'Without damage',
 
 insert into orders(order_date, order_status, price, rental_period, car_id, user_id, created_at,
                    updated_at)
-VALUES (now(), 'UNDER_CONSIDERATION', 1000, 2, 7, 2, now(), now()),
-       (now(), 'UNDER_CONSIDERATION', 1400, 2, 8, 2, now(), now());
+VALUES (now(), 0, 1000, 2, 7, 2, now(), now()),
+       (now(), 0, 1400, 2, 8, 2, now(), now());
 
