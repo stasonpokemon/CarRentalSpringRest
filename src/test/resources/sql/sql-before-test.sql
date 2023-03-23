@@ -18,8 +18,6 @@ VALUES ('dsfddsf', now(), 'asfdsad', 'asdsadasd', 'sadasdasd', now(), now(), 1),
        ('test', now(), 'test', 'test', 'test', now(), now(), 2),
        ('test1', now(), 'test1', 'test1', 'test1', now(), now(), 3);
 
-
-
 INSERT INTO user_role(user_id, roles)
 VALUES (1, 'ADMIN'),
        (1, 'USER'),
