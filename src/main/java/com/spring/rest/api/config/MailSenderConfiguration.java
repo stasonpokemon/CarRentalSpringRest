@@ -40,6 +40,7 @@ public class MailSenderConfiguration {
         mailSender.setPort(port);
         mailSender.setUsername(username);
         mailSender.setPassword(password);
+
         Properties javaMailProperties = mailSender.getJavaMailProperties();
         javaMailProperties.setProperty(MAIL_TRANSPORT_PROTOCOL_PROPERTY, protocol);
         javaMailProperties.setProperty(MAIL_DEBUG_PROPERTY, debug);
