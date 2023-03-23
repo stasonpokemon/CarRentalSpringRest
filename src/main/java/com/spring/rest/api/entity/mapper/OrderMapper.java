@@ -11,5 +11,4 @@ public interface OrderMapper {
     OrderResponseDTO orderToOrderDTO(Order order);
 
     Order createOrderRequestDTOToOrder(CreateOrderRequestDTO createOrderRequestDTO);
-
 }
