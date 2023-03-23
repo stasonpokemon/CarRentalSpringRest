@@ -12,7 +12,7 @@ jobs:
   tests:
     name: Unit tests
     #Run on Ubuntu using the latest version
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     #Job's steps
     steps:
       #Check-out your repository under $GITHUB_WORKSPACE, so your workflow can access it
