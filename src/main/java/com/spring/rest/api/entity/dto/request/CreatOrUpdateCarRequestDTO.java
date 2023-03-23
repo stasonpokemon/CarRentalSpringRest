@@ -1,6 +1,5 @@
-package com.spring.rest.api.entity.dto;
+package com.spring.rest.api.entity.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarDTO {
+public class CreatOrUpdateCarRequestDTO {
 
     @NotBlank(message = "Please fill the producer")
     @Length(max = 255, message = "Producer too long. Max length is 2048")
@@ -31,16 +30,6 @@ public class CarDTO {
     @Min(value = 0, message = "Price per day can't be less than 0")
     private Double pricePerDay;
 
-    @NotNull(message = "Employment status can't be null")
-    private boolean employmentStatus;
-
-    @Length(max = 255, message = "Damage status too long. Max length is 1000")
-    @NotBlank(message = "Please fill the damage status")
-    private String damageStatus;
-
     @NotBlank(message = "Please fill the image link")
     private String imageLink;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private boolean broken;
 }

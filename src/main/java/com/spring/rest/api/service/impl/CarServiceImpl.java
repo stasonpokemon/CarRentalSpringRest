@@ -2,7 +2,8 @@ package com.spring.rest.api.service.impl;
 
 
 import com.spring.rest.api.entity.Car;
-import com.spring.rest.api.entity.dto.CarDTO;
+import com.spring.rest.api.entity.dto.response.CarResponseDTO;
+import com.spring.rest.api.entity.dto.request.CreatOrUpdateCarRequestDTO;
 import com.spring.rest.api.entity.mapper.CarMapper;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.CarRepository;
@@ -39,10 +40,10 @@ public class CarServiceImpl implements CarService {
 
         log.info("Finding car with id: {}", id);
 
-        CarDTO carDTO = carMapper.carToCarDTO(findCarByIdOrThrowException(id));
-        ResponseEntity<?> response = new ResponseEntity<>(carDTO, HttpStatus.OK);
+        CarResponseDTO carResponseDTO = carMapper.carToCarDTO(findCarByIdOrThrowException(id));
+        ResponseEntity<?> response = new ResponseEntity<>(carResponseDTO, HttpStatus.OK);
 
-        log.info("Find car: {}", carDTO);
+        log.info("Find car: {}", carResponseDTO);
 
         return response;
     }
@@ -53,7 +54,7 @@ public class CarServiceImpl implements CarService {
 
         log.info("Finding all cars");
 
-        List<CarDTO> carsDTO = carRepository.findAll(pageable)
+        List<CarResponseDTO> carsDTO = carRepository.findAll(pageable)
                 .stream()
                 .map(carMapper::carToCarDTO)
                 .collect(Collectors.toList());
@@ -75,7 +76,7 @@ public class CarServiceImpl implements CarService {
 
         log.info("Finding all not mark as deleted cars");
 
-        List<CarDTO> carsDTO = carRepository.findAllByDeleted(false, pageable)
+        List<CarResponseDTO> carsDTO = carRepository.findAllByDeleted(false, pageable)
                 .stream()
                 .map(carMapper::carToCarDTO)
                 .collect(Collectors.toList());
@@ -97,7 +98,7 @@ public class CarServiceImpl implements CarService {
 
         log.info("Finding all free not mark as deleted cars");
 
-        List<CarDTO> carsDTO = carRepository.findAllByEmploymentStatusAndDeleted(true, false, pageable)
+        List<CarResponseDTO> carsDTO = carRepository.findAllByEmploymentStatusAndDeleted(true, false, pageable)
                 .stream()
                 .map(carMapper::carToCarDTO)
                 .collect(Collectors.toList());
@@ -114,11 +115,13 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public ResponseEntity<?> save(CarDTO carDTO) {
+    public ResponseEntity<?> save(CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO) {
 
-        log.info("Saving car: {}", carDTO);
+        log.info("Saving car: {}", creatOrUpdateCarRequestDTO);
 
-        Car car = carMapper.carDTOToCar(carDTO);
+        Car car = carMapper.createCarRequestDTOToCar(creatOrUpdateCarRequestDTO);
+        car.setDamageStatus("Without damage");
+        car.setEmploymentStatus(true);
         car.setDeleted(false);
         Car savedCar = carRepository.save(car);
 
@@ -130,12 +133,12 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public ResponseEntity<?> update(Long id, CarDTO carDTO) {
+    public ResponseEntity<?> update(Long id, CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO) {
 
-        log.info("Updating car: {} with id: {}", carDTO, id);
+        log.info("Updating car: {} with id: {}", creatOrUpdateCarRequestDTO, id);
 
         Car car = findCarByIdOrThrowException(id);
-        CarUtil.getInstance().copyNotNullFieldsFromCarDTOToCar(carDTO, car);
+        CarUtil.getInstance().copyNotNullFieldsFromCarDTOToCar(creatOrUpdateCarRequestDTO, car);
 
         ResponseEntity<?> response = new ResponseEntity<>(carMapper.carToCarDTO(car), HttpStatus.OK);
 

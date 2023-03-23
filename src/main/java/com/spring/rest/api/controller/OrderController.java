@@ -1,7 +1,7 @@
 package com.spring.rest.api.controller;
 
-import com.spring.rest.api.entity.Order;
-import com.spring.rest.api.entity.dto.RefundDTO;
+import com.spring.rest.api.entity.dto.request.CreateOrderRequestDTO;
+import com.spring.rest.api.entity.dto.request.CreateRefundRequestDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -29,7 +29,7 @@ public interface OrderController {
     ResponseEntity<?> createOrder(
             @PathVariable("userId") Long userId,
             @PathVariable("carId") Long carId,
-            @RequestBody @Valid Order order);
+            @RequestBody @Valid CreateOrderRequestDTO createOrderRequestDTO);
 
     @PatchMapping("/{orderId}/accept")
     ResponseEntity<?> acceptOrder(
@@ -42,7 +42,7 @@ public interface OrderController {
     @PostMapping("/{orderId}/refund")
     ResponseEntity<?> createOrdersRefund
             (@PathVariable("orderId") Long orderId,
-             @RequestBody @Valid RefundDTO refundDTO);
+             @RequestBody @Valid CreateRefundRequestDTO createRefundRequestDTO);
 
 
 }

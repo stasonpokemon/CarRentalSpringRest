@@ -1,13 +1,14 @@
 package com.spring.rest.api.entity.mapper;
 
 import com.spring.rest.api.entity.Car;
-import com.spring.rest.api.entity.dto.CarDTO;
+import com.spring.rest.api.entity.dto.response.CarResponseDTO;
+import com.spring.rest.api.entity.dto.request.CreatOrUpdateCarRequestDTO;
 import org.mapstruct.Mapper;
 
 @Mapper
 public interface CarMapper {
 
-    CarDTO carToCarDTO(Car car);
+    CarResponseDTO carToCarDTO(Car car);
 
-    Car carDTOToCar(CarDTO carDTO);
+    Car createCarRequestDTOToCar(CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO);
 }

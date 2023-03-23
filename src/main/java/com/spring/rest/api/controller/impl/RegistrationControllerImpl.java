@@ -1,7 +1,7 @@
 package com.spring.rest.api.controller.impl;
 
 import com.spring.rest.api.controller.RegistrationController;
-import com.spring.rest.api.entity.dto.UserDTO;
+import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
 import com.spring.rest.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +14,8 @@ public class RegistrationControllerImpl implements RegistrationController {
     private final UserService userService;
 
     @Override
-    public ResponseEntity<?> saveRegisteredUser(UserDTO userDTO) {
-        return userService.saveRegisteredUser(userDTO);
+    public ResponseEntity<?> saveRegisteredUser(CreateUserRequestDTO createUserRequestDTO) {
+        return userService.saveRegisteredUser(createUserRequestDTO);
     }
 
     @Override

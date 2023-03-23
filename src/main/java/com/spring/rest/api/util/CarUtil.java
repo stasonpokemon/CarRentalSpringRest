@@ -1,7 +1,7 @@
 package com.spring.rest.api.util;
 
 import com.spring.rest.api.entity.Car;
-import com.spring.rest.api.entity.dto.CarDTO;
+import com.spring.rest.api.entity.dto.request.CreatOrUpdateCarRequestDTO;
 
 public class CarUtil {
 
@@ -18,7 +18,7 @@ public class CarUtil {
     }
 
 
-    public void copyNotNullFieldsFromCarDTOToCar(CarDTO from, Car to) {
+    public void copyNotNullFieldsFromCarDTOToCar(CreatOrUpdateCarRequestDTO from, Car to) {
         if (from.getModel() != null && !from.getModel().isEmpty()) {
             to.setModel(from.getModel());
         }
@@ -27,9 +27,6 @@ public class CarUtil {
         }
         if (from.getPricePerDay() != null) {
             to.setPricePerDay(from.getPricePerDay());
-        }
-        if (from.getDamageStatus() != null && !from.getDamageStatus().isEmpty()) {
-            to.setDamageStatus(from.getDamageStatus());
         }
         if (from.getReleaseDate() != null) {
             to.setReleaseDate(from.getReleaseDate());

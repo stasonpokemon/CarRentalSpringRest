@@ -1,6 +1,6 @@
 package com.spring.rest.api.controller;
 
-import com.spring.rest.api.entity.dto.CarDTO;
+import com.spring.rest.api.entity.dto.request.CreatOrUpdateCarRequestDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -27,12 +27,12 @@ public interface CarController {
 
     @PostMapping
     ResponseEntity<?> createCar(
-            @RequestBody @Valid CarDTO carDTO);
+            @RequestBody @Valid CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO);
 
     @PatchMapping("/{id}")
     ResponseEntity<?> updateCar(
             @PathVariable("id") Long carId,
-            @RequestBody @Valid CarDTO carDTO);
+            @RequestBody @Valid CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO);
 
     @PatchMapping("/{id}/fix")
     ResponseEntity<?> fixBrokenCar(
