@@ -13,7 +13,10 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "orders")
 @Data
-// This annotation for connect jpa with postgres enum
+
+/**
+ * This annotation for connect jpa with postgres enum
+ */
 @TypeDef(name = "enum_type", typeClass = PostgreSQLEnumType.class)
 public class Order extends BaseEntity {
 
@@ -42,6 +45,4 @@ public class Order extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "refund_id")
     private Refund refund;
-
-
 }

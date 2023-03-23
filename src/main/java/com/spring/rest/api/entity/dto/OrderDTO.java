@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class OrderDTO {
 
-
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private CarDTO car;
 
@@ -38,6 +37,4 @@ public class OrderDTO {
     @NotNull(message = "Please fill the rental period")
     @Min(value = 1, message = "Rental period should be greater than 1")
     private Integer rentalPeriod;
-
-
 }

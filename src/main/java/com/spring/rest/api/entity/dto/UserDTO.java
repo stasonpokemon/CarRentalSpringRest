@@ -28,8 +28,4 @@ public class UserDTO {
     private String email;
 
     private PassportDTO passport;
-
-
-
-
 }

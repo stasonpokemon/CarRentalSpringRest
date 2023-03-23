@@ -43,6 +43,4 @@ public class CarDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private boolean broken;
-
-
 }

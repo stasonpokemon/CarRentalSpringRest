@@ -12,7 +12,7 @@ import java.util.Date;
 @Table(name = "passports")
 @Data
 @ToString(of = {"name"})
-public class Passport extends BaseEntity{
+public class Passport extends BaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -32,8 +32,4 @@ public class Passport extends BaseEntity{
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
-
-
-
-
 }

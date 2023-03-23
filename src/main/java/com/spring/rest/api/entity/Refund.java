@@ -1,6 +1,7 @@
 package com.spring.rest.api.entity;
 
 import javax.persistence.*;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,8 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "refunds")
 @Data
-public class Refund extends BaseEntity{
-
+public class Refund extends BaseEntity {
 
     @Column(name = "damage_status")
     private boolean damaged;
@@ -27,5 +27,4 @@ public class Refund extends BaseEntity{
 
     @OneToOne(mappedBy = "refund", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Order order;
-
 }
