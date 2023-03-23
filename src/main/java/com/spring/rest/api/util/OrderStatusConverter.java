@@ -2,8 +2,8 @@ package com.spring.rest.api.util;
 
 import com.spring.rest.api.entity.OrderStatus;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class OrderStatusConverter implements AttributeConverter<OrderStatus, Integer> {

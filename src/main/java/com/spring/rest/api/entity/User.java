@@ -3,7 +3,9 @@ package com.spring.rest.api.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -12,6 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Data
+@ToString(of = {"username", "password", "email", "roles"})
 public class User extends BaseEntity {
 
 

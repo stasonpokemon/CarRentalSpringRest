@@ -4,14 +4,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "passports")
 @Data
-@ToString(of = {"name"})
+@ToString(of = {"name", "surname", "patronymic", "birthday", "address"})
 public class Passport extends BaseEntity {
 
     @Column(name = "name", nullable = false)
