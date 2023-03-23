@@ -43,6 +43,7 @@ public class MailSenderConfiguration {
         Properties javaMailProperties = mailSender.getJavaMailProperties();
         javaMailProperties.setProperty(MAIL_TRANSPORT_PROTOCOL_PROPERTY, protocol);
         javaMailProperties.setProperty(MAIL_DEBUG_PROPERTY, debug);
+
         return mailSender;
     }
 }

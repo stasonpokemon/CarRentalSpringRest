@@ -17,7 +17,6 @@ public class RefundDTO {
     @NotNull(message = "isDamaged field must be filled")
     private boolean damaged;
 
-
     private String damageDescription;
 
     @Min(value = 0, message = "Price must be 0 or greater than 0")
@@ -25,5 +24,4 @@ public class RefundDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime refundDate;
-
 }

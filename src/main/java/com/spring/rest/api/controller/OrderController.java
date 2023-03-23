@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,30 +14,35 @@ import javax.validation.Valid;
 public interface OrderController {
 
     @GetMapping
-    ResponseEntity<?> findAll(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable);
+    ResponseEntity<?> findAll(
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable);
 
     @GetMapping("/{id}")
-    ResponseEntity<?> findById(@PathVariable("id") Long orderId);
+    ResponseEntity<?> findById(
+            @PathVariable("id") Long orderId);
 
     @GetMapping("/{id}/refund")
-    ResponseEntity<?> findOrdersRefund(@PathVariable("id") Long orderId);
+    ResponseEntity<?> findOrdersRefund(
+            @PathVariable("id") Long orderId);
 
     @PostMapping("/{userId}/{carId}")
-    ResponseEntity<?> createOrder(@PathVariable("userId") Long userId,
-                                  @PathVariable("carId") Long carId,
-                                  @RequestBody @Valid Order order,
-                                  BindingResult bindingResult);
+    ResponseEntity<?> createOrder(
+            @PathVariable("userId") Long userId,
+            @PathVariable("carId") Long carId,
+            @RequestBody @Valid Order order);
 
     @PatchMapping("/{orderId}/accept")
-    ResponseEntity<?> acceptOrder(@PathVariable("orderId") Long orderId);
+    ResponseEntity<?> acceptOrder(
+            @PathVariable("orderId") Long orderId);
 
     @PatchMapping("/{orderId}/cancel")
-    ResponseEntity<?> cancelOrder(@PathVariable("orderId") Long orderId);
+    ResponseEntity<?> cancelOrder(
+            @PathVariable("orderId") Long orderId);
 
     @PostMapping("/{orderId}/refund")
-    ResponseEntity<?> createOrdersRefund(@PathVariable("orderId") Long orderId,
-                                         @RequestBody @Valid RefundDTO refundDTO,
-                                         BindingResult bindingResult);
+    ResponseEntity<?> createOrdersRefund
+            (@PathVariable("orderId") Long orderId,
+             @RequestBody @Valid RefundDTO refundDTO);
 
 
 }

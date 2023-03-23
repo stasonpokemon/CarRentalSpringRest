@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -14,31 +13,38 @@ import javax.validation.Valid;
 public interface UserController {
 
     @GetMapping
-    ResponseEntity<?> findAll(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable);
+    ResponseEntity<?> findAll(
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable);
 
     @GetMapping("/{id}")
-    ResponseEntity<?> findUserById(@PathVariable("id") Long userId);
+    ResponseEntity<?> findUserById(
+            @PathVariable("id") Long userId);
 
     @PatchMapping("/{id}/block")
-    ResponseEntity<?> blockUser(@PathVariable("id") Long userId);
+    ResponseEntity<?> blockUser(
+            @PathVariable("id") Long userId);
 
     @PatchMapping("/{id}/unlock")
-    ResponseEntity<?> unlockUser(@PathVariable("id") Long userId);
+    ResponseEntity<?> unlockUser(
+            @PathVariable("id") Long userId);
 
     @GetMapping("/{id}/orders")
-    ResponseEntity<?> findUsersOrders(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable,
-                                      @PathVariable("id") Long userId);
+    ResponseEntity<?> findUsersOrders(
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable,
+            @PathVariable("id") Long userId);
 
     @GetMapping("/{id}/passport")
-    ResponseEntity<?> findUsersPassport(@PathVariable("id") Long userId);
+    ResponseEntity<?> findUsersPassport(
+            @PathVariable("id") Long userId);
 
     @PostMapping("/{id}/passport")
-    ResponseEntity<?> createPassportForUser(@PathVariable("id") Long userId,
-                                            @RequestBody @Valid PassportDTO passportDTO,
-                                            BindingResult bindingResult);
+    ResponseEntity<?> createPassportForUser(
+            @PathVariable("id") Long userId,
+            @RequestBody @Valid PassportDTO passportDTO);
 
     @PatchMapping("/{id}/passport")
-    ResponseEntity<?> editUsersPassport(@PathVariable("id") Long userId,
-                                        @RequestBody PassportDTO passportDTO);
+    ResponseEntity<?> editUsersPassport(
+            @PathVariable("id") Long userId,
+            @RequestBody PassportDTO passportDTO);
 
 }
