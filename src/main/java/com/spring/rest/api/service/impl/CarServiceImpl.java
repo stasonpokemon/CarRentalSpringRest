@@ -2,8 +2,9 @@ package com.spring.rest.api.service.impl;
 
 
 import com.spring.rest.api.entity.Car;
+import com.spring.rest.api.entity.dto.request.CreatCarRequestDTO;
+import com.spring.rest.api.entity.dto.request.UpdateCarRequestDTO;
 import com.spring.rest.api.entity.dto.response.CarResponseDTO;
-import com.spring.rest.api.entity.dto.request.CreatOrUpdateCarRequestDTO;
 import com.spring.rest.api.entity.mapper.CarMapper;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.CarRepository;
@@ -115,11 +116,11 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public ResponseEntity<?> save(CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO) {
+    public ResponseEntity<?> save(CreatCarRequestDTO creatCarRequestDTO) {
 
-        log.info("Saving car: {}", creatOrUpdateCarRequestDTO);
+        log.info("Saving car: {}", creatCarRequestDTO);
 
-        Car car = carMapper.createCarRequestDTOToCar(creatOrUpdateCarRequestDTO);
+        Car car = carMapper.createCarRequestDTOToCar(creatCarRequestDTO);
         car.setDamageStatus("Without damage");
         car.setEmploymentStatus(true);
         car.setDeleted(false);
@@ -133,12 +134,12 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public ResponseEntity<?> update(Long id, CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO) {
+    public ResponseEntity<?> update(Long id, UpdateCarRequestDTO updateCarRequestDTO) {
 
-        log.info("Updating car: {} with id: {}", creatOrUpdateCarRequestDTO, id);
+        log.info("Updating car: {} with id: {}", updateCarRequestDTO, id);
 
         Car car = findCarByIdOrThrowException(id);
-        CarUtil.getInstance().copyNotNullFieldsFromCarDTOToCar(creatOrUpdateCarRequestDTO, car);
+        CarUtil.getInstance().copyNotNullFieldsFromUpdateCarDTOToCar(updateCarRequestDTO, car);
 
         ResponseEntity<?> response = new ResponseEntity<>(carMapper.carToCarDTO(car), HttpStatus.OK);
 

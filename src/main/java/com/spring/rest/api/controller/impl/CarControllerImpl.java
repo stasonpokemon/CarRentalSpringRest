@@ -1,7 +1,8 @@
 package com.spring.rest.api.controller.impl;
 
 import com.spring.rest.api.controller.CarController;
-import com.spring.rest.api.entity.dto.request.CreatOrUpdateCarRequestDTO;
+import com.spring.rest.api.entity.dto.request.CreatCarRequestDTO;
+import com.spring.rest.api.entity.dto.request.UpdateCarRequestDTO;
 import com.spring.rest.api.service.CarService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,20 +43,20 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> createCar(CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO) {
+    public ResponseEntity<?> createCar(CreatCarRequestDTO creatCarRequestDTO) {
 
-        log.info("POST request to create car: {}", creatOrUpdateCarRequestDTO);
+        log.info("POST request to create car: {}", creatCarRequestDTO);
 
-        return carService.save(creatOrUpdateCarRequestDTO);
+        return carService.save(creatCarRequestDTO);
     }
 
     @Override
     public ResponseEntity<?> updateCar(Long carId,
-                                       CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO) {
+                                       UpdateCarRequestDTO updateCarRequestDTO) {
 
-        log.info("PATCH request to update car: {} with id: {}", creatOrUpdateCarRequestDTO, carId);
+        log.info("PATCH request to update car: {} with id: {}", updateCarRequestDTO, carId);
 
-        return carService.update(carId, creatOrUpdateCarRequestDTO);
+        return carService.update(carId, updateCarRequestDTO);
     }
 
     @Override
