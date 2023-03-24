@@ -2,7 +2,8 @@ package com.spring.rest.api.service;
 
 
 import com.spring.rest.api.entity.Car;
-import com.spring.rest.api.entity.dto.request.CreatOrUpdateCarRequestDTO;
+import com.spring.rest.api.entity.dto.request.CreatCarRequestDTO;
+import com.spring.rest.api.entity.dto.request.UpdateCarRequestDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
@@ -17,9 +18,9 @@ public interface CarService {
 
     ResponseEntity<?> findAllFreeNotMarkAsDeleted(Pageable pageable);
 
-    ResponseEntity<?> save(CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO);
+    ResponseEntity<?> save(CreatCarRequestDTO creatCarRequestDTO);
 
-    ResponseEntity<?> update(Long carId, CreatOrUpdateCarRequestDTO creatOrUpdateCarRequestDTO);
+    ResponseEntity<?> update(Long carId, UpdateCarRequestDTO updateCarRequestDTO);
 
     ResponseEntity<String> markCarAsDeleted(Long carId);
 

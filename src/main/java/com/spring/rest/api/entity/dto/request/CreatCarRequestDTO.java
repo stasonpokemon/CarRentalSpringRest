@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreatOrUpdateCarRequestDTO {
+public class CreatCarRequestDTO {
 
     @NotBlank(message = "Please fill the producer")
     @Length(max = 255, message = "Producer too long. Max length is 2048")
