@@ -1,6 +1,7 @@
 package com.spring.rest.api.entity.dto.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -13,7 +14,8 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreatCarRequestDTO {
+@Builder
+public class CreateCarRequestDTO {
 
     @NotBlank(message = "Please fill the producer")
     @Length(max = 255, message = "Producer too long. Max length is 2048")

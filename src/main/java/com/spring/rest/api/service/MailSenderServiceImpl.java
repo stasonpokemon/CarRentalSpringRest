@@ -1,6 +1,5 @@
-package com.spring.rest.api.service.impl;
+package com.spring.rest.api.service;
 
-import com.spring.rest.api.service.MailSenderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

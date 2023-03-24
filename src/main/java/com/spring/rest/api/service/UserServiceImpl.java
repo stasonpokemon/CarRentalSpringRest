@@ -1,18 +1,16 @@
-package com.spring.rest.api.service.impl;
+package com.spring.rest.api.service;
 
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.Role;
 import com.spring.rest.api.entity.User;
-import com.spring.rest.api.entity.dto.response.UserResponseDTO;
-import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
 import com.spring.rest.api.entity.dto.PassportDTO;
+import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
+import com.spring.rest.api.entity.dto.response.UserResponseDTO;
 import com.spring.rest.api.entity.mapper.PassportMapper;
 import com.spring.rest.api.entity.mapper.UserMapper;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.PassportRepository;
 import com.spring.rest.api.repo.UserRepository;
-import com.spring.rest.api.service.MailSenderService;
-import com.spring.rest.api.service.UserService;
 import com.spring.rest.api.util.PassportUtil;
 import com.spring.rest.api.util.tread.MailSenderThread;
 import lombok.RequiredArgsConstructor;

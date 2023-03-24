@@ -1,17 +1,14 @@
-package com.spring.rest.api.service.impl;
+package com.spring.rest.api.service;
 
 import com.spring.rest.api.entity.*;
-import com.spring.rest.api.entity.dto.response.OrderResponseDTO;
-import com.spring.rest.api.entity.dto.response.RefundResponseDTO;
 import com.spring.rest.api.entity.dto.request.CreateOrderRequestDTO;
 import com.spring.rest.api.entity.dto.request.CreateRefundRequestDTO;
+import com.spring.rest.api.entity.dto.response.OrderResponseDTO;
+import com.spring.rest.api.entity.dto.response.RefundResponseDTO;
 import com.spring.rest.api.entity.mapper.OrderMapper;
 import com.spring.rest.api.entity.mapper.RefundMapper;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.OrderRepository;
-import com.spring.rest.api.service.CarService;
-import com.spring.rest.api.service.OrderService;
-import com.spring.rest.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
@@ -260,7 +257,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
-    public Order findOrderByIdOrThrowException(Long orderId) {
+    protected Order findOrderByIdOrThrowException(Long orderId) {
 
         log.info("Finding order with id: {}", orderId);
 
