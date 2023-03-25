@@ -8,7 +8,9 @@ import org.mapstruct.Mapper;
 @Mapper
 public interface CarMapper {
 
-    CarResponseDTO carToCarDTO(Car car);
+    CarResponseDTO carToCarResponseDTO(Car car);
 
     Car createCarRequestDTOToCar(CreateCarRequestDTO createCarRequestDTO);
+
+    CreateCarRequestDTO carToCreateCarRequestDTO(Car car);
 }

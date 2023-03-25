@@ -1,5 +1,6 @@
 package com.spring.rest.api.exception.handler;
 
+import com.spring.rest.api.exception.BadRequestException;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.exception.dto.ErrorTypeResponseDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 public class CommonExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<ErrorTypeResponseDTO> entityNotFoundExceptionHandler(
+    public ResponseEntity<ErrorTypeResponseDTO> notFoundExceptionHandler(
             NotFoundException notFoundException) {
 
         log.warn(notFoundException.getMessage());
@@ -28,6 +29,17 @@ public class CommonExceptionHandler {
                 .status(HttpStatus.NOT_FOUND).build(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ErrorTypeResponseDTO> badRequestExceptionHandler(
+            BadRequestException badRequestException) {
+
+        log.warn(badRequestException.getMessage());
+
+        return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
+                .time(LocalDateTime.now())
+                .message(badRequestException.getMessage())
+                .status(HttpStatus.BAD_REQUEST).build(), HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler
     public ResponseEntity<ErrorTypeResponseDTO> methodArgumentNotValidExceptionHandler(
             MethodArgumentNotValidException methodArgumentNotValidException) {

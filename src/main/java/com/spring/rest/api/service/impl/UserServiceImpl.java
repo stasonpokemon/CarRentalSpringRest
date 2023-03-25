@@ -1,4 +1,4 @@
-package com.spring.rest.api.service;
+package com.spring.rest.api.service.impl;
 
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.Role;
@@ -9,8 +9,11 @@ import com.spring.rest.api.entity.dto.response.UserResponseDTO;
 import com.spring.rest.api.entity.mapper.PassportMapper;
 import com.spring.rest.api.entity.mapper.UserMapper;
 import com.spring.rest.api.exception.NotFoundException;
+import com.spring.rest.api.exception.BadRequestException;
 import com.spring.rest.api.repo.PassportRepository;
 import com.spring.rest.api.repo.UserRepository;
+import com.spring.rest.api.service.MailSenderService;
+import com.spring.rest.api.service.UserService;
 import com.spring.rest.api.util.PassportUtil;
 import com.spring.rest.api.util.tread.MailSenderThread;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
         log.info("Finding user by id: {}", userId);
 
-        UserResponseDTO userResponseDTO = userMapper.userToUserDTO(findUserByIdOrThrowException(userId));
+        UserResponseDTO userResponseDTO = userMapper.userToUserResponseDTO(findUserByIdOrThrowException(userId));
         ResponseEntity<?> response = new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
 
         log.info("Find user: {} by id: {}", userResponseDTO, userId);
@@ -73,11 +76,11 @@ public class UserServiceImpl implements UserService {
 
         List<UserResponseDTO> usersDTO = userRepository.findAll(pageable)
                 .stream()
-                .map(userMapper::userToUserDTO)
+                .map(userMapper::userToUserResponseDTO)
                 .collect(Collectors.toList());
 
         if (usersDTO.isEmpty()) {
-            return new ResponseEntity<>("There is no users", HttpStatus.NO_CONTENT);
+            throw new NotFoundException(User.class);
         }
 
         ResponseEntity<?> response = new ResponseEntity<Page<UserResponseDTO>>(new PageImpl<>(usersDTO), HttpStatus.OK);
@@ -94,8 +97,12 @@ public class UserServiceImpl implements UserService {
 
         log.info("Finding passport by userId: {}", userId);
 
-        User user = findUserByIdOrThrowException(userId);
-        Passport passport = findPassportByUserOrThrowException(user);
+        Passport passport = findUserByIdOrThrowException(userId).getPassport();
+
+        if (passport == null) {
+            throw new NotFoundException(String.format("Passport not found for user with id = %s", userId));
+        }
+
         ResponseEntity<?> response = new ResponseEntity<>(passportMapper.passportToPassportDTO(passport), HttpStatus.OK);
 
         log.info("Find passport: {} by userId: {}", passport, userId);
@@ -112,13 +119,15 @@ public class UserServiceImpl implements UserService {
         User user = findUserByIdOrThrowException(userId);
 
         if (user.getPassport() != null) {
-            return new ResponseEntity<>(String.format("User with id = %s already has passport", userId), HttpStatus.OK);
+            throw new BadRequestException(String.format("User with id = %s already has passport", userId));
         }
 
         Passport passport = passportMapper.passportDTOtoPassport(passportDTO);
         passport.setUser(user);
-        passportRepository.save(passport);
-        ResponseEntity<?> response = new ResponseEntity<>(passportDTO, HttpStatus.OK);
+        passport = passportRepository.save(passport);
+
+        ResponseEntity<?> response = new ResponseEntity<>(
+                passportMapper.passportToPassportDTO(passport), HttpStatus.OK);
 
         log.info("Creat new passport: {} for user with id: {}", passport, userId);
 
@@ -148,24 +157,22 @@ public class UserServiceImpl implements UserService {
 
             log.warn("There is user with username: {}", createUserRequestDTO.getUsername());
 
-            return new ResponseEntity<>("There is user with the same username", HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("There is user with the same username");
         }
 
         if (userRepository.findUserByEmail(createUserRequestDTO.getEmail()).isPresent()) {
 
             log.warn("There is user with email: {}", createUserRequestDTO.getEmail());
 
-            return new ResponseEntity<>("There is user with the same email", HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("There is user with the same email");
         }
-
-        ResponseEntity<?> response;
 
         User user = userMapper.createUserRequestDTOToUser(createUserRequestDTO);
         user.setActive(false);
         user.setActivationCode(UUID.randomUUID().toString());
         user.setRoles(Collections.singleton(Role.USER));
 
-        response = new ResponseEntity<>(userMapper.userToUserDTO(userRepository.save(user)), HttpStatus.OK);
+        ResponseEntity<?> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(userRepository.save(user)), HttpStatus.OK);
 
         log.info("Save registered user: {}", user);
 
@@ -206,11 +213,11 @@ public class UserServiceImpl implements UserService {
         User user = findUserByIdOrThrowException(id);
 
         if (!user.isActive()) {
-            return new ResponseEntity<>("User is already blocked", HttpStatus.OK);
+            throw new BadRequestException(String.format("User with id: %s is already blocked", id));
         }
 
         user.setActive(false);
-        ResponseEntity<?> response = new ResponseEntity<>("User is blocked", HttpStatus.OK);
+        ResponseEntity<?> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
 
         log.info("Block user: {}", user);
 
@@ -225,11 +232,11 @@ public class UserServiceImpl implements UserService {
         User user = findUserByIdOrThrowException(id);
 
         if (user.isActive()) {
-            return new ResponseEntity<>("User is already unlocked", HttpStatus.OK);
+            throw new BadRequestException(String.format("User with id: %s is already unlocked", id));
         }
 
         user.setActive(true);
-        ResponseEntity<?> response = new ResponseEntity<>("User is unlocked", HttpStatus.OK);
+        ResponseEntity<?> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
 
         log.info("Unlock user: {}", user);
 
@@ -250,14 +257,13 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
-    @Override
-    public Passport findPassportByUserOrThrowException(User user) {
+    private Passport findPassportByUserOrThrowException(User user) {
 
         log.info("Finding passport by user: {}", user);
 
         Passport passport = Optional.ofNullable(user.getPassport())
-                .orElseThrow(() -> new NotFoundException(Passport.class, user.getId()));
+                .orElseThrow(() -> new BadRequestException(
+                        String.format("Passport not found for user with id = %s", user.getId())));
 
         log.info("Finding passport: {} by user: {}", passport, user);
 

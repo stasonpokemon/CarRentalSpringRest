@@ -1,4 +1,4 @@
-package com.spring.rest.api.service;
+package com.spring.rest.api.service.impl;
 
 
 import com.spring.rest.api.entity.Car;
@@ -8,6 +8,7 @@ import com.spring.rest.api.entity.dto.response.CarResponseDTO;
 import com.spring.rest.api.entity.mapper.CarMapper;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.CarRepository;
+import com.spring.rest.api.service.CarService;
 import com.spring.rest.api.util.CarUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,7 @@ public class CarServiceImpl implements CarService {
 
         log.info("Finding car with id: {}", id);
 
-        CarResponseDTO carResponseDTO = carMapper.carToCarDTO(findCarByIdOrThrowException(id));
+        CarResponseDTO carResponseDTO = carMapper.carToCarResponseDTO(findCarByIdOrThrowException(id));
         ResponseEntity<?> response = new ResponseEntity<>(carResponseDTO, HttpStatus.OK);
 
         log.info("Find car: {}", carResponseDTO);
@@ -56,11 +57,11 @@ public class CarServiceImpl implements CarService {
 
         List<CarResponseDTO> carsDTO = carRepository.findAll(pageable)
                 .stream()
-                .map(carMapper::carToCarDTO)
+                .map(carMapper::carToCarResponseDTO)
                 .collect(Collectors.toList());
 
         if (carsDTO.isEmpty()) {
-            return new ResponseEntity<>("There isn't cars", HttpStatus.OK);
+            throw new NotFoundException(Car.class);
         }
 
         ResponseEntity<?> response = new ResponseEntity<>(new PageImpl<>(carsDTO), HttpStatus.OK);
@@ -78,7 +79,7 @@ public class CarServiceImpl implements CarService {
 
         List<CarResponseDTO> carsDTO = carRepository.findAllByDeleted(false, pageable)
                 .stream()
-                .map(carMapper::carToCarDTO)
+                .map(carMapper::carToCarResponseDTO)
                 .collect(Collectors.toList());
 
         if (carsDTO.isEmpty()) {
@@ -100,11 +101,11 @@ public class CarServiceImpl implements CarService {
 
         List<CarResponseDTO> carsDTO = carRepository.findAllByEmploymentStatusAndDeleted(true, false, pageable)
                 .stream()
-                .map(carMapper::carToCarDTO)
+                .map(carMapper::carToCarResponseDTO)
                 .collect(Collectors.toList());
 
         if (carsDTO.isEmpty()) {
-            return new ResponseEntity<>("There isn't free cars not mark as deleted", HttpStatus.OK);
+            throw new NotFoundException("There isn't free cars not mark as deleted");
         }
 
         ResponseEntity<?> response = new ResponseEntity<>(new PageImpl<>(carsDTO), HttpStatus.OK);
@@ -125,7 +126,7 @@ public class CarServiceImpl implements CarService {
         car.setDeleted(false);
         Car savedCar = carRepository.save(car);
 
-        ResponseEntity<?> response = new ResponseEntity<>(carMapper.carToCarDTO(savedCar), HttpStatus.OK);
+        ResponseEntity<?> response = new ResponseEntity<>(carMapper.carToCarResponseDTO(savedCar), HttpStatus.OK);
 
         log.info("Save car: {}", car);
 
@@ -140,7 +141,7 @@ public class CarServiceImpl implements CarService {
         Car car = findCarByIdOrThrowException(id);
         CarUtil.getInstance().copyNotNullFieldsFromUpdateCarDTOToCar(updateCarRequestDTO, car);
 
-        ResponseEntity<?> response = new ResponseEntity<>(carMapper.carToCarDTO(car), HttpStatus.OK);
+        ResponseEntity<?> response = new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
 
         log.info("Update car: {} with id: {}", car, id);
 
@@ -166,7 +167,7 @@ public class CarServiceImpl implements CarService {
         car.setDamageStatus("Without damage");
         car.setEmploymentStatus(true);
 
-        ResponseEntity<?> response = new ResponseEntity<>(carMapper.carToCarDTO(car), HttpStatus.OK);
+        ResponseEntity<?> response = new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
 
         log.info("Fix broken car: {} with id: {}", car, carId);
 
@@ -189,7 +190,7 @@ public class CarServiceImpl implements CarService {
         car.setDeleted(true);
         car.setEmploymentStatus(false);
 
-        ResponseEntity<CarResponseDTO> response = new ResponseEntity<>(carMapper.carToCarDTO(car), HttpStatus.OK);
+        ResponseEntity<CarResponseDTO> response = new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
 
         log.info("Mark car: {} with id: {} as deleted", car, id);
 

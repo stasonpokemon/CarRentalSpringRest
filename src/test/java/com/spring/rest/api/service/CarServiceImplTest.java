@@ -6,6 +6,8 @@ import com.spring.rest.api.entity.dto.request.UpdateCarRequestDTO;
 import com.spring.rest.api.entity.dto.response.CarResponseDTO;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.CarRepository;
+import com.spring.rest.api.service.impl.CarServiceImpl;
+import com.spring.rest.api.util.CarTestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +48,7 @@ class CarServiceImplTest {
 
     private CarResponseDTO firstCarResponseDTO;
 
-    private CreateCarRequestDTO firstCreateCarRequestDTo;
+    private CreateCarRequestDTO createCarRequestDTO;
 
     private UpdateCarRequestDTO updateCarRequestDTO;
 
@@ -66,114 +67,27 @@ class CarServiceImplTest {
 
     @BeforeEach
     void init() {
-        firstCar = Car.builder()
-                .model("testModel")
-                .producer("testProducer")
-                .releaseDate(LocalDate.of(2001, 7, 13))
-                .pricePerDay(100D)
-                .employmentStatus(true)
-                .damageStatus("Without damage")
-                .imageLink("")
-                .deleted(false)
-                .broken(false).build();
+        firstCar = CarTestDataFactory.buildCar();
 
-        secoundCar = Car.builder()
-                .model("testModel2")
-                .producer("testProducer2")
-                .releaseDate(LocalDate.of(2001, 5, 4))
-                .pricePerDay(200D)
-                .employmentStatus(true)
-                .damageStatus("Without damage")
-                .imageLink("")
-                .deleted(false)
-                .broken(false).build();
+        secoundCar = CarTestDataFactory.buildCar();
 
-        brokenCar = Car.builder()
-                .model("broken")
-                .producer("testProducer2")
-                .releaseDate(LocalDate.of(2001, 5, 4))
-                .pricePerDay(200D)
-                .employmentStatus(false)
-                .damageStatus("With damage")
-                .imageLink("")
-                .deleted(false)
-                .broken(true).build();
+        brokenCar = CarTestDataFactory.buildBrokenCar();
 
-        deletedCar = Car.builder()
-                .model("testModel")
-                .producer("testProducer")
-                .releaseDate(LocalDate.of(2001, 7, 13))
-                .pricePerDay(100D)
-                .employmentStatus(false)
-                .damageStatus("Without damage")
-                .imageLink("")
-                .deleted(true)
-                .broken(false).build();
+        deletedCar = CarTestDataFactory.buildDeletedCar();
 
-        firstCarResponseDTO = CarResponseDTO.builder()
-                .model("testModel")
-                .producer("testProducer")
-                .releaseDate(LocalDate.of(2001, 7, 13))
-                .pricePerDay(100D)
-                .employmentStatus(true)
-                .damageStatus("Without damage")
-                .imageLink("")
-                .broken(false).build();
+        firstCarResponseDTO = CarTestDataFactory.buildCarResponseDTO(firstCar);
 
-        CarResponseDTO secondCarResponseDTO = CarResponseDTO.builder()
-                .model("testModel2")
-                .producer("testProducer2")
-                .releaseDate(LocalDate.of(2001, 5, 4))
-                .pricePerDay(200D)
-                .employmentStatus(true)
-                .damageStatus("Without damage")
-                .imageLink("")
-                .broken(false).build();
+        CarResponseDTO secondCarResponseDTO = CarTestDataFactory.buildCarResponseDTO(secoundCar);
 
-        firstCreateCarRequestDTo = CreateCarRequestDTO.builder()
-                .model("testModel")
-                .producer("testProducer")
-                .releaseDate(LocalDate.of(2001, 7, 13))
-                .pricePerDay(100D)
-                .imageLink("").build();
+        createCarRequestDTO = CarTestDataFactory.buildCreateCarRequestDTO(firstCar);
 
-        updateCarRequestDTO = UpdateCarRequestDTO.builder()
-                .model("update")
-                .producer("update")
-                .releaseDate(LocalDate.of(2003, 11, 5))
-                .pricePerDay(250D)
-                .employmentStatus(true)
-                .damageStatus("Without damage")
-                .imageLink("").build();
+        updateCarRequestDTO = CarTestDataFactory.buildUpdateCarRequestDTO();
 
-        updatedCarResponseDTO = CarResponseDTO.builder()
-                .model("update")
-                .producer("update")
-                .releaseDate(LocalDate.of(2003, 11, 5))
-                .pricePerDay(250D)
-                .employmentStatus(true)
-                .damageStatus("Without damage")
-                .imageLink("").build();
+        updatedCarResponseDTO = CarTestDataFactory.buildUpdatedCarResponseDTO();
 
-        fixedCarResponseDTO = CarResponseDTO.builder()
-                .model("broken")
-                .producer("testProducer2")
-                .releaseDate(LocalDate.of(2001, 5, 4))
-                .pricePerDay(200D)
-                .employmentStatus(true)
-                .damageStatus("Without damage")
-                .imageLink("")
-                .broken(false).build();
+        fixedCarResponseDTO = CarTestDataFactory.buildFixedCarResponseDTO();
 
-        deletedFirstCarResponseDTO = CarResponseDTO.builder()
-                .model("testModel")
-                .producer("testProducer")
-                .releaseDate(LocalDate.of(2001, 7, 13))
-                .pricePerDay(100D)
-                .employmentStatus(false)
-                .damageStatus("Without damage")
-                .imageLink("")
-                .broken(false).build();
+        deletedFirstCarResponseDTO = CarTestDataFactory.buildDeletedFirstCarResponseDTO(firstCar);
 
         carsPage = new PageImpl<>(List.of(firstCar, secoundCar));
 
@@ -206,16 +120,18 @@ class CarServiceImplTest {
         //given - precondition or setup
         when(carRepository.findById(11L)).thenReturn(Optional.empty());
 
-        //then - verify the output
+        //when - action or the behaviour that we are going test
         NotFoundException notFoundException
                 = assertThrows(NotFoundException.class, () -> carService.findById(11L));
+
+        //then - verify the output
         assertEquals("Not found Car with id: 11", notFoundException.getMessage());
 
         verify(carRepository).findById(11L);
     }
 
     @Test
-    void findAll_ReturnPageOfCars() {
+    void findAll_WhenThereIsCarsInDataBase_ReturnPageOfCars() {
         //given - precondition or setup
         when(carRepository.findAll(pageRequest)).thenReturn(carsPage);
 
@@ -228,6 +144,21 @@ class CarServiceImplTest {
         assertNotNull(responseBody);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(carDTOsPage, responseBody);
+
+        verify(carRepository).findAll(pageRequest);
+    }
+
+    @Test
+    void findAll_WhenThereIsNotCarsInDataBase_ThrowsNotFoundException() {
+        //given - precondition or setup
+        when(carRepository.findAll(pageRequest)).thenReturn(new PageImpl<>(Collections.emptyList()));
+
+        //when - action or the behaviour that we are going test
+        NotFoundException notFoundException
+                = assertThrows(NotFoundException.class, () -> carService.findAll(pageRequest));
+
+        //then - verify the output
+        assertEquals("Not found Cars", notFoundException.getMessage());
 
         verify(carRepository).findAll(pageRequest);
     }
@@ -255,16 +186,51 @@ class CarServiceImplTest {
         //given - precondition or setup
         when(carRepository.findAllByDeleted(false, pageRequest)).thenReturn(Collections.emptyList());
 
-        //then - verify the output
+        //when - action or the behaviour that we are going test
         NotFoundException notFoundException
                 = assertThrows(NotFoundException.class, () -> carService.findAllNotMarkAsDeleted(pageRequest));
+
+        //then - verify the output
         assertEquals("There isn't cars not mark as deleted", notFoundException.getMessage());
 
         verify(carRepository).findAllByDeleted(false, pageRequest);
     }
 
     @Test
-    void findAllFreeNotMarkAsDeleted() {
+    void findAllFreeNotMarkAsDeleted_WhenThereIsFreeNotMarkAsDeleted_ReturnPageOfCars() {
+        //given - precondition or setup
+        when(carRepository.findAllByEmploymentStatusAndDeleted(true, false, pageRequest))
+                .thenReturn(List.of(firstCar, secoundCar));
+
+        //when - action or the behaviour that we are going test
+        ResponseEntity<?> response = carService.findAllFreeNotMarkAsDeleted(pageRequest);
+        Page<CarResponseDTO> responseBody = (Page<CarResponseDTO>) response.getBody();
+
+        //then - verify the output
+        assertNotNull(response);
+        assertNotNull(responseBody);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(carDTOsPage, responseBody);
+
+        verify(carRepository).findAllByEmploymentStatusAndDeleted(true, false, pageRequest);
+
+    }
+
+    @Test
+    void findAllFreeNotMarkAsDeleted_WhenThereIsNotFreeNotMarkAsDeleted_ThrowsNotNullException() {
+        //given - precondition or setup
+        when(carRepository.findAllByEmploymentStatusAndDeleted(true, false, pageRequest))
+                .thenReturn(Collections.emptyList());
+
+        //when - action or the behaviour that we are going test
+        NotFoundException notFoundException
+                = assertThrows(NotFoundException.class, () -> carService.findAllFreeNotMarkAsDeleted(pageRequest));
+
+        //then - verify the output
+        assertEquals("There isn't free cars not mark as deleted", notFoundException.getMessage());
+
+        verify(carRepository).findAllByEmploymentStatusAndDeleted(true, false, pageRequest);
+
     }
 
     @Test
@@ -273,7 +239,7 @@ class CarServiceImplTest {
         when(carRepository.save(firstCar)).thenReturn(firstCar);
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.save(firstCreateCarRequestDTo);
+        ResponseEntity<?> response = carService.save(createCarRequestDTO);
         CarResponseDTO responseBody = (CarResponseDTO) response.getBody();
 
         //then - verify the output
@@ -308,9 +274,11 @@ class CarServiceImplTest {
         //given - precondition or setup
         when(carRepository.findById(3L)).thenReturn(Optional.empty());
 
-        //then - verify the output
+        //when - action or the behaviour that we are going test
         NotFoundException notFoundException
                 = assertThrows(NotFoundException.class, () -> carService.update(3L, updateCarRequestDTO));
+
+        //then - verify the output
         assertEquals("Not found Car with id: 3", notFoundException.getMessage());
     }
 
@@ -337,9 +305,11 @@ class CarServiceImplTest {
         //given - precondition or setup
         when(carRepository.findById(1L)).thenReturn(Optional.empty());
 
-        //then - verify the output
+        //when - action or the behaviour that we are going test
         NotFoundException notFoundException
                 = assertThrows(NotFoundException.class, () -> carService.fixBrokenCar(1L));
+
+        //then - verify the output
         assertEquals("Not found Car with id: 1", notFoundException.getMessage());
 
         verify(carRepository).findById(1L);

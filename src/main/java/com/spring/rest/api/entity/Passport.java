@@ -1,8 +1,6 @@
 package com.spring.rest.api.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import jakarta.persistence.*;
 import java.util.Date;
@@ -11,7 +9,11 @@ import java.util.Date;
 @Entity
 @Table(name = "passports")
 @Data
-@ToString(of = {"name", "surname", "patronymic", "birthday", "address"})
+//@ToString(of = {"name", "surname", "patronymic", "birthday", "address"})
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Passport extends BaseEntity {
 
     @Column(name = "name", nullable = false)
