@@ -182,7 +182,8 @@ public class UserServiceImpl implements UserService {
                 SERVER_PORT,
                 user.getActivationCode()
         );
-        new MailSenderThread(mailSenderService, user.getEmail(), "Activation code", message).start();
+
+        mailSenderService.send(user.getEmail(), "Activation code", message);
 
         return response;
     }

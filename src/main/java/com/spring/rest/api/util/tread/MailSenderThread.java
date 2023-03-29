@@ -1,23 +1,24 @@
 package com.spring.rest.api.util.tread;
 
-import com.spring.rest.api.service.MailSenderService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
+@Slf4j
 public class MailSenderThread extends Thread {
 
-    private final MailSenderService mailSenderService;
-    private final String emailTo;
-    private final String subject;
-    private final String message;
+    private final JavaMailSender mailSender;
+    private final SimpleMailMessage message;
 
-    public MailSenderThread(MailSenderService mailSenderService, String emailTo, String subject, String message) {
-        this.mailSenderService = mailSenderService;
-        this.emailTo = emailTo;
-        this.subject = subject;
+    public MailSenderThread(JavaMailSender mailSender, SimpleMailMessage message) {
+        this.mailSender = mailSender;
         this.message = message;
     }
 
     @Override
     public void run() {
-        mailSenderService.send(emailTo, subject, message);
+        mailSender.send(message);
+
+        log.info("Send email to: {} with subject: {} with message: {}",message.getTo(), message.getSubject(), message.getText());
     }
 }
