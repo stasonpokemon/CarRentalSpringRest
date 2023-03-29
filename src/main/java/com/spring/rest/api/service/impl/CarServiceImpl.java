@@ -123,7 +123,7 @@ public class CarServiceImpl implements CarService {
 
         Car car = carMapper.createCarRequestDTOToCar(createCarRequestDTO);
         car.setDamageStatus("Without damage");
-        car.setEmploymentStatus(true);
+        car.setBusy(false);
         car.setDeleted(false);
         Car savedCar = carRepository.save(car);
 
@@ -166,7 +166,7 @@ public class CarServiceImpl implements CarService {
 
         car.setBroken(false);
         car.setDamageStatus("Without damage");
-        car.setEmploymentStatus(true);
+        car.setBusy(false);
 
         ResponseEntity<?> response = new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
 
@@ -187,7 +187,7 @@ public class CarServiceImpl implements CarService {
             throw new BadRequestException(String.format("Car with id = %s is already broken", carId));
         }
 
-        if (!car.isEmploymentStatus()) {
+        if (car.isBusy()) {
             throw new BadRequestException(String.format("Car with id = %s is busy now", carId));
         }
 
@@ -217,7 +217,7 @@ public class CarServiceImpl implements CarService {
         }
 
         car.setDeleted(true);
-        car.setEmploymentStatus(false);
+        car.setBusy(true);
 
         ResponseEntity<CarResponseDTO> response = new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
 

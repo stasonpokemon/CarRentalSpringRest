@@ -23,7 +23,7 @@ public class CarTestDataFactory {
                 .producer("testProducer")
                 .releaseDate(LocalDate.of(2001, 7, 13))
                 .pricePerDay(100D)
-                .employmentStatus(true)
+                .busy(false)
                 .damageStatus("Without damage")
                 .imageLink("")
                 .deleted(false)
@@ -36,7 +36,7 @@ public class CarTestDataFactory {
                 .producer("testProducer2")
                 .releaseDate(LocalDate.of(2001, 5, 4))
                 .pricePerDay(200D)
-                .employmentStatus(false)
+                .busy(true)
                 .damageStatus("With damage")
                 .imageLink("")
                 .deleted(false)
@@ -49,7 +49,7 @@ public class CarTestDataFactory {
                 .producer("testProducer")
                 .releaseDate(LocalDate.of(2001, 7, 13))
                 .pricePerDay(100D)
-                .employmentStatus(false)
+                .busy(true)
                 .damageStatus("Without damage")
                 .imageLink("")
                 .deleted(false)
@@ -69,7 +69,7 @@ public class CarTestDataFactory {
                 .producer("testProducer")
                 .releaseDate(LocalDate.of(2001, 7, 13))
                 .pricePerDay(100D)
-                .employmentStatus(true)
+                .busy(false)
                 .damageStatus("Without damage")
                 .imageLink("")
                 .deleted(true)
@@ -91,7 +91,7 @@ public class CarTestDataFactory {
                 .producer("update")
                 .releaseDate(LocalDate.of(2003, 11, 5))
                 .pricePerDay(250D)
-                .employmentStatus(true)
+                .busy(false)
                 .damageStatus("Without damage")
                 .imageLink("").build();
     }
@@ -102,7 +102,7 @@ public class CarTestDataFactory {
                 .producer("update")
                 .releaseDate(LocalDate.of(2003, 11, 5))
                 .pricePerDay(250D)
-                .employmentStatus(true)
+                .busy(false)
                 .damageStatus("Without damage")
                 .imageLink("").build();
     }
@@ -113,7 +113,7 @@ public class CarTestDataFactory {
                 .producer("testProducer2")
                 .releaseDate(LocalDate.of(2001, 5, 4))
                 .pricePerDay(200D)
-                .employmentStatus(true)
+                .busy(false)
                 .damageStatus("Without damage")
                 .imageLink("")
                 .broken(false).build();
@@ -121,7 +121,7 @@ public class CarTestDataFactory {
 
     public static CarResponseDTO buildDeletedFirstCarResponseDTO(Car car) {
         CarResponseDTO carResponseDTO = carMapper.carToCarResponseDTO(car);
-        carResponseDTO.setEmploymentStatus(false);
+        carResponseDTO.setBusy(true);
         return carResponseDTO;
     }
 

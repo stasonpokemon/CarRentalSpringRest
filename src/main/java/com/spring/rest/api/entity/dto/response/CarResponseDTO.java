@@ -35,7 +35,7 @@ public class CarResponseDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(example = CAR_EMPLOYMENT_STATUS, description = CAR_EMPLOYMENT_STATUS)
-    private boolean employmentStatus;
+    private boolean busy;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(example = CAR_DAMAGE_STATUS, description = CAR_DAMAGE_STATUS)
