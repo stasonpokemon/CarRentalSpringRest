@@ -132,12 +132,12 @@ public class OrderServiceImpl implements OrderService {
                     String.format("The car with id = %s is deleted", carId), HttpStatus.OK);
         }
 
-        if (!car.isEmploymentStatus()) {
+        if (car.isBusy()) {
             return new ResponseEntity<>(
                     String.format("The car with id = %s isn't free", carId), HttpStatus.OK);
         }
 
-        car.setEmploymentStatus(false);
+        car.setBusy(true);
 
         Order order = orderMapper.createOrderRequestDTOToOrder(createOrderRequestDTO);
         order.setCar(car);
@@ -192,7 +192,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setOrderStatus(OrderStatus.REFUSAL);
-        order.getCar().setEmploymentStatus(true);
+        order.getCar().setBusy(false);
         response = new ResponseEntity<>(orderMapper.orderToOrderDTO(order), HttpStatus.OK);
 
         log.info("Cancel order with id: {}", orderId);
@@ -218,7 +218,7 @@ public class OrderServiceImpl implements OrderService {
 
 
         if (!refund.isDamaged()) {
-            order.getCar().setEmploymentStatus(true);
+            order.getCar().setBusy(false);
             refund.setPrice(0);
             refund.setDamageDescription("");
         } else {

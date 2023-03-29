@@ -42,7 +42,7 @@ public class UpdateCarRequestDTO {
 
     @NotNull(message = "Employment status can't be null")
     @Schema(example = CAR_EMPLOYMENT_STATUS, description = CAR_EMPLOYMENT_STATUS)
-    private boolean employmentStatus;
+    private boolean busy;
 
     @Length(max = 255, message = "Damage status too long. Max length is 1000")
     @NotBlank(message = "Please fill the damage status")
