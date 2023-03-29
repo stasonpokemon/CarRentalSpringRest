@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -34,7 +32,6 @@ public class OrderResponseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime orderDate;
 
-    @NotNull(message = "Please fill the rental period")
-    @Min(value = 1, message = "Rental period should be greater than 1")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer rentalPeriod;
 }

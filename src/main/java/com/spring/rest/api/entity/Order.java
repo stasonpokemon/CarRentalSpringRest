@@ -1,16 +1,18 @@
 package com.spring.rest.api.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "orders")
 @Data
-
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 /**
  * This annotation for connect jpa with postgres enum
  */

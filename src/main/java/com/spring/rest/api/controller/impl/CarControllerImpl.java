@@ -1,7 +1,7 @@
 package com.spring.rest.api.controller.impl;
 
 import com.spring.rest.api.controller.CarController;
-import com.spring.rest.api.entity.dto.request.CreatCarRequestDTO;
+import com.spring.rest.api.entity.dto.request.CreateCarRequestDTO;
 import com.spring.rest.api.entity.dto.request.UpdateCarRequestDTO;
 import com.spring.rest.api.service.CarService;
 import lombok.RequiredArgsConstructor;
@@ -43,11 +43,11 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> createCar(CreatCarRequestDTO creatCarRequestDTO) {
+    public ResponseEntity<?> createCar(CreateCarRequestDTO createCarRequestDTO) {
 
-        log.info("POST request to create car: {}", creatCarRequestDTO);
+        log.info("POST request to create car: {}", createCarRequestDTO);
 
-        return carService.save(creatCarRequestDTO);
+        return carService.save(createCarRequestDTO);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<String> markCarAsDeleted(Long carId) {
+    public ResponseEntity<?> markCarAsDeleted(Long carId) {
 
         log.info("PATCH request to mark car with id: {} as deleted ", carId);
 

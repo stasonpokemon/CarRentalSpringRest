@@ -2,14 +2,14 @@ package com.spring.rest.api.entity.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.spring.rest.api.entity.dto.PassportDTO;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_EMAIL;
 
 @Data
 @AllArgsConstructor
@@ -17,16 +17,17 @@ import jakarta.validation.constraints.NotBlank;
 @Builder
 public class UserResponseDTO {
 
-    @Length(min = 6, message = "Username must be more than 6 symbols")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(example = USER_USERNAME, description = USER_USERNAME)
     private String username;
 
-    @Length(min = 6, message = "Password must be more than 6 symbols")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(example = USER_PASSWORD, description = USER_PASSWORD)
     private String password;
 
-    @NotBlank(message = "Please fill the email")
-    @Email(message = "Please fill the correct email")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(example = USER_EMAIL, description = USER_EMAIL)
     private String email;
-
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private PassportDTO passport;
 }

@@ -1,6 +1,6 @@
 package com.spring.rest.api.controller;
 
-import com.spring.rest.api.entity.dto.request.CreatCarRequestDTO;
+import com.spring.rest.api.entity.dto.request.CreateCarRequestDTO;
 import com.spring.rest.api.entity.dto.request.UpdateCarRequestDTO;
 import com.spring.rest.api.entity.dto.response.CarResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -99,7 +99,7 @@ public interface CarController {
     })
     @PostMapping
     ResponseEntity<?> createCar(
-            @RequestBody @Valid CreatCarRequestDTO creatCarRequestDTO);
+            @RequestBody @Valid CreateCarRequestDTO createCarRequestDTO);
 
     @Operation(
             summary = "Update car",
@@ -165,6 +165,6 @@ public interface CarController {
                     content = {@Content(schema = @Schema())})
     })
     @PatchMapping("/{id}/remove")
-    ResponseEntity<String> markCarAsDeleted(
+    ResponseEntity<?> markCarAsDeleted(
             @PathVariable("id") Long carId);
 }

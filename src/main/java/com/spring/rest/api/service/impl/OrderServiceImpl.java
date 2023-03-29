@@ -1,10 +1,10 @@
 package com.spring.rest.api.service.impl;
 
 import com.spring.rest.api.entity.*;
-import com.spring.rest.api.entity.dto.response.OrderResponseDTO;
-import com.spring.rest.api.entity.dto.response.RefundResponseDTO;
 import com.spring.rest.api.entity.dto.request.CreateOrderRequestDTO;
 import com.spring.rest.api.entity.dto.request.CreateRefundRequestDTO;
+import com.spring.rest.api.entity.dto.response.OrderResponseDTO;
+import com.spring.rest.api.entity.dto.response.RefundResponseDTO;
 import com.spring.rest.api.entity.mapper.OrderMapper;
 import com.spring.rest.api.entity.mapper.RefundMapper;
 import com.spring.rest.api.exception.NotFoundException;
@@ -72,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
 
         if (ordersDTO.isEmpty()) {
-            return new ResponseEntity<>("There are no orders", HttpStatus.OK);
+            throw  new NotFoundException("There are no orders");
         }
 
         response = new ResponseEntity<Page<OrderResponseDTO>>(new PageImpl<>(ordersDTO), HttpStatus.OK);
@@ -89,8 +89,6 @@ public class OrderServiceImpl implements OrderService {
 
         log.info("Finding all orders by user id: {}", userId);
 
-        ResponseEntity<?> response;
-
         User user = userService.findUserByIdOrThrowException(userId);
 
         if (user.getOrders().isEmpty()) {
@@ -103,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
                 .map(orderMapper::orderToOrderDTO)
                 .collect(Collectors.toList());
 
-        response = new ResponseEntity<Page<OrderResponseDTO>>(new PageImpl<>(ordersDTO), HttpStatus.OK);
+        ResponseEntity<?> response = new ResponseEntity<Page<OrderResponseDTO>>(new PageImpl<>(ordersDTO), HttpStatus.OK);
 
         log.info("Find all orders by user id: {}", userId);
 
@@ -147,7 +145,9 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(OrderStatus.UNDER_CONSIDERATION);
         order.setOrderDate(LocalDateTime.now());
         order.setPrice(((double) order.getRentalPeriod() * car.getPricePerDay()));
+
         OrderResponseDTO orderResponseDTO = orderMapper.orderToOrderDTO(orderRepository.save(order));
+
         response = new ResponseEntity<>(orderResponseDTO, HttpStatus.OK);
 
         log.info("Creat new order: {} for user with id: {}", orderResponseDTO, userId);
@@ -260,7 +260,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
-    public Order findOrderByIdOrThrowException(Long orderId) {
+    protected Order findOrderByIdOrThrowException(Long orderId) {
 
         log.info("Finding order with id: {}", orderId);
 

@@ -1,10 +1,8 @@
 package com.spring.rest.api.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import jakarta.persistence.*;
-import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +12,10 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Data
-@ToString(of = {"username", "password", "email", "roles"})
+@ToString(of = {"username", "password", "email", "roles", "activationCode"})
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User extends BaseEntity {
 
 

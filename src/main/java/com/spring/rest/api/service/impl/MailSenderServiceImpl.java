@@ -1,6 +1,7 @@
 package com.spring.rest.api.service.impl;
 
 import com.spring.rest.api.service.MailSenderService;
+import com.spring.rest.api.util.tread.MailSenderThread;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,9 +30,7 @@ public class MailSenderServiceImpl implements MailSenderService {
         mailMessage.setTo(emailTo);
         mailMessage.setSubject(subject);
         mailMessage.setText(message);
-        mailSender.send(mailMessage);
 
-        log.info("Send email to: {} with subject: {} with message: {}",
-                emailTo, subject, message);
+        new MailSenderThread(mailSender, mailMessage).start();
     }
 }
