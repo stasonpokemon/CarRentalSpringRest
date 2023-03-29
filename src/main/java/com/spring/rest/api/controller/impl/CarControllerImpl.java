@@ -68,6 +68,16 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
+    public ResponseEntity<?> setCarAsBroken(Long carId,
+                                            String damageStatus) {
+
+        log.info("PATCH request to set the car as broken with car's id: {} and damage description: {}",
+                carId, damageStatus);
+
+        return carService.setCarAsBroken(carId, damageStatus);
+    }
+
+    @Override
     public ResponseEntity<?> markCarAsDeleted(Long carId) {
 
         log.info("PATCH request to mark car with id: {} as deleted ", carId);
