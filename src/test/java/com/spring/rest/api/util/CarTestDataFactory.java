@@ -43,13 +43,33 @@ public class CarTestDataFactory {
                 .broken(true).build();
     }
 
+    public static Car buildBusyCar(){
+        return Car.builder()
+                .model("testModel" + UUID.randomUUID())
+                .producer("testProducer")
+                .releaseDate(LocalDate.of(2001, 7, 13))
+                .pricePerDay(100D)
+                .employmentStatus(false)
+                .damageStatus("Without damage")
+                .imageLink("")
+                .deleted(false)
+                .broken(false).build();
+    }
+
+    public static CarResponseDTO buildBrokenCarResponseDTOFromCar(Car car){
+        CarResponseDTO carResponseDTO = carMapper.carToCarResponseDTO(car);
+        carResponseDTO.setBroken(true);
+        carResponseDTO.setDamageStatus("With damage");
+        return carResponseDTO;
+    }
+
     public static Car buildDeletedCar() {
         return Car.builder()
                 .model("testModel")
                 .producer("testProducer")
                 .releaseDate(LocalDate.of(2001, 7, 13))
                 .pricePerDay(100D)
-                .employmentStatus(false)
+                .employmentStatus(true)
                 .damageStatus("Without damage")
                 .imageLink("")
                 .deleted(true)

@@ -4,6 +4,7 @@ import com.spring.rest.api.entity.Car;
 import com.spring.rest.api.entity.dto.request.CreateCarRequestDTO;
 import com.spring.rest.api.entity.dto.request.UpdateCarRequestDTO;
 import com.spring.rest.api.entity.dto.response.CarResponseDTO;
+import com.spring.rest.api.exception.BadRequestException;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.CarRepository;
 import com.spring.rest.api.service.impl.CarServiceImpl;
@@ -46,6 +47,8 @@ class CarServiceImplTest {
 
     private Car deletedCar;
 
+    private Car busyCar;
+
     private CarResponseDTO firstCarResponseDTO;
 
     private CreateCarRequestDTO createCarRequestDTO;
@@ -57,6 +60,8 @@ class CarServiceImplTest {
     private CarResponseDTO fixedCarResponseDTO;
 
     private CarResponseDTO deletedFirstCarResponseDTO;
+
+    private CarResponseDTO brokenFirstCarResponseDTO;
 
     private Page<Car> carsPage;
 
@@ -75,6 +80,8 @@ class CarServiceImplTest {
 
         deletedCar = CarTestDataFactory.buildDeletedCar();
 
+        busyCar = CarTestDataFactory.buildBusyCar();
+
         firstCarResponseDTO = CarTestDataFactory.buildCarResponseDTO(firstCar);
 
         CarResponseDTO secondCarResponseDTO = CarTestDataFactory.buildCarResponseDTO(secoundCar);
@@ -88,6 +95,8 @@ class CarServiceImplTest {
         fixedCarResponseDTO = CarTestDataFactory.buildFixedCarResponseDTO();
 
         deletedFirstCarResponseDTO = CarTestDataFactory.buildDeletedFirstCarResponseDTO(firstCar);
+
+        brokenFirstCarResponseDTO = CarTestDataFactory.buildBrokenCarResponseDTOFromCar(firstCar);
 
         carsPage = new PageImpl<>(List.of(firstCar, secoundCar));
 
@@ -347,6 +356,78 @@ class CarServiceImplTest {
         assertNotNull(responseBody);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Unable to fix car. Car with id = 1 is deleted", responseBody);
+
+        verify(carRepository).findById(1L);
+    }
+
+    @Test
+    void setCarAsBroken_WhenCarIdIsValid_ReturnBrokenCar() {
+        String damageDescription = "With damage";
+        when(carRepository.findById(1L)).thenReturn(Optional.of(firstCar));
+
+        ResponseEntity<?> response = carService.setCarAsBroken(1L, damageDescription);
+        CarResponseDTO responseBody = (CarResponseDTO) response.getBody();
+
+        assertNotNull(response);
+        assertNotNull(responseBody);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(brokenFirstCarResponseDTO, responseBody);
+
+        verify(carRepository).findById(1L);
+    }
+
+    @Test
+    void setCarAsBroken_WhenCarIdIsValidAndCarIsBroken_ThrowsBadRequestException() {
+        String damageDescription = "With damage";
+        when(carRepository.findById(1L)).thenReturn(Optional.of(brokenCar));
+
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> carService.setCarAsBroken(1L, damageDescription));
+
+        assertNotNull(badRequestException);
+        assertEquals("Car with id = 1 is already broken", badRequestException.getMessage());
+
+        verify(carRepository).findById(1L);
+    }
+
+    @Test
+    void setCarAsBroken_WhenCarIdIsValidAndCarIsBusy_ThrowsBadRequestException() {
+        String damageDescription = "With damage";
+        when(carRepository.findById(1L)).thenReturn(Optional.of(busyCar));
+
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> carService.setCarAsBroken(1L, damageDescription));
+
+        assertNotNull(badRequestException);
+        assertEquals("Car with id = 1 is busy now", badRequestException.getMessage());
+
+        verify(carRepository).findById(1L);
+    }
+
+    @Test
+    void setCarAsBroken_WhenCarIdIsValidAndCarIsDeleted_ThrowsBadRequestException() {
+        String damageDescription = "With damage";
+        when(carRepository.findById(1L)).thenReturn(Optional.of(deletedCar));
+
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> carService.setCarAsBroken(1L, damageDescription));
+
+        assertNotNull(badRequestException);
+        assertEquals("Car with id = 1 is deleted", badRequestException.getMessage());
+
+        verify(carRepository).findById(1L);
+    }
+
+    @Test
+    void setCarAsBroken_WhenCarIdIsValidAndCarIsDeleted_ThrowsNotFoundException() {
+        String damageDescription = "With damage";
+        when(carRepository.findById(1L)).thenReturn(Optional.empty());
+
+        NotFoundException notFoundException
+                = assertThrows(NotFoundException.class, () -> carService.setCarAsBroken(1L, damageDescription));
+
+        assertNotNull(notFoundException);
+        assertEquals("Not found Car with id: 1", notFoundException.getMessage());
 
         verify(carRepository).findById(1L);
     }

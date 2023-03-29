@@ -20,11 +20,15 @@ public interface CarService {
 
     ResponseEntity<?> save(CreateCarRequestDTO createCarRequestDTO);
 
-    ResponseEntity<?> update(Long carId, UpdateCarRequestDTO updateCarRequestDTO);
+    ResponseEntity<?> update(Long carId,
+                             UpdateCarRequestDTO updateCarRequestDTO);
 
     ResponseEntity<?> markCarAsDeleted(Long carId);
 
     Car findCarByIdOrThrowException(Long carId);
 
     ResponseEntity<?> fixBrokenCar(Long carId);
+
+    ResponseEntity<?> setCarAsBroken(Long carId,
+                                     String damageStatus);
 }

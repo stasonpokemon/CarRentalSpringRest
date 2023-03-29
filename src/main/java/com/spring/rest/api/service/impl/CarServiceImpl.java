@@ -6,6 +6,7 @@ import com.spring.rest.api.entity.dto.request.CreateCarRequestDTO;
 import com.spring.rest.api.entity.dto.request.UpdateCarRequestDTO;
 import com.spring.rest.api.entity.dto.response.CarResponseDTO;
 import com.spring.rest.api.entity.mapper.CarMapper;
+import com.spring.rest.api.exception.BadRequestException;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.CarRepository;
 import com.spring.rest.api.service.CarService;
@@ -173,6 +174,34 @@ public class CarServiceImpl implements CarService {
 
         return response;
 
+    }
+
+    @Override
+    public ResponseEntity<?> setCarAsBroken(Long carId, String damageStatus) {
+
+        log.info("Setting the car as broken with id: {} and damage description: {}", carId, damageStatus);
+
+        Car car = findCarByIdOrThrowException(carId);
+
+        if (car.isBroken()) {
+            throw new BadRequestException(String.format("Car with id = %s is already broken", carId));
+        }
+
+        if (!car.isEmploymentStatus()) {
+            throw new BadRequestException(String.format("Car with id = %s is busy now", carId));
+        }
+
+        if (car.isDeleted()){
+            throw new BadRequestException(String.format("Car with id = %s is deleted", carId));
+        }
+
+        car.setBroken(true);
+        car.setDamageStatus(damageStatus);
+
+        ResponseEntity<?> response = new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
+
+        log.info("Set the car: {} as broken with id: {}", car, carId);
+        return response;
     }
 
 

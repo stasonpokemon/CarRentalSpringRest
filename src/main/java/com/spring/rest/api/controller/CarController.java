@@ -147,6 +147,29 @@ public interface CarController {
             @PathVariable("id") Long carId);
 
     @Operation(
+            summary = "Set the car as broken",
+            description = "This endpoint allows you to set the car as broken and set damage description that not busy at the moment, not fixed and already exist in the database")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",
+                    description = "Car status is set as broken",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CarResponseDTO.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "Bad request",
+                    content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "404",
+                    description = "Not found",
+                    content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "500",
+                    description = "Internal server error",
+                    content = {@Content(schema = @Schema())})
+    })
+    @PatchMapping("/{id}/broke")
+    ResponseEntity<?> setCarAsBroken(
+            @PathVariable("id") Long carId,
+            @RequestParam(name = "damage") String damageStatus);
+
+    @Operation(
             summary = "Mark car as deleted",
             description = "This endpoint allows you to mark car as deleted that already exist in the database")
     @ApiResponses({
