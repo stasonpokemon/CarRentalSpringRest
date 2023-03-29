@@ -64,7 +64,7 @@ public interface OrderController {
             @PathVariable("id") Long orderId);
 
     @Operation(
-            summary = "Find refund by id",
+            summary = "Find refund by id order's id",
             description = "This endpoint allows you to get order's refund by order's id from database")
     @ApiResponses({
             @ApiResponse(responseCode = "200",

@@ -332,6 +332,7 @@ class UserServiceImplTest {
         when(userRepository.findUserByUsername(createUserRequestDTO.getUsername())).thenReturn(Optional.empty());
         when(userRepository.findUserByEmail(createUserRequestDTO.getEmail())).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenReturn(newUser);
+        doNothing().when(mailSenderService).send(any(String.class), any(String.class), any(String.class));
 
         //when - action or the behaviour that we are going test
         ResponseEntity<?> response = userService.saveRegisteredUser(createUserRequestDTO);
@@ -355,6 +356,7 @@ class UserServiceImplTest {
         //given - precondition or setup
         when(userRepository.findUserByUsername(createUserRequestDTO.getUsername())).thenReturn(Optional.empty());
         when(userRepository.findUserByEmail(createUserRequestDTO.getEmail())).thenReturn(Optional.of(secondUserWithoutPassport));
+        doNothing().when(mailSenderService).send(any(String.class), any(String.class), any(String.class));
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException
@@ -373,6 +375,7 @@ class UserServiceImplTest {
     void saveRegisteredUser_WhenUserUsernameExists_ThrowsBadRequestException() {
         //given - precondition or setup
         when(userRepository.findUserByUsername(createUserRequestDTO.getUsername())).thenReturn(Optional.of(secondUserWithoutPassport));
+        doNothing().when(mailSenderService).send(any(String.class), any(String.class), any(String.class));
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException

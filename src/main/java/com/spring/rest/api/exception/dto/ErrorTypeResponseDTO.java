@@ -15,7 +15,9 @@ import java.time.LocalDateTime;
 public class ErrorTypeResponseDTO {
 
     private LocalDateTime time;
+
     private HttpStatus status;
+
     private String message;
 
 }
