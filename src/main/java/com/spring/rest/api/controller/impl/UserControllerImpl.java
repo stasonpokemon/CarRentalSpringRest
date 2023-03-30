@@ -1,7 +1,7 @@
 package com.spring.rest.api.controller.impl;
 
 import com.spring.rest.api.controller.UserController;
-import com.spring.rest.api.entity.dto.PassportDTO;
+import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
 import com.spring.rest.api.service.OrderService;
 import com.spring.rest.api.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -72,20 +72,20 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ResponseEntity<?> createPassportForUser(UUID userId,
-                                                   PassportDTO passportDTO) {
+                                                   PassportRequestDTO passportRequestDTO) {
 
-        log.info("POST request to create passport: {} for user with id: {}", passportDTO, userId);
+        log.info("POST request to create passport: {} for user with id: {}", passportRequestDTO, userId);
 
-        return userService.createPassportForUser(userId, passportDTO);
+        return userService.createPassportForUser(userId, passportRequestDTO);
     }
 
     @Override
     public ResponseEntity<?> editUsersPassport(UUID userId,
-                                               PassportDTO passportDTO) {
+                                               PassportRequestDTO passportRequestDTO) {
 
-        log.info("PATCH request to change passport: {} of user with userId: {}", passportDTO, userId);
+        log.info("PATCH request to change passport: {} of user with userId: {}", passportRequestDTO, userId);
 
-        return userService.updateUsersPassport(userId, passportDTO);
+        return userService.updateUsersPassport(userId, passportRequestDTO);
     }
 
 }

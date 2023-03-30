@@ -104,10 +104,6 @@ VALUES ('011ebe9c-ced6-11ed-a81c-0242ac140002', 'ADMIN'),
        ('d1c48c1e-99b4-41b5-8e50-1235ce728aaf', 'USER'),
        ('240184de-710e-4603-ac86-c150cca7b84b', 'USER');
 
-
-select uuid_generate_v4();
-
-
 INSERT INTO cars(id, producer, model, release_date, price_per_day, is_busy, damage_status, img_link,
                  is_deleted, is_broken, created_at, updated_at)
 VALUES ('695fedf4-bd75-4b38-bfcc-5f498b333028', 'Audi', 'A7', '01-01-2015', 290, false, 'Without damage',

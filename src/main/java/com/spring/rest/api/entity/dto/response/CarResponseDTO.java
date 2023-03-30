@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
 
@@ -17,6 +18,9 @@ import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
 @Builder
 public class CarResponseDTO {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(example = CAR_UUID, description = CAR_UUID)
+    private UUID id;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(example = CAR_PRODUCER, description = CAR_PRODUCER)
     private String producer;

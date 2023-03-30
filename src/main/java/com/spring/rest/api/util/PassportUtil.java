@@ -1,7 +1,7 @@
 package com.spring.rest.api.util;
 
 import com.spring.rest.api.entity.Passport;
-import com.spring.rest.api.entity.dto.PassportDTO;
+import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
 
 public class PassportUtil {
 
@@ -18,7 +18,7 @@ public class PassportUtil {
     }
 
 
-    public void copyNotNullFieldsFromPassportDTOToPassport(PassportDTO from, Passport to) {
+    public void copyNotNullFieldsFromPassportDTOToPassport(PassportRequestDTO from, Passport to) {
         if (from.getAddress() != null && !from.getAddress().isEmpty()) {
             to.setAddress(from.getAddress());
         }

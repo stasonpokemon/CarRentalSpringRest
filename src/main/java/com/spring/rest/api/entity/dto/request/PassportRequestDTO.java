@@ -1,4 +1,4 @@
-package com.spring.rest.api.entity.dto;
+package com.spring.rest.api.entity.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PassportDTO {
+public class PassportRequestDTO {
 
     @Length(max = 255, message = "Name too long. Max length is 255")
     @NotBlank(message = "Please fill the name")

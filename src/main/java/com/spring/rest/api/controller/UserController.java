@@ -1,7 +1,8 @@
 package com.spring.rest.api.controller;
 
-import com.spring.rest.api.entity.dto.PassportDTO;
+import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
 import com.spring.rest.api.entity.dto.response.OrderResponseDTO;
+import com.spring.rest.api.entity.dto.response.PassportResponseDTO;
 import com.spring.rest.api.entity.dto.response.UserResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -138,7 +139,7 @@ public interface UserController {
             @ApiResponse(responseCode = "200",
                     description = "Found the following passport",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PassportDTO.class))}),
+                            schema = @Schema(implementation = PassportResponseDTO.class))}),
             @ApiResponse(responseCode = "400",
                     description = "Bed request",
                     content = {@Content(schema = @Schema())}),
@@ -160,7 +161,7 @@ public interface UserController {
             @ApiResponse(responseCode = "200",
                     description = "Passport successfully created",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PassportDTO.class))}),
+                            schema = @Schema(implementation = PassportResponseDTO.class))}),
             @ApiResponse(responseCode = "400",
                     description = "Bad request",
                     content = {@Content(schema = @Schema())}),
@@ -174,7 +175,7 @@ public interface UserController {
     @PostMapping("/{id}/passport")
     ResponseEntity<?> createPassportForUser(
             @PathVariable("id") UUID userId,
-            @RequestBody @Valid PassportDTO passportDTO);
+            @RequestBody @Valid PassportRequestDTO passportRequestDTO);
 
     @Operation(
             summary = "Update user's passport",
@@ -183,7 +184,7 @@ public interface UserController {
             @ApiResponse(responseCode = "200",
                     description = "Passport successfully updated",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PassportDTO.class))}),
+                            schema = @Schema(implementation = PassportResponseDTO.class))}),
             @ApiResponse(responseCode = "400",
                     description = "Bad request",
                     content = {@Content(schema = @Schema())}),
@@ -197,6 +198,6 @@ public interface UserController {
     @PatchMapping("/{id}/passport")
     ResponseEntity<?> editUsersPassport(
             @PathVariable("id") UUID userId,
-            @RequestBody PassportDTO passportDTO);
+            @RequestBody PassportRequestDTO passportRequestDTO);
 
 }

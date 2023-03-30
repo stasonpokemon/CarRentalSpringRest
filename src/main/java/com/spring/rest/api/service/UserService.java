@@ -1,7 +1,7 @@
 package com.spring.rest.api.service;
 
 import com.spring.rest.api.entity.User;
-import com.spring.rest.api.entity.dto.PassportDTO;
+import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
 import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +19,10 @@ public interface UserService {
     ResponseEntity<?> findPassportByUserId(UUID userId);
 
     ResponseEntity<?> createPassportForUser(UUID userId,
-                                            PassportDTO passportDTO);
+                                            PassportRequestDTO passportRequestDTO);
 
     ResponseEntity<?> updateUsersPassport(UUID userId,
-                                          PassportDTO passportDTO);
+                                          PassportRequestDTO passportRequestDTO);
 
     ResponseEntity<?> saveRegisteredUser(CreateUserRequestDTO createUserRequestDTO);
 

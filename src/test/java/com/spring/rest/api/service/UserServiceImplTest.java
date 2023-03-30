@@ -2,8 +2,9 @@ package com.spring.rest.api.service;
 
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.User;
-import com.spring.rest.api.entity.dto.PassportDTO;
+import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
 import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
+import com.spring.rest.api.entity.dto.response.PassportResponseDTO;
 import com.spring.rest.api.entity.dto.response.UserResponseDTO;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.exception.BadRequestException;
@@ -65,11 +66,15 @@ class UserServiceImplTest {
 
     private CreateUserRequestDTO createUserRequestDTO;
 
-    private PassportDTO firstUserPassportDTO;
+    private PassportResponseDTO firstUserPassportResponseDTO;
 
-    private PassportDTO newPassportForSecondUserDTO;
+    private PassportRequestDTO newPassportRequestDTOForSecondUser;
 
-    private PassportDTO updatedPassportDTO;
+    private PassportRequestDTO updatedPassportRequestDTO;
+
+    private PassportResponseDTO newPassportResponseDTOForSecondUser;
+
+    private PassportResponseDTO updatedPassportResponseDTO;
 
     private Pageable pageRequest;
 
@@ -86,19 +91,25 @@ class UserServiceImplTest {
 
         secondUserWithoutPassport = UserTestDataFactory.buildUserWithOutPassport();
 
+        Passport passportForUpdate = PassportTestDataFactory.buildPassport();
+
         firstUserResponseDTO = UserTestDataFactory.buildUserResponseDTO(firstUserWithPassport);
 
         UserResponseDTO secondUserResponseDTO = UserTestDataFactory.buildUserResponseDTO(secondUserWithoutPassport);
 
-        firstUserPassportDTO = UserTestDataFactory.buildPassportDTOFromUser(firstUserWithPassport);
-
         newPassportForSecondUser = PassportTestDataFactory.buildPassportOfUser(secondUserWithoutPassport);
 
-        newPassportForSecondUserDTO = PassportTestDataFactory.buildPassportDTOFromPassport(newPassportForSecondUser);
+        newPassportRequestDTOForSecondUser = PassportTestDataFactory.buildPassportDTOFromPassport(newPassportForSecondUser);
 
-        updatedPassportDTO = PassportTestDataFactory.buildPassportDTOFromPassport(PassportTestDataFactory.buildPassport());
+        updatedPassportRequestDTO = PassportTestDataFactory.buildPassportDTOFromPassport(passportForUpdate);
 
         createUserRequestDTO = UserTestDataFactory.buildCreateUserRequestDTO();
+
+        firstUserPassportResponseDTO = UserTestDataFactory.buildPassportResponseDTOFromUser(firstUserWithPassport);
+
+        newPassportResponseDTOForSecondUser = PassportTestDataFactory.buildPassportResponseDTOFromPassport(newPassportForSecondUser);
+
+        updatedPassportResponseDTO = PassportTestDataFactory.buildPassportResponseDTOFromPassport(passportForUpdate);
 
         newUser = UserTestDataFactory.buildNewUserFromCreateUserRequestDTO(createUserRequestDTO);
 
@@ -185,13 +196,13 @@ class UserServiceImplTest {
 
         //when - action or the behaviour that we are going test
         ResponseEntity<?> response = userService.findPassportByUserId(userId);
-        PassportDTO responseBody = (PassportDTO) response.getBody();
+        PassportResponseDTO responseBody = (PassportResponseDTO) response.getBody();
 
         //then - verify the output
         assertNotNull(response);
         assertNotNull(responseBody);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(firstUserPassportDTO, responseBody);
+        assertEquals(firstUserPassportResponseDTO, responseBody);
 
         verify(userRepository).findById(userId);
     }
@@ -234,14 +245,14 @@ class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(secondUserWithoutPassport));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.createPassportForUser(userId, newPassportForSecondUserDTO);
-        PassportDTO responseBody = (PassportDTO) response.getBody();
+        ResponseEntity<?> response = userService.createPassportForUser(userId, newPassportRequestDTOForSecondUser);
+        PassportResponseDTO responseBody = (PassportResponseDTO) response.getBody();
 
         //then - verify the output
         assertNotNull(response);
         assertNotNull(responseBody);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(newPassportForSecondUserDTO, responseBody);
+        assertEquals(newPassportResponseDTOForSecondUser, responseBody);
 
         verify(userRepository).findById(userId);
         verify(passportRepository).save(any(Passport.class));
@@ -254,7 +265,7 @@ class UserServiceImplTest {
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> userService.createPassportForUser(userId, newPassportForSecondUserDTO));
+                = assertThrows(BadRequestException.class, () -> userService.createPassportForUser(userId, newPassportRequestDTOForSecondUser));
 
         //then - verify the output
         assertEquals(String.format("User with id = %s already has passport", userId), badRequestException.getMessage());
@@ -270,7 +281,7 @@ class UserServiceImplTest {
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> userService.createPassportForUser(userId, newPassportForSecondUserDTO));
+                = assertThrows(NotFoundException.class, () -> userService.createPassportForUser(userId, newPassportRequestDTOForSecondUser));
 
         //then - verify the output
         assertEquals(String.format("Not found User with id: %s", userId), notFoundException.getMessage());
@@ -284,14 +295,14 @@ class UserServiceImplTest {
         //given - precondition or setup
         when(userRepository.findById(userId)).thenReturn(Optional.of(firstUserWithPassport));
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.updateUsersPassport(userId, updatedPassportDTO);
-        PassportDTO responseBody = (PassportDTO) response.getBody();
+        ResponseEntity<?> response = userService.updateUsersPassport(userId, updatedPassportRequestDTO);
+        PassportResponseDTO responseBody = (PassportResponseDTO) response.getBody();
 
         //then - verify the output
         assertNotNull(response);
         assertNotNull(responseBody);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(updatedPassportDTO, responseBody);
+        assertEquals(updatedPassportResponseDTO, responseBody);
 
         verify(userRepository).findById(userId);
     }
@@ -304,7 +315,7 @@ class UserServiceImplTest {
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException =
-                assertThrows(BadRequestException.class, () -> userService.updateUsersPassport(userId, updatedPassportDTO));
+                assertThrows(BadRequestException.class, () -> userService.updateUsersPassport(userId, updatedPassportRequestDTO));
 
         //then - verify the output
         assertEquals(String.format("Passport not found for user with id = %s", userId), badRequestException.getMessage());
@@ -319,7 +330,7 @@ class UserServiceImplTest {
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException =
-                assertThrows(NotFoundException.class, () -> userService.updateUsersPassport(userId, updatedPassportDTO));
+                assertThrows(NotFoundException.class, () -> userService.updateUsersPassport(userId, updatedPassportRequestDTO));
 
         //then - verify the output
         assertEquals(String.format("Not found User with id: %s", userId), notFoundException.getMessage());

@@ -2,7 +2,8 @@ package com.spring.rest.api.util;
 
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.User;
-import com.spring.rest.api.entity.dto.PassportDTO;
+import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
+import com.spring.rest.api.entity.dto.response.PassportResponseDTO;
 import com.spring.rest.api.entity.mapper.PassportMapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -38,7 +39,11 @@ public class PassportTestDataFactory {
                 .user(user).build();
     }
 
-    public static PassportDTO buildPassportDTOFromPassport(Passport passport){
+    public static PassportRequestDTO buildPassportDTOFromPassport(Passport passport){
         return passportMapper.passportToPassportDTO(passport);
+    }
+
+    public static PassportResponseDTO buildPassportResponseDTOFromPassport(Passport passport) {
+        return passportMapper.passportToPassportResponseDTO(passport);
     }
 }
