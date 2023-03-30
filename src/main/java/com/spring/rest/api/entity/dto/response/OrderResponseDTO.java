@@ -43,6 +43,7 @@ public class OrderResponseDTO {
     private OrderStatus orderStatus;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(example = ORDER_ORDER_DATE, description = ORDER_ORDER_DATE)
     private LocalDateTime orderDate;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
