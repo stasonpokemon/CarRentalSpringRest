@@ -150,7 +150,8 @@ public interface CarController {
 
     @Operation(
             summary = "Set the car as broken",
-            description = "This endpoint allows you to set the car as broken and set damage description that not busy at the moment, not fixed and already exist in the database")
+            description = "This endpoint allows you to set the car as broken and set damage description that " +
+                    "not busy at the moment, not fixed and already exist in the database")
     @ApiResponses({
             @ApiResponse(responseCode = "200",
                     description = "Car status is set as broken",

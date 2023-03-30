@@ -60,8 +60,31 @@ public class OpenApiConstants {
 
     public static final String ORDER_ORDER_STATUS = "UNDER_CONSIDERATION";
 
+    public static final String ORDER_ORDER_DATE = "2023-03-03";
+
     public static final String ORDER_RENTAL_PERIOD = "3";
 
+    public static final String CONFIG_SERVER_URL_DEV_DESCRIPTION = "Server URL in Development environment";
+
+    public static final String CONFIG_SERVER_URL_PROD_DESCRIPTION = "Server URL in Production environment";
+
+    public static final String CONFIG_CONTACT_EMAIL = "stasonpokemon@icloud.com";
+
+    public static final String CONFIG_CONTACT_NAME = "Stanislau Trebnikau";
+
+    public static final String CONFIG_CONTACT_WEBSITE = "https://www.linkedin.com/in/stanislau-trebnikau/";
+
+    public static final String CONFIG_LICENSE_NAME = "MIT License";
+
+    public static final String CONFIG_LICENSE_WEBSITE = "https://choosealicense.com/licenses/mit/";
+
+    public static final String CONFIG_INFO_TITLE = "Car rental REST Api Application";
+
+    public static final String CONFIG_INFO_VERSION = "1.0";
+
+    public static final String CONFIG_INFO_DESCRIPTION = "Description for Car rental Api";
+
+    public static final String CONFIG_INFO_TERMS_OF_SERVICE = "https://github.com/stasonpokemon/CarRentalSpringRest";
 
 
 }
