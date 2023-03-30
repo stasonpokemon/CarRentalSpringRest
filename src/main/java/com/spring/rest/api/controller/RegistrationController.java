@@ -32,7 +32,7 @@ public interface RegistrationController {
                     content = {@Content(schema = @Schema())})
     })
     @PostMapping()
-    ResponseEntity<?> saveRegisteredUser(
+    ResponseEntity<UserResponseDTO> saveRegisteredUser(
             @RequestBody @Valid CreateUserRequestDTO createUserRequestDTO);
 
     @Operation(
@@ -54,6 +54,6 @@ public interface RegistrationController {
                     content = {@Content(schema = @Schema())})
     })
     @GetMapping("/activate/{code}")
-    ResponseEntity<?> activateUser(
+    ResponseEntity<UserResponseDTO> activateUser(
             @PathVariable("code") String activateCode);
 }

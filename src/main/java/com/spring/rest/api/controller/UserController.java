@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -40,7 +41,7 @@ public interface UserController {
                     content = {@Content(schema = @Schema())})
     })
     @GetMapping
-    ResponseEntity<?> findAll(
+    ResponseEntity<Page<UserResponseDTO>> findAll(
             @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable);
 
     @Operation(
@@ -62,7 +63,7 @@ public interface UserController {
                     content = {@Content(schema = @Schema())})
     })
     @GetMapping("/{id}")
-    ResponseEntity<?> findUserById(
+    ResponseEntity<UserResponseDTO> findUserById(
             @PathVariable("id") UUID userId);
 
     @Operation(
@@ -84,7 +85,7 @@ public interface UserController {
                     content = {@Content(schema = @Schema())})
     })
     @PatchMapping("/{id}/block")
-    ResponseEntity<?> blockUser(
+    ResponseEntity<UserResponseDTO> blockUser(
             @PathVariable("id") UUID userId);
 
     @Operation(
@@ -106,7 +107,7 @@ public interface UserController {
                     content = {@Content(schema = @Schema())})
     })
     @PatchMapping("/{id}/unlock")
-    ResponseEntity<?> unlockUser(
+    ResponseEntity<UserResponseDTO> unlockUser(
             @PathVariable("id") UUID userId);
 
     @Operation(
@@ -128,7 +129,7 @@ public interface UserController {
                     content = {@Content(schema = @Schema())})
     })
     @GetMapping("/{id}/orders")
-    ResponseEntity<?> findUsersOrders(
+    ResponseEntity<Page<OrderResponseDTO>> findUsersOrders(
             @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable,
             @PathVariable("id") UUID userId);
 
@@ -151,7 +152,7 @@ public interface UserController {
                     content = {@Content(schema = @Schema())})
     })
     @GetMapping("/{id}/passport")
-    ResponseEntity<?> findUsersPassport(
+    ResponseEntity<PassportResponseDTO> findUsersPassport(
             @PathVariable("id") UUID userId);
 
     @Operation(
@@ -173,7 +174,7 @@ public interface UserController {
                     content = {@Content(schema = @Schema())})
     })
     @PostMapping("/{id}/passport")
-    ResponseEntity<?> createPassportForUser(
+    ResponseEntity<PassportResponseDTO> createPassportForUser(
             @PathVariable("id") UUID userId,
             @RequestBody @Valid PassportRequestDTO passportRequestDTO);
 
@@ -196,7 +197,7 @@ public interface UserController {
                     content = {@Content(schema = @Schema())})
     })
     @PatchMapping("/{id}/passport")
-    ResponseEntity<?> editUsersPassport(
+    ResponseEntity<PassportResponseDTO> editUsersPassport(
             @PathVariable("id") UUID userId,
             @RequestBody PassportRequestDTO passportRequestDTO);
 

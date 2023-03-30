@@ -3,9 +3,11 @@ package com.spring.rest.api.controller.impl;
 import com.spring.rest.api.controller.CarController;
 import com.spring.rest.api.entity.dto.request.CreateCarRequestDTO;
 import com.spring.rest.api.entity.dto.request.UpdateCarRequestDTO;
+import com.spring.rest.api.entity.dto.response.CarResponseDTO;
 import com.spring.rest.api.service.CarService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +23,7 @@ public class CarControllerImpl implements CarController {
     private final CarService carService;
 
     @Override
-    public ResponseEntity<?> findAll(Pageable pageable) {
+    public ResponseEntity<Page<CarResponseDTO>> findAll(Pageable pageable) {
 
         log.info("GET request to find all cars");
 
@@ -29,7 +31,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> findAllNotMarkedAsDeleted(Pageable pageable) {
+    public ResponseEntity<Page<CarResponseDTO>> findAllNotMarkedAsDeleted(Pageable pageable) {
 
         log.info("GET request to find all cars not marked as deleted");
 
@@ -37,7 +39,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> findCar(UUID carId) {
+    public ResponseEntity<CarResponseDTO> findCar(UUID carId) {
 
         log.info("GET request to find cars with id: {}", carId);
 
@@ -45,7 +47,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> createCar(CreateCarRequestDTO createCarRequestDTO) {
+    public ResponseEntity<CarResponseDTO> createCar(CreateCarRequestDTO createCarRequestDTO) {
 
         log.info("POST request to create car: {}", createCarRequestDTO);
 
@@ -53,7 +55,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> updateCar(UUID carId,
+    public ResponseEntity<CarResponseDTO> updateCar(UUID carId,
                                        UpdateCarRequestDTO updateCarRequestDTO) {
 
         log.info("PATCH request to update car: {} with id: {}", updateCarRequestDTO, carId);
@@ -62,7 +64,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> fixBrokenCar(UUID carId) {
+    public ResponseEntity<CarResponseDTO> fixBrokenCar(UUID carId) {
 
         log.info("PATCH request to fix broken car with id: {}", carId);
 
@@ -70,7 +72,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> setCarAsBroken(UUID carId,
+    public ResponseEntity<CarResponseDTO> setCarAsBroken(UUID carId,
                                             String damageStatus) {
 
         log.info("PATCH request to set the car as broken with car's id: {} and damage description: {}",
@@ -80,7 +82,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> markCarAsDeleted(UUID carId) {
+    public ResponseEntity<CarResponseDTO> markCarAsDeleted(UUID carId) {
 
         log.info("PATCH request to mark car with id: {} as deleted ", carId);
 

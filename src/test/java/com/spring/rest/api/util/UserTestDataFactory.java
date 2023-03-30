@@ -83,4 +83,15 @@ public class UserTestDataFactory {
     }
 
 
+    public static UserResponseDTO buildActicatedUserResponseDTO(User user) {
+        UserResponseDTO userResponseDTO = userMapper.userToUserResponseDTO(user);
+        userResponseDTO.setActive(true);
+        return userResponseDTO;
+    }
+
+    public static UserResponseDTO buildBlockedUserResponseDTO(User user) {
+        UserResponseDTO userResponseDTO = userMapper.userToUserResponseDTO(user);
+        userResponseDTO.setActive(false);
+        return userResponseDTO;
+    }
 }

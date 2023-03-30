@@ -7,6 +7,7 @@ import com.spring.rest.api.entity.dto.response.OrderResponseDTO;
 import com.spring.rest.api.entity.dto.response.RefundResponseDTO;
 import com.spring.rest.api.entity.mapper.OrderMapper;
 import com.spring.rest.api.entity.mapper.RefundMapper;
+import com.spring.rest.api.exception.BadRequestException;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.OrderRepository;
 import com.spring.rest.api.service.CarService;
@@ -25,7 +26,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -47,12 +47,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findById(UUID orderId) {
+    public ResponseEntity<OrderResponseDTO> findById(UUID orderId) {
 
         log.info("Finding order by id: {}", orderId);
 
         OrderResponseDTO orderResponseDTO = orderMapper.orderToOrderDTO(findOrderByIdOrThrowException(orderId));
-        ResponseEntity<?> response = new ResponseEntity<>(orderResponseDTO, HttpStatus.OK);
+
+        ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderResponseDTO, HttpStatus.OK);
 
         log.info("Find order by id: {}", orderId);
 
@@ -61,22 +62,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findAll(Pageable pageable) {
+    public ResponseEntity<Page<OrderResponseDTO>> findAll(Pageable pageable) {
 
         log.info("Finding all orders");
 
-        ResponseEntity<?> response;
-
-        List<OrderResponseDTO> ordersDTO = orderRepository.findAll(pageable)
+        Page<OrderResponseDTO> orderResponseDTOPage = new PageImpl<>(orderRepository.findAll(pageable)
                 .stream()
                 .map(orderMapper::orderToOrderDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
 
-        if (ordersDTO.isEmpty()) {
-            throw  new NotFoundException("There are no orders");
+        if (orderResponseDTOPage.isEmpty()) {
+            throw new NotFoundException("There are no orders");
         }
 
-        response = new ResponseEntity<Page<OrderResponseDTO>>(new PageImpl<>(ordersDTO), HttpStatus.OK);
+        ResponseEntity<Page<OrderResponseDTO>> response = new ResponseEntity<>(orderResponseDTOPage, HttpStatus.OK);
 
         log.info("Find all orders");
 
@@ -85,24 +84,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findOrdersByUserId(UUID userId,
-                                                Pageable pageable) {
+    public ResponseEntity<Page<OrderResponseDTO>> findOrdersByUserId(UUID userId,
+                                                                     Pageable pageable) {
 
         log.info("Finding all orders by user id: {}", userId);
 
         User user = userService.findUserByIdOrThrowException(userId);
 
         if (user.getOrders().isEmpty()) {
-            return new ResponseEntity<>(
-                    String.format("User with id = %s hasn't orders", userId), HttpStatus.OK);
+            throw new NotFoundException(
+                    String.format("User with id = %s hasn't orders", userId));
         }
 
-        List<OrderResponseDTO> ordersDTO = orderRepository.findAllByUserId(userId, pageable)
+        Page<OrderResponseDTO> orderResponseDTOPage = new PageImpl<>(orderRepository.findAllByUserId(userId, pageable)
                 .stream()
                 .map(orderMapper::orderToOrderDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
 
-        ResponseEntity<?> response = new ResponseEntity<Page<OrderResponseDTO>>(new PageImpl<>(ordersDTO), HttpStatus.OK);
+        ResponseEntity<Page<OrderResponseDTO>> response = new ResponseEntity<>(orderResponseDTOPage, HttpStatus.OK);
 
         log.info("Find all orders by user id: {}", userId);
 
@@ -111,31 +110,29 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public ResponseEntity<?> createOrder(CreateOrderRequestDTO createOrderRequestDTO,
-                                         UUID userId,
-                                         UUID carId) {
+    public ResponseEntity<OrderResponseDTO> createOrder(CreateOrderRequestDTO createOrderRequestDTO,
+                                                        UUID userId,
+                                                        UUID carId) {
 
         log.info("Creating new order: {} for car with id: {} for user with id: {}",
                 createOrderRequestDTO, carId, userId);
-
-        ResponseEntity<?> response;
 
         Car car = carService.findCarByIdOrThrowException(carId);
         User user = userService.findUserByIdOrThrowException(userId);
 
         if (user.getPassport() == null) {
-            return new ResponseEntity<>(
-                    "The user must have a passport to create a new order", HttpStatus.OK);
+            throw new BadRequestException(
+                    "The user must have a passport to create a new order");
         }
 
         if (car.isDeleted()) {
-            return new ResponseEntity<>(
-                    String.format("The car with id = %s is deleted", carId), HttpStatus.OK);
+            throw new BadRequestException(
+                    String.format("The car with id = %s is deleted", carId));
         }
 
         if (car.isBusy()) {
-            return new ResponseEntity<>(
-                    String.format("The car with id = %s isn't free", carId), HttpStatus.OK);
+            throw new BadRequestException(
+                    String.format("The car with id = %s isn't free", carId));
         }
 
         car.setBusy(true);
@@ -149,7 +146,7 @@ public class OrderServiceImpl implements OrderService {
 
         OrderResponseDTO orderResponseDTO = orderMapper.orderToOrderDTO(orderRepository.save(order));
 
-        response = new ResponseEntity<>(orderResponseDTO, HttpStatus.OK);
+        ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderResponseDTO, HttpStatus.OK);
 
         log.info("Creat new order: {} for user with id: {}", orderResponseDTO, userId);
 
@@ -157,21 +154,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<?> acceptOrder(UUID orderId) {
+    public ResponseEntity<OrderResponseDTO> acceptOrder(UUID orderId) {
 
         log.info("Accepting order with id: {}", orderId);
-
-        ResponseEntity<?> response;
 
         Order order = findOrderByIdOrThrowException(orderId);
 
         if (!order.getOrderStatus().equals(OrderStatus.UNDER_CONSIDERATION)) {
-            return new ResponseEntity<>(
-                    String.format("Order with id = %s already accepted or canceled", orderId), HttpStatus.OK);
+            throw new BadRequestException(
+                    String.format("Order with id = %s already accepted or canceled", orderId));
         }
 
         order.setOrderStatus(OrderStatus.CONFIRMED);
-        response = new ResponseEntity<>(orderMapper.orderToOrderDTO(order), HttpStatus.OK);
+        ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderMapper.orderToOrderDTO(order), HttpStatus.OK);
 
         log.info("Accept order with id: {}", orderId);
 
@@ -179,22 +174,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<?> cancelOrder(UUID orderId) {
+    public ResponseEntity<OrderResponseDTO> cancelOrder(UUID orderId) {
 
         log.info("Canceling order with id: {}", orderId);
-
-        ResponseEntity<?> response;
 
         Order order = findOrderByIdOrThrowException(orderId);
 
         if (!order.getOrderStatus().equals(OrderStatus.UNDER_CONSIDERATION)) {
-            return new ResponseEntity<>(
-                    String.format("Order with id = %s already accepted or canceled", orderId), HttpStatus.OK);
+            throw new BadRequestException(
+                    String.format("Order with id = %s already accepted or canceled", orderId));
         }
 
         order.setOrderStatus(OrderStatus.REFUSAL);
         order.getCar().setBusy(false);
-        response = new ResponseEntity<>(orderMapper.orderToOrderDTO(order), HttpStatus.OK);
+        ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderMapper.orderToOrderDTO(order), HttpStatus.OK);
 
         log.info("Cancel order with id: {}", orderId);
 
@@ -202,16 +195,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<?> createOrdersRefund(UUID orderId,
-                                                CreateRefundRequestDTO createRefundRequestDTO) {
+    public ResponseEntity<RefundResponseDTO> createOrdersRefund(UUID orderId,
+                                                                CreateRefundRequestDTO createRefundRequestDTO) {
 
         log.info("Creating refund: {} for order with id: {}", createRefundRequestDTO, orderId);
 
         Order order = findOrderByIdOrThrowException(orderId);
 
         if (order.getRefund() != null) {
-            return new ResponseEntity<>(
-                    String.format("Order with id = %s already has refund", orderId), HttpStatus.OK);
+            throw new BadRequestException(
+                    String.format("Order with id = %s already has refund", orderId));
         }
 
         Refund refund = refundMapper.createRefundRequestDTOToRefund(createRefundRequestDTO);
@@ -228,7 +221,12 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setRefund(refund);
-        ResponseEntity<?> response = new ResponseEntity<>(orderMapper.orderToOrderDTO(order), HttpStatus.OK);
+
+        refund.setOrder(order);
+
+        Refund savedRefund = orderRepository.save(order).getRefund();
+
+        ResponseEntity<RefundResponseDTO> response = new ResponseEntity<>(refundMapper.refundToRefundResponseDTO(savedRefund), HttpStatus.OK);
 
         log.info("Create refund: {} for order with id: {}", createRefundRequestDTO, orderId);
 
@@ -237,22 +235,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findOrdersRefund(UUID orderId) {
+    public ResponseEntity<RefundResponseDTO> findOrdersRefund(UUID orderId) {
 
         log.info("Finding order's refund by orderId: {}", orderId);
-
-        ResponseEntity<?> response;
 
         Order order = findOrderByIdOrThrowException(orderId);
 
         if (order.getRefund() == null) {
-            return new ResponseEntity<>(
-                    String.format("Order with id = %s hasn't refund", orderId), HttpStatus.OK);
+            throw new BadRequestException(
+                    String.format("Order with id = %s hasn't refund", orderId));
         }
 
-        RefundResponseDTO refundResponseDTO = refundMapper.refundToRefundDTO(order.getRefund());
+        RefundResponseDTO refundResponseDTO = refundMapper.refundToRefundResponseDTO(order.getRefund());
 
-        response = new ResponseEntity<>(refundResponseDTO, HttpStatus.OK);
+        ResponseEntity<RefundResponseDTO> response = new ResponseEntity<>(refundResponseDTO, HttpStatus.OK);
 
         log.info("Find order's refund: {} by orderId: {}", refundResponseDTO, orderId);
 
