@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -40,7 +41,7 @@ public interface CarController {
                     content = {@Content(schema = @Schema())})
     })
     @GetMapping("/all")
-    ResponseEntity<?> findAll(
+    ResponseEntity<Page<CarResponseDTO>> findAll(
             @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable);
 
     @Operation(
@@ -59,7 +60,7 @@ public interface CarController {
                     content = {@Content(schema = @Schema())})
     })
     @GetMapping
-    ResponseEntity<?> findAllNotMarkedAsDeleted(
+    ResponseEntity<Page<CarResponseDTO>> findAllNotMarkedAsDeleted(
             @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable);
 
     @Operation(
@@ -81,7 +82,7 @@ public interface CarController {
                     content = {@Content(schema = @Schema())})
     })
     @GetMapping("/{id}")
-    ResponseEntity<?> findCar(
+    ResponseEntity<CarResponseDTO> findCar(
             @PathVariable(name = "id") UUID carId);
 
     @Operation(
@@ -100,7 +101,7 @@ public interface CarController {
                     content = {@Content(schema = @Schema())})
     })
     @PostMapping
-    ResponseEntity<?> createCar(
+    ResponseEntity<CarResponseDTO> createCar(
             @RequestBody @Valid CreateCarRequestDTO createCarRequestDTO);
 
     @Operation(
@@ -122,7 +123,7 @@ public interface CarController {
                     content = {@Content(schema = @Schema())})
     })
     @PatchMapping("/{id}")
-    ResponseEntity<?> updateCar(
+    ResponseEntity<CarResponseDTO> updateCar(
             @PathVariable("id") UUID carId,
             @RequestBody @Valid UpdateCarRequestDTO updateCarRequestDTO);
 
@@ -145,7 +146,7 @@ public interface CarController {
                     content = {@Content(schema = @Schema())})
     })
     @PatchMapping("/{id}/fix")
-    ResponseEntity<?> fixBrokenCar(
+    ResponseEntity<CarResponseDTO> fixBrokenCar(
             @PathVariable("id") UUID carId);
 
     @Operation(
@@ -168,7 +169,7 @@ public interface CarController {
                     content = {@Content(schema = @Schema())})
     })
     @PatchMapping("/{id}/broke")
-    ResponseEntity<?> setCarAsBroken(
+    ResponseEntity<CarResponseDTO> setCarAsBroken(
             @PathVariable("id") UUID carId,
             @RequestParam(name = "damage") String damageStatus);
 
@@ -191,6 +192,6 @@ public interface CarController {
                     content = {@Content(schema = @Schema())})
     })
     @PatchMapping("/{id}/remove")
-    ResponseEntity<?> markCarAsDeleted(
+    ResponseEntity<CarResponseDTO> markCarAsDeleted(
             @PathVariable("id") UUID carId);
 }

@@ -64,6 +64,8 @@ class UserServiceImplTest {
 
     private UserResponseDTO firstUserResponseDTO;
 
+    private UserResponseDTO activatedNewUserResponseDTO;
+
     private CreateUserRequestDTO createUserRequestDTO;
 
     private PassportResponseDTO firstUserPassportResponseDTO;
@@ -113,6 +115,8 @@ class UserServiceImplTest {
 
         newUser = UserTestDataFactory.buildNewUserFromCreateUserRequestDTO(createUserRequestDTO);
 
+        activatedNewUserResponseDTO = UserTestDataFactory.buildActicatedUserResponseDTO(newUser);
+
         blockedUser = UserTestDataFactory.buildBlockedUser();
 
         userDTOsPage = new PageImpl<>(List.of(firstUserResponseDTO, secondUserResponseDTO));
@@ -129,8 +133,8 @@ class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(firstUserWithPassport));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.findUser(userId);
-        UserResponseDTO responseBody = (UserResponseDTO) response.getBody();
+        ResponseEntity<UserResponseDTO> response = userService.findUser(userId);
+        UserResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -162,8 +166,8 @@ class UserServiceImplTest {
         when(userRepository.findAll(pageRequest)).thenReturn(usersPage);
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.findAll(pageRequest);
-        Page<UserResponseDTO> responseBody = (Page<UserResponseDTO>) response.getBody();
+        ResponseEntity<Page<UserResponseDTO>> response = userService.findAll(pageRequest);
+        Page<UserResponseDTO> responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -195,8 +199,8 @@ class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(firstUserWithPassport));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.findPassportByUserId(userId);
-        PassportResponseDTO responseBody = (PassportResponseDTO) response.getBody();
+        ResponseEntity<PassportResponseDTO> response = userService.findPassportByUserId(userId);
+        PassportResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -245,8 +249,8 @@ class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(secondUserWithoutPassport));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.createPassportForUser(userId, newPassportRequestDTOForSecondUser);
-        PassportResponseDTO responseBody = (PassportResponseDTO) response.getBody();
+        ResponseEntity<PassportResponseDTO> response = userService.createPassportForUser(userId, newPassportRequestDTOForSecondUser);
+        PassportResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -295,8 +299,8 @@ class UserServiceImplTest {
         //given - precondition or setup
         when(userRepository.findById(userId)).thenReturn(Optional.of(firstUserWithPassport));
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.updateUsersPassport(userId, updatedPassportRequestDTO);
-        PassportResponseDTO responseBody = (PassportResponseDTO) response.getBody();
+        ResponseEntity<PassportResponseDTO> response = userService.updateUsersPassport(userId, updatedPassportRequestDTO);
+        PassportResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -351,8 +355,8 @@ class UserServiceImplTest {
         doNothing().when(mailSenderService).send(any(String.class), any(String.class), any(String.class));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.saveRegisteredUser(createUserRequestDTO);
-        UserResponseDTO responseBody = (UserResponseDTO) response.getBody();
+        ResponseEntity<UserResponseDTO> response = userService.saveRegisteredUser(createUserRequestDTO);
+        UserResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -411,14 +415,14 @@ class UserServiceImplTest {
         when(userRepository.findUserByActivationCode(newUserActivationCode)).thenReturn(Optional.of(newUser));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.activateUser(newUserActivationCode);
-        String responseBody = (String) response.getBody();
+        ResponseEntity<UserResponseDTO> response = userService.activateUser(newUserActivationCode);
+        UserResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
         assertNotNull(responseBody);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("User successfully activated", responseBody);
+        assertEquals(activatedNewUserResponseDTO, responseBody);
 
         verify(userRepository).findUserByActivationCode(newUserActivationCode);
     }
@@ -442,12 +446,12 @@ class UserServiceImplTest {
     @Test
     void blockUser_WhenUserIdIsValidAndUserIsNotBlocked_ReturnSuccessfulStringMessage() {
         //given - precondition or setup
-        UserResponseDTO expectedUserResponseDTO = UserTestDataFactory.buildUserResponseDTO(firstUserWithPassport);
+        UserResponseDTO expectedUserResponseDTO = UserTestDataFactory.buildBlockedUserResponseDTO(firstUserWithPassport);
         when(userRepository.findById(userId)).thenReturn(Optional.of(firstUserWithPassport));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.blockUser(userId);
-        UserResponseDTO responseBody = (UserResponseDTO) response.getBody();
+        ResponseEntity<UserResponseDTO> response = userService.blockUser(userId);
+        UserResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -493,12 +497,12 @@ class UserServiceImplTest {
     @Test
     void unlockUser_WhenUserIdIsValidAndUserIsBlocked_ReturnSuccessfulStringMessage() {
         //given - precondition or setup
-        UserResponseDTO expectedUserResponseDTO = UserTestDataFactory.buildUserResponseDTO(blockedUser);
+        UserResponseDTO expectedUserResponseDTO = UserTestDataFactory.buildActicatedUserResponseDTO(blockedUser);
         when(userRepository.findById(userId)).thenReturn(Optional.of(blockedUser));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.unlockUser(userId);
-        UserResponseDTO responseBody = (UserResponseDTO) response.getBody();
+        ResponseEntity<UserResponseDTO> response = userService.unlockUser(userId);
+        UserResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);

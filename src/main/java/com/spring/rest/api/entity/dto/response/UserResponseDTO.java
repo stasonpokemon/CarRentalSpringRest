@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
-import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_EMAIL;
 
 @Data
 @AllArgsConstructor
@@ -33,6 +32,11 @@ public class UserResponseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(example = USER_EMAIL, description = USER_EMAIL)
     private String email;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(example = USER_ACTIVE, description = USER_ACTIVE)
+    private boolean active;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(example = PASSPORT_UUID, description = PASSPORT_UUID)
     private UUID passportId;

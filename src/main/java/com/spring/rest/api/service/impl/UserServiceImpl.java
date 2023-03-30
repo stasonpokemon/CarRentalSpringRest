@@ -3,8 +3,9 @@ package com.spring.rest.api.service.impl;
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.Role;
 import com.spring.rest.api.entity.User;
-import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
 import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
+import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
+import com.spring.rest.api.entity.dto.response.PassportResponseDTO;
 import com.spring.rest.api.entity.dto.response.UserResponseDTO;
 import com.spring.rest.api.entity.mapper.PassportMapper;
 import com.spring.rest.api.entity.mapper.UserMapper;
@@ -29,7 +30,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -54,12 +54,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findUser(UUID userId) {
+    public ResponseEntity<UserResponseDTO> findUser(UUID userId) {
 
         log.info("Finding user by id: {}", userId);
 
         UserResponseDTO userResponseDTO = userMapper.userToUserResponseDTO(findUserByIdOrThrowException(userId));
-        ResponseEntity<?> response = new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
+        ResponseEntity<UserResponseDTO> response = new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
 
         log.info("Find user: {} by id: {}", userResponseDTO, userId);
 
@@ -69,22 +69,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findAll(Pageable pageable) {
+    public ResponseEntity<Page<UserResponseDTO>> findAll(Pageable pageable) {
 
         log.info("Finding all users");
 
-        List<UserResponseDTO> usersDTO = userRepository.findAll(pageable)
+        Page<UserResponseDTO> userResponseDTOPage = new PageImpl<>(userRepository.findAll(pageable)
                 .stream()
                 .map(userMapper::userToUserResponseDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
 
-        if (usersDTO.isEmpty()) {
+
+        if (userResponseDTOPage.isEmpty()) {
             throw new NotFoundException(User.class);
         }
 
-        ResponseEntity<?> response = new ResponseEntity<Page<UserResponseDTO>>(new PageImpl<>(usersDTO), HttpStatus.OK);
+        ResponseEntity<Page<UserResponseDTO>> response = new ResponseEntity<>(userResponseDTOPage, HttpStatus.OK);
 
-        log.info("Find all users: {}", usersDTO);
+        log.info("Find all users: {}", userResponseDTOPage.getContent());
 
         return response;
     }
@@ -92,7 +93,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findPassportByUserId(UUID userId) {
+    public ResponseEntity<PassportResponseDTO> findPassportByUserId(UUID userId) {
 
         log.info("Finding passport by userId: {}", userId);
 
@@ -102,7 +103,7 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException(String.format("Passport not found for user with id = %s", userId));
         }
 
-        ResponseEntity<?> response = new ResponseEntity<>(passportMapper.passportToPassportResponseDTO(passport), HttpStatus.OK);
+        ResponseEntity<PassportResponseDTO> response = new ResponseEntity<>(passportMapper.passportToPassportResponseDTO(passport), HttpStatus.OK);
 
         log.info("Find passport: {} by userId: {}", passport, userId);
 
@@ -111,8 +112,8 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResponseEntity<?> createPassportForUser(UUID userId,
-                                                   PassportRequestDTO passportRequestDTO) {
+    public ResponseEntity<PassportResponseDTO> createPassportForUser(UUID userId,
+                                                                     PassportRequestDTO passportRequestDTO) {
 
         log.info("Creating new passport: {} for user with id: {}", passportRequestDTO, userId);
 
@@ -126,7 +127,7 @@ public class UserServiceImpl implements UserService {
         passport.setUser(user);
         passport = passportRepository.save(passport);
 
-        ResponseEntity<?> response = new ResponseEntity<>(
+        ResponseEntity<PassportResponseDTO> response = new ResponseEntity<>(
                 passportMapper.passportToPassportResponseDTO(passport), HttpStatus.OK);
 
         log.info("Creat new passport: {} for user with id: {}", passport, userId);
@@ -135,14 +136,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> updateUsersPassport(UUID userId,
-                                                 PassportRequestDTO passportRequestDTO) {
+    public ResponseEntity<PassportResponseDTO> updateUsersPassport(UUID userId,
+                                                                   PassportRequestDTO passportRequestDTO) {
 
         log.info("Updating user's passport: {} by userId: {}", passportRequestDTO, userId);
 
         Passport passport = findPassportByUserOrThrowException(findUserByIdOrThrowException(userId));
         PassportUtil.getInstance().copyNotNullFieldsFromPassportDTOToPassport(passportRequestDTO, passport);
-        ResponseEntity<?> response = new ResponseEntity<>(passportMapper.passportToPassportResponseDTO(passport), HttpStatus.OK);
+        ResponseEntity<PassportResponseDTO> response = new ResponseEntity<>(passportMapper.passportToPassportResponseDTO(passport), HttpStatus.OK);
 
         log.info("Update user's passport: {} by userId: {}", passport, userId);
 
@@ -150,7 +151,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> saveRegisteredUser(CreateUserRequestDTO createUserRequestDTO) {
+    public ResponseEntity<UserResponseDTO> saveRegisteredUser(CreateUserRequestDTO createUserRequestDTO) {
 
         log.info("Saving registered user: {}", createUserRequestDTO);
 
@@ -173,7 +174,7 @@ public class UserServiceImpl implements UserService {
         user.setActivationCode(UUID.randomUUID().toString());
         user.setRoles(Collections.singleton(Role.USER));
 
-        ResponseEntity<?> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(userRepository.save(user)), HttpStatus.OK);
+        ResponseEntity<UserResponseDTO> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(userRepository.save(user)), HttpStatus.OK);
 
         log.info("Save registered user: {}", user);
 
@@ -190,7 +191,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> activateUser(String activateCode) {
+    public ResponseEntity<UserResponseDTO> activateUser(String activateCode) {
 
         log.info("Activating user");
 
@@ -199,7 +200,7 @@ public class UserServiceImpl implements UserService {
         user.setActivationCode(null);
         user.setActive(true);
 
-        ResponseEntity<?> response = new ResponseEntity<>("User successfully activated", HttpStatus.OK);
+        ResponseEntity<UserResponseDTO> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
 
         log.info("Activate user: {}", user);
 
@@ -208,7 +209,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResponseEntity<?> blockUser(UUID id) {
+    public ResponseEntity<UserResponseDTO> blockUser(UUID id) {
 
         log.info("Blocking user with id: {}", id);
 
@@ -219,7 +220,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setActive(false);
-        ResponseEntity<?> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
+        ResponseEntity<UserResponseDTO> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
 
         log.info("Block user: {}", user);
 
@@ -227,7 +228,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> unlockUser(UUID id) {
+    public ResponseEntity<UserResponseDTO> unlockUser(UUID id) {
 
         log.info("Unlocking user with id: {}", id);
 
@@ -238,7 +239,8 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setActive(true);
-        ResponseEntity<?> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
+
+        ResponseEntity<UserResponseDTO> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
 
         log.info("Unlock user: {}", user);
 

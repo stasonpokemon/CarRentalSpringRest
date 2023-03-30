@@ -125,8 +125,8 @@ class OrderServiceImplTest {
         when(orderRepository.findAll(pageRequest)).thenReturn(orderPage);
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = orderService.findAll(pageRequest);
-        Page<OrderResponseDTO> responseBody = (Page<OrderResponseDTO>) response.getBody();
+        ResponseEntity<Page<OrderResponseDTO>> response = orderService.findAll(pageRequest);
+        Page<OrderResponseDTO> responseBody = response.getBody();
 
         assertNotNull(response);
         assertNotNull(responseBody);

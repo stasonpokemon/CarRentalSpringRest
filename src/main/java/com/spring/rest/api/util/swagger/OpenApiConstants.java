@@ -54,6 +54,8 @@ public class OpenApiConstants {
 
     public static final String USER_EMAIL = "example_email@gmail.com";
 
+    public static final String USER_ACTIVE = "true";
+
     public static final String ORDER_UUID = "df4b6bd2-b715-4835-b9c2-e251946090b9";
 
     public static final String ORDER_PRICE = "450";

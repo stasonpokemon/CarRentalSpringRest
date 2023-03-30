@@ -4,11 +4,13 @@ import com.spring.rest.api.entity.Refund;
 import com.spring.rest.api.entity.dto.response.RefundResponseDTO;
 import com.spring.rest.api.entity.dto.request.CreateRefundRequestDTO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper
 public interface RefundMapper {
 
-    RefundResponseDTO refundToRefundDTO(Refund refund);
+    @Mapping(target = "orderId", source = "order.id")
+    RefundResponseDTO refundToRefundResponseDTO(Refund refund);
 
     Refund createRefundRequestDTOToRefund(CreateRefundRequestDTO createRefundRequestDTO);
 }

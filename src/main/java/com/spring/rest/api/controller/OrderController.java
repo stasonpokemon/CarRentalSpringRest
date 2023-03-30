@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -40,7 +41,7 @@ public interface OrderController {
                     content = {@Content(schema = @Schema())})
     })
     @GetMapping
-    ResponseEntity<?> findAll(
+    ResponseEntity<Page<OrderResponseDTO>> findAll(
             @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable);
 
     @Operation(
@@ -84,7 +85,7 @@ public interface OrderController {
                     content = {@Content(schema = @Schema())})
     })
     @GetMapping("/{id}/refund")
-    ResponseEntity<?> findOrdersRefund(
+    ResponseEntity<RefundResponseDTO> findOrdersRefund(
             @PathVariable("id") UUID orderId);
 
     @Operation(
@@ -103,7 +104,7 @@ public interface OrderController {
                     content = {@Content(schema = @Schema())})
     })
     @PostMapping("/{userId}/{carId}")
-    ResponseEntity<?> createOrder(
+    ResponseEntity<OrderResponseDTO> createOrder(
             @PathVariable("userId") UUID userId,
             @PathVariable("carId") UUID carId,
             @RequestBody @Valid CreateOrderRequestDTO createOrderRequestDTO);
@@ -127,7 +128,7 @@ public interface OrderController {
                     content = {@Content(schema = @Schema())})
     })
     @PatchMapping("/{orderId}/accept")
-    ResponseEntity<?> acceptOrder(
+    ResponseEntity<OrderResponseDTO> acceptOrder(
             @PathVariable("orderId") UUID orderId);
 
     @Operation(
@@ -171,7 +172,7 @@ public interface OrderController {
                     content = {@Content(schema = @Schema())})
     })
     @PostMapping("/{orderId}/refund")
-    ResponseEntity<?> createOrdersRefund
+    ResponseEntity<RefundResponseDTO> createOrdersRefund
             (@PathVariable("orderId") UUID orderId,
              @RequestBody @Valid CreateRefundRequestDTO createRefundRequestDTO);
 }

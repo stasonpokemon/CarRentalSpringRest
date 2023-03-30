@@ -117,8 +117,8 @@ class CarServiceImplTest {
         when(carRepository.findById(carId)).thenReturn(Optional.of(firstCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.findById(carId);
-        CarResponseDTO responseBody = (CarResponseDTO) response.getBody();
+        ResponseEntity<CarResponseDTO> response = carService.findById(carId);
+        CarResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -150,8 +150,8 @@ class CarServiceImplTest {
         when(carRepository.findAll(pageRequest)).thenReturn(carsPage);
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.findAll(pageRequest);
-        Page<CarResponseDTO> responseBody = (Page<CarResponseDTO>) response.getBody();
+        ResponseEntity<Page<CarResponseDTO>> response = carService.findAll(pageRequest);
+        Page<CarResponseDTO> responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -183,8 +183,8 @@ class CarServiceImplTest {
         when(carRepository.findAllByDeleted(false, pageRequest)).thenReturn(List.of(firstCar, secoundCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.findAllNotMarkAsDeleted(pageRequest);
-        Page<CarResponseDTO> responseBody = (Page<CarResponseDTO>) response.getBody();
+        ResponseEntity<Page<CarResponseDTO>> response = carService.findAllNotMarkAsDeleted(pageRequest);
+        Page<CarResponseDTO> responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -217,8 +217,8 @@ class CarServiceImplTest {
                 .thenReturn(List.of(firstCar, secoundCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.findAllFreeNotMarkAsDeleted(pageRequest);
-        Page<CarResponseDTO> responseBody = (Page<CarResponseDTO>) response.getBody();
+        ResponseEntity<Page<CarResponseDTO>> response = carService.findAllFreeNotMarkAsDeleted(pageRequest);
+        Page<CarResponseDTO> responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -253,8 +253,8 @@ class CarServiceImplTest {
         when(carRepository.save(firstCar)).thenReturn(firstCar);
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.save(createCarRequestDTO);
-        CarResponseDTO responseBody = (CarResponseDTO) response.getBody();
+        ResponseEntity<CarResponseDTO> response = carService.save(createCarRequestDTO);
+        CarResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -271,8 +271,8 @@ class CarServiceImplTest {
         when(carRepository.findById(carId)).thenReturn(Optional.of(secoundCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.update(carId, updateCarRequestDTO);
-        Object responseBody = response.getBody();
+        ResponseEntity<CarResponseDTO> response = carService.update(carId, updateCarRequestDTO);
+        CarResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -302,8 +302,8 @@ class CarServiceImplTest {
         when(carRepository.findById(carId)).thenReturn(Optional.of(brokenCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.fixBrokenCar(carId);
-        CarResponseDTO responseBody = (CarResponseDTO) response.getBody();
+        ResponseEntity<CarResponseDTO> response = carService.fixBrokenCar(carId);
+        CarResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -335,14 +335,12 @@ class CarServiceImplTest {
         when(carRepository.findById(carId)).thenReturn(Optional.of(firstCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.fixBrokenCar(carId);
-        String responseBody = (String) response.getBody();
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> carService.fixBrokenCar(carId));
 
         //then - verify the output
-        assertNotNull(response);
-        assertNotNull(responseBody);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(String.format("Unable to fix car. Car with id = %s already fixed", carId), responseBody);
+        assertNotNull(badRequestException);
+        assertEquals(String.format("Unable to fix car. Car with id = %s already fixed", carId), badRequestException.getMessage());
 
         verify(carRepository).findById(carId);
     }
@@ -353,14 +351,12 @@ class CarServiceImplTest {
         when(carRepository.findById(carId)).thenReturn(Optional.of(deletedCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.fixBrokenCar(carId);
-        String responseBody = (String) response.getBody();
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> carService.fixBrokenCar(carId));
 
         //then - verify the output
-        assertNotNull(response);
-        assertNotNull(responseBody);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(String.format("Unable to fix car. Car with id = %s is deleted", carId), responseBody);
+        assertNotNull(badRequestException);
+        assertEquals(String.format("Unable to fix car. Car with id = %s is deleted", carId), badRequestException.getMessage());
 
         verify(carRepository).findById(carId);
     }
@@ -370,8 +366,8 @@ class CarServiceImplTest {
         String damageDescription = "With damage";
         when(carRepository.findById(carId)).thenReturn(Optional.of(firstCar));
 
-        ResponseEntity<?> response = carService.setCarAsBroken(carId, damageDescription);
-        CarResponseDTO responseBody = (CarResponseDTO) response.getBody();
+        ResponseEntity<CarResponseDTO> response = carService.setCarAsBroken(carId, damageDescription);
+        CarResponseDTO responseBody = response.getBody();
 
         assertNotNull(response);
         assertNotNull(responseBody);
@@ -443,8 +439,8 @@ class CarServiceImplTest {
         when(carRepository.findById(carId)).thenReturn(Optional.of(firstCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.markCarAsDeleted(carId);
-        CarResponseDTO responseBody = (CarResponseDTO) response.getBody();
+        ResponseEntity<CarResponseDTO> response = carService.markCarAsDeleted(carId);
+        CarResponseDTO responseBody = response.getBody();
 
         //then - verify the output
         assertNotNull(response);
@@ -461,14 +457,12 @@ class CarServiceImplTest {
         when(carRepository.findById(carId)).thenReturn(Optional.of(deletedCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.markCarAsDeleted(carId);
-        String responseBody = (String) response.getBody();
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> carService.markCarAsDeleted(carId));
 
         //then - verify the output
-        assertNotNull(response);
-        assertNotNull(responseBody);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(String.format("Car with id = %s already marked as deleted", carId), responseBody);
+        assertNotNull(badRequestException);
+        assertEquals(String.format("Car with id = %s already marked as deleted", carId), badRequestException.getMessage());
 
         verify(carRepository).findById(carId);
     }

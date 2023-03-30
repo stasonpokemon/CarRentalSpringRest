@@ -3,9 +3,12 @@ package com.spring.rest.api.controller.impl;
 import com.spring.rest.api.controller.OrderController;
 import com.spring.rest.api.entity.dto.request.CreateOrderRequestDTO;
 import com.spring.rest.api.entity.dto.request.CreateRefundRequestDTO;
+import com.spring.rest.api.entity.dto.response.OrderResponseDTO;
+import com.spring.rest.api.entity.dto.response.RefundResponseDTO;
 import com.spring.rest.api.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +23,7 @@ public class OrderControllerImpl implements OrderController {
     private final OrderService orderService;
 
     @Override
-    public ResponseEntity<?> findAll(Pageable pageable) {
+    public ResponseEntity<Page<OrderResponseDTO>> findAll(Pageable pageable) {
 
         log.info("GET request to find all orders");
 
@@ -36,7 +39,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<?> findOrdersRefund(UUID orderId) {
+    public ResponseEntity<RefundResponseDTO> findOrdersRefund(UUID orderId) {
 
         log.info("GET request to find order's refund with orderId: {}", orderId);
 
@@ -44,7 +47,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<?> createOrder(UUID userId,
+    public ResponseEntity<OrderResponseDTO> createOrder(UUID userId,
                                          UUID carId,
                                          CreateOrderRequestDTO createOrderRequestDTO) {
 
@@ -55,7 +58,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<?> acceptOrder(UUID orderId) {
+    public ResponseEntity<OrderResponseDTO> acceptOrder(UUID orderId) {
 
         log.info("PATCH request to accept order with id: {}", orderId);
 
@@ -63,7 +66,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<?> cancelOrder(UUID orderId) {
+    public ResponseEntity<OrderResponseDTO> cancelOrder(UUID orderId) {
 
         log.info("PATCH request to cancel order with id: {}", orderId);
 
@@ -71,8 +74,8 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<?> createOrdersRefund(UUID orderId,
-                                                CreateRefundRequestDTO createRefundRequestDTO) {
+    public ResponseEntity<RefundResponseDTO> createOrdersRefund(UUID orderId,
+                                                                CreateRefundRequestDTO createRefundRequestDTO) {
 
         log.info("POST request to create refund: {} for order with id: {}", createRefundRequestDTO, orderId);
 

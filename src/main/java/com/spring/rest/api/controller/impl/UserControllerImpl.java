@@ -2,10 +2,14 @@ package com.spring.rest.api.controller.impl;
 
 import com.spring.rest.api.controller.UserController;
 import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
+import com.spring.rest.api.entity.dto.response.OrderResponseDTO;
+import com.spring.rest.api.entity.dto.response.PassportResponseDTO;
+import com.spring.rest.api.entity.dto.response.UserResponseDTO;
 import com.spring.rest.api.service.OrderService;
 import com.spring.rest.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +26,7 @@ public class UserControllerImpl implements UserController {
     private final OrderService orderService;
 
     @Override
-    public ResponseEntity<?> findAll(Pageable pageable) {
+    public ResponseEntity<Page<UserResponseDTO>> findAll(Pageable pageable) {
 
         log.info("GET request to find all users");
 
@@ -30,7 +34,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> findUserById(UUID userId) {
+    public ResponseEntity<UserResponseDTO> findUserById(UUID userId) {
 
         log.info("GET request to find user with id: {}", userId);
 
@@ -38,7 +42,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> blockUser(UUID userId) {
+    public ResponseEntity<UserResponseDTO> blockUser(UUID userId) {
 
         log.info("PATCH request to block user with id: {}", userId);
 
@@ -46,7 +50,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> unlockUser(UUID userId) {
+    public ResponseEntity<UserResponseDTO> unlockUser(UUID userId) {
 
         log.info("PATCH request to unlock user with id: {}", userId);
 
@@ -54,8 +58,8 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> findUsersOrders(Pageable pageable,
-                                             UUID userId) {
+    public ResponseEntity<Page<OrderResponseDTO>> findUsersOrders(Pageable pageable,
+                                                                  UUID userId) {
 
         log.info("GET request to find user's orders by userId: {}", userId);
 
@@ -63,7 +67,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> findUsersPassport(UUID userId) {
+    public ResponseEntity<PassportResponseDTO> findUsersPassport(UUID userId) {
 
         log.info("GET request to find user's passport by userId: {}", userId);
 
@@ -71,7 +75,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> createPassportForUser(UUID userId,
+    public ResponseEntity<PassportResponseDTO> createPassportForUser(UUID userId,
                                                    PassportRequestDTO passportRequestDTO) {
 
         log.info("POST request to create passport: {} for user with id: {}", passportRequestDTO, userId);
@@ -80,7 +84,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> editUsersPassport(UUID userId,
+    public ResponseEntity<PassportResponseDTO> editUsersPassport(UUID userId,
                                                PassportRequestDTO passportRequestDTO) {
 
         log.info("PATCH request to change passport: {} of user with userId: {}", passportRequestDTO, userId);

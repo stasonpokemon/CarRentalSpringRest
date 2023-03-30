@@ -35,4 +35,8 @@ public class RefundResponseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(example = REFUND_REFUND_DATE, description = REFUND_REFUND_DATE)
     private LocalDateTime refundDate;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(example = ORDER_UUID, description = ORDER_UUID)
+    private UUID orderId;
 }
