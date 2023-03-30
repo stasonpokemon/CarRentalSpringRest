@@ -28,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,6 +48,8 @@ class UserServiceImplTest {
 
     @Mock
     private MailSenderService mailSenderService;
+
+    private UUID userId;
 
     private User firstUserWithPassport;
 
@@ -77,6 +80,8 @@ class UserServiceImplTest {
 
     @BeforeEach
     void init() {
+        userId = UUID.randomUUID();
+
         firstUserWithPassport = UserTestDataFactory.buildUserWithPassport();
 
         secondUserWithoutPassport = UserTestDataFactory.buildUserWithOutPassport();
@@ -110,10 +115,10 @@ class UserServiceImplTest {
     @Test
     void findUser_WhenUserExistsWithSpecifiedId_ReturnUserDTO() {
         //given - precondition or setup
-        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(firstUserWithPassport));
+        when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(firstUserWithPassport));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.findUser(1L);
+        ResponseEntity<?> response = userService.findUser(userId);
         UserResponseDTO responseBody = (UserResponseDTO) response.getBody();
 
         //then - verify the output
@@ -122,22 +127,22 @@ class UserServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(firstUserResponseDTO, responseBody);
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test
     void findUser_WhenUserDoesNotExistsWithSpecifiedId_ThrowsNotNullException() {
         //given - precondition or setup
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> userService.findUser(1L));
+                = assertThrows(NotFoundException.class, () -> userService.findUser(userId));
 
         //then - verify the output
-        assertEquals("Not found User with id: 1", notFoundException.getMessage());
+        assertEquals(String.format("Not found User with id: %s", userId), notFoundException.getMessage());
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test
@@ -176,10 +181,10 @@ class UserServiceImplTest {
     @Test
     void findPassportByUserId_WhenUserIdIsValidAndUserHasPassport_ReturnPassportDTO() {
         //given - precondition or setup
-        when(userRepository.findById(1L)).thenReturn(Optional.of(firstUserWithPassport));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(firstUserWithPassport));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.findPassportByUserId(1L);
+        ResponseEntity<?> response = userService.findPassportByUserId(userId);
         PassportDTO responseBody = (PassportDTO) response.getBody();
 
         //then - verify the output
@@ -188,48 +193,48 @@ class UserServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(firstUserPassportDTO, responseBody);
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test
     void findPassportByUserId_WhenUserIdIsValidAndUserHasNoPassport_ThrowsNotFoundException() {
         //given - precondition or setup
-        secondUserWithoutPassport.setId(1L);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(secondUserWithoutPassport));
+        secondUserWithoutPassport.setId(userId);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(secondUserWithoutPassport));
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> userService.findPassportByUserId(1L));
+                = assertThrows(NotFoundException.class, () -> userService.findPassportByUserId(userId));
 
         //then - verify the output
-        assertEquals("Passport not found for user with id = 1", notFoundException.getMessage());
+        assertEquals(String.format("Passport not found for user with id = %s", userId), notFoundException.getMessage());
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test
     void findPassportByUserId_WhenUserIdIsInvalid_ThrowsNotFoundException() {
         //given - precondition or setup
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> userService.findPassportByUserId(1L));
+                = assertThrows(NotFoundException.class, () -> userService.findPassportByUserId(userId));
 
         //then - verify the output
-        assertEquals("Not found User with id: 1", notFoundException.getMessage());
+        assertEquals(String.format("Not found User with id: %s", userId), notFoundException.getMessage());
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test
     void createPassportForUser_WhenUserIdIsValidAndUserHasNotPassport_ReturnPassportDTO() {
         //given - precondition or setup
         when(passportRepository.save(newPassportForSecondUser)).thenReturn(newPassportForSecondUser);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(secondUserWithoutPassport));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(secondUserWithoutPassport));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.createPassportForUser(1L, newPassportForSecondUserDTO);
+        ResponseEntity<?> response = userService.createPassportForUser(userId, newPassportForSecondUserDTO);
         PassportDTO responseBody = (PassportDTO) response.getBody();
 
         //then - verify the output
@@ -238,48 +243,48 @@ class UserServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(newPassportForSecondUserDTO, responseBody);
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
         verify(passportRepository).save(any(Passport.class));
     }
 
     @Test
     void createPassportForUser_WhenUserIdIsValidAndUserHasPassport_ThrowsBadRequestException() {
         //given - precondition or setup
-        when(userRepository.findById(1L)).thenReturn(Optional.of(firstUserWithPassport));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(firstUserWithPassport));
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> userService.createPassportForUser(1L, newPassportForSecondUserDTO));
+                = assertThrows(BadRequestException.class, () -> userService.createPassportForUser(userId, newPassportForSecondUserDTO));
 
         //then - verify the output
-        assertEquals("User with id = 1 already has passport", badRequestException.getMessage());
+        assertEquals(String.format("User with id = %s already has passport", userId), badRequestException.getMessage());
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
         verify(passportRepository, never()).save(any(Passport.class));
     }
 
     @Test
     void createPassportForUser_WhenUserIdIsInvalid_ThrowsNotFoundException() {
         //given - precondition or setup
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> userService.createPassportForUser(1L, newPassportForSecondUserDTO));
+                = assertThrows(NotFoundException.class, () -> userService.createPassportForUser(userId, newPassportForSecondUserDTO));
 
         //then - verify the output
-        assertEquals("Not found User with id: 1", notFoundException.getMessage());
+        assertEquals(String.format("Not found User with id: %s", userId), notFoundException.getMessage());
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
         verify(passportRepository, never()).save(any(Passport.class));
     }
 
     @Test
     void updateUsersPassport_WhenUserIdIsValidAndUserHasPassport_ReturnUpdatedPassport() {
         //given - precondition or setup
-        when(userRepository.findById(1L)).thenReturn(Optional.of(firstUserWithPassport));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(firstUserWithPassport));
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.updateUsersPassport(1L, updatedPassportDTO);
+        ResponseEntity<?> response = userService.updateUsersPassport(userId, updatedPassportDTO);
         PassportDTO responseBody = (PassportDTO) response.getBody();
 
         //then - verify the output
@@ -288,38 +293,38 @@ class UserServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(updatedPassportDTO, responseBody);
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test
     void updateUsersPassport_WhenUserIdIsValidAndUserHasNotPassport_ThrowsBadRequestException() {
         //given - precondition or setup
-        secondUserWithoutPassport.setId(1L);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(secondUserWithoutPassport));
+        secondUserWithoutPassport.setId(userId);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(secondUserWithoutPassport));
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException =
-                assertThrows(BadRequestException.class, () -> userService.updateUsersPassport(1L, updatedPassportDTO));
+                assertThrows(BadRequestException.class, () -> userService.updateUsersPassport(userId, updatedPassportDTO));
 
         //then - verify the output
-        assertEquals("Passport not found for user with id = 1", badRequestException.getMessage());
+        assertEquals(String.format("Passport not found for user with id = %s", userId), badRequestException.getMessage());
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test
     void updateUsersPassport_WhenUserIdIsInvalid_ThrowsNotFoundException() {
         //given - precondition or setup
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException =
-                assertThrows(NotFoundException.class, () -> userService.updateUsersPassport(1L, updatedPassportDTO));
+                assertThrows(NotFoundException.class, () -> userService.updateUsersPassport(userId, updatedPassportDTO));
 
         //then - verify the output
-        assertEquals("Not found User with id: 1", notFoundException.getMessage());
+        assertEquals(String.format("Not found User with id: %s", userId), notFoundException.getMessage());
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
 
@@ -427,10 +432,10 @@ class UserServiceImplTest {
     void blockUser_WhenUserIdIsValidAndUserIsNotBlocked_ReturnSuccessfulStringMessage() {
         //given - precondition or setup
         UserResponseDTO expectedUserResponseDTO = UserTestDataFactory.buildUserResponseDTO(firstUserWithPassport);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(firstUserWithPassport));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(firstUserWithPassport));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.blockUser(1L);
+        ResponseEntity<?> response = userService.blockUser(userId);
         UserResponseDTO responseBody = (UserResponseDTO) response.getBody();
 
         //then - verify the output
@@ -439,49 +444,49 @@ class UserServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedUserResponseDTO, responseBody);
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test
     void blockUser_WhenUserIdIsValidAndUserIsBlocked_ThrowsBadRequestException() {
         //given - precondition or setup
-        when(userRepository.findById(1L)).thenReturn(Optional.of(blockedUser));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(blockedUser));
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> userService.blockUser(1L));
+                = assertThrows(BadRequestException.class, () -> userService.blockUser(userId));
 
         //then - verify the output
         assertNotNull(badRequestException);
-        assertEquals("User with id: 1 is already blocked", badRequestException.getMessage());
+        assertEquals(String.format("User with id: %s is already blocked", userId), badRequestException.getMessage());
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test
     void blockUser_WhenUserIdIsInvalidAnd_ThrowsNotFound() {
         //given - precondition or setup
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> userService.blockUser(1L));
+                = assertThrows(NotFoundException.class, () -> userService.blockUser(userId));
 
         //then - verify the output
         assertNotNull(notFoundException);
-        assertEquals("Not found User with id: 1", notFoundException.getMessage());
+        assertEquals(String.format("Not found User with id: %s", userId), notFoundException.getMessage());
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test
     void unlockUser_WhenUserIdIsValidAndUserIsBlocked_ReturnSuccessfulStringMessage() {
         //given - precondition or setup
         UserResponseDTO expectedUserResponseDTO = UserTestDataFactory.buildUserResponseDTO(blockedUser);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(blockedUser));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(blockedUser));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = userService.unlockUser(1L);
+        ResponseEntity<?> response = userService.unlockUser(userId);
         UserResponseDTO responseBody = (UserResponseDTO) response.getBody();
 
         //then - verify the output
@@ -490,39 +495,39 @@ class UserServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedUserResponseDTO, responseBody);
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test
     void unlockUser_WhenUserIdIsValidAndUserIsNotBlocked_ThrowsBadRequestException() {
         //given - precondition or setup
-        when(userRepository.findById(1L)).thenReturn(Optional.of(firstUserWithPassport));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(firstUserWithPassport));
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> userService.unlockUser(1L));
+                = assertThrows(BadRequestException.class, () -> userService.unlockUser(userId));
 
         //then - verify the output
         assertNotNull(badRequestException);
-        assertEquals("User with id: 1 is already unlocked", badRequestException.getMessage());
+        assertEquals(String.format("User with id: %s is already unlocked", userId), badRequestException.getMessage());
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test
     void unlockUser_WhenUserIdIsInvalid_ThrowsNotFound() {
         //given - precondition or setup
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> userService.unlockUser(1L));
+                = assertThrows(NotFoundException.class, () -> userService.unlockUser(userId));
 
         //then - verify the output
         assertNotNull(notFoundException);
-        assertEquals("Not found User with id: 1", notFoundException.getMessage());
+        assertEquals(String.format("Not found User with id: %s", userId), notFoundException.getMessage());
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findById(userId);
     }
 
     @Test

@@ -6,27 +6,31 @@ import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
+import java.util.UUID;
+
 public interface UserService {
 
     ResponseEntity<?> findAll(Pageable pageable);
 
-    ResponseEntity<?> blockUser(Long userId);
+    ResponseEntity<?> blockUser(UUID userId);
 
-    ResponseEntity<?> unlockUser(Long userId);
+    ResponseEntity<?> unlockUser(UUID userId);
 
-    ResponseEntity<?> findPassportByUserId(Long userId);
+    ResponseEntity<?> findPassportByUserId(UUID userId);
 
-    ResponseEntity<?> createPassportForUser(Long userId, PassportDTO passportDTO);
+    ResponseEntity<?> createPassportForUser(UUID userId,
+                                            PassportDTO passportDTO);
 
-    ResponseEntity<?> updateUsersPassport(Long userId, PassportDTO passportDTO);
+    ResponseEntity<?> updateUsersPassport(UUID userId,
+                                          PassportDTO passportDTO);
 
     ResponseEntity<?> saveRegisteredUser(CreateUserRequestDTO createUserRequestDTO);
 
     ResponseEntity<?> activateUser(String activateCode);
 
-    ResponseEntity<?> findUser(Long userId);
+    ResponseEntity<?> findUser(UUID userId);
 
-    User findUserByIdOrThrowException(Long userId);
+    User findUserByIdOrThrowException(UUID userId);
 
 
 }

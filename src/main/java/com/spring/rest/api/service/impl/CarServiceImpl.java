@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -38,7 +39,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findById(Long id) {
+    public ResponseEntity<?> findById(UUID id) {
 
         log.info("Finding car with id: {}", id);
 
@@ -100,7 +101,7 @@ public class CarServiceImpl implements CarService {
 
         log.info("Finding all free not mark as deleted cars");
 
-        List<CarResponseDTO> carsDTO = carRepository.findAllByEmploymentStatusAndDeleted(true, false, pageable)
+        List<CarResponseDTO> carsDTO = carRepository.findAllByBusyAndDeleted(false, false, pageable)
                 .stream()
                 .map(carMapper::carToCarResponseDTO)
                 .collect(Collectors.toList());
@@ -135,7 +136,8 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public ResponseEntity<?> update(Long id, UpdateCarRequestDTO updateCarRequestDTO) {
+    public ResponseEntity<?> update(UUID id,
+                                    UpdateCarRequestDTO updateCarRequestDTO) {
 
         log.info("Updating car: {} with id: {}", updateCarRequestDTO, id);
 
@@ -150,7 +152,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public ResponseEntity<?> fixBrokenCar(Long carId) {
+    public ResponseEntity<?> fixBrokenCar(UUID carId) {
 
         log.info("Fixing broken car with id: {}", carId);
 
@@ -177,7 +179,8 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public ResponseEntity<?> setCarAsBroken(Long carId, String damageStatus) {
+    public ResponseEntity<?> setCarAsBroken(UUID carId,
+                                            String damageStatus) {
 
         log.info("Setting the car as broken with id: {} and damage description: {}", carId, damageStatus);
 
@@ -206,7 +209,7 @@ public class CarServiceImpl implements CarService {
 
 
     @Override
-    public ResponseEntity<?> markCarAsDeleted(Long id) {
+    public ResponseEntity<?> markCarAsDeleted(UUID id) {
 
         log.info("Marking car with id: {} as deleted", id);
 
@@ -229,7 +232,7 @@ public class CarServiceImpl implements CarService {
 
     @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
     @Override
-    public Car findCarByIdOrThrowException(Long id) {
+    public Car findCarByIdOrThrowException(UUID id) {
 
         log.info("Finding car with id: {}", id);
 

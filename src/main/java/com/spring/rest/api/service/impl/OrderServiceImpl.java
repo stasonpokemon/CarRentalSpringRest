@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findById(Long orderId) {
+    public ResponseEntity<?> findById(UUID orderId) {
 
         log.info("Finding order by id: {}", orderId);
 
@@ -84,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findOrdersByUserId(Long userId,
+    public ResponseEntity<?> findOrdersByUserId(UUID userId,
                                                 Pageable pageable) {
 
         log.info("Finding all orders by user id: {}", userId);
@@ -111,8 +112,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseEntity<?> createOrder(CreateOrderRequestDTO createOrderRequestDTO,
-                                         Long userId,
-                                         Long carId) {
+                                         UUID userId,
+                                         UUID carId) {
 
         log.info("Creating new order: {} for car with id: {} for user with id: {}",
                 createOrderRequestDTO, carId, userId);
@@ -156,7 +157,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<?> acceptOrder(Long orderId) {
+    public ResponseEntity<?> acceptOrder(UUID orderId) {
 
         log.info("Accepting order with id: {}", orderId);
 
@@ -178,7 +179,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<?> cancelOrder(Long orderId) {
+    public ResponseEntity<?> cancelOrder(UUID orderId) {
 
         log.info("Canceling order with id: {}", orderId);
 
@@ -201,7 +202,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<?> createOrdersRefund(Long orderId,
+    public ResponseEntity<?> createOrdersRefund(UUID orderId,
                                                 CreateRefundRequestDTO createRefundRequestDTO) {
 
         log.info("Creating refund: {} for order with id: {}", createRefundRequestDTO, orderId);
@@ -236,7 +237,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findOrdersRefund(Long orderId) {
+    public ResponseEntity<?> findOrdersRefund(UUID orderId) {
 
         log.info("Finding order's refund by orderId: {}", orderId);
 
@@ -260,7 +261,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
-    protected Order findOrderByIdOrThrowException(Long orderId) {
+    protected Order findOrderByIdOrThrowException(UUID orderId) {
 
         log.info("Finding order with id: {}", orderId);
 

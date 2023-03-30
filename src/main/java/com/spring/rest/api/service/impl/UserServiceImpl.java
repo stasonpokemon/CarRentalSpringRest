@@ -8,14 +8,13 @@ import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
 import com.spring.rest.api.entity.dto.response.UserResponseDTO;
 import com.spring.rest.api.entity.mapper.PassportMapper;
 import com.spring.rest.api.entity.mapper.UserMapper;
-import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.exception.BadRequestException;
+import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.PassportRepository;
 import com.spring.rest.api.repo.UserRepository;
 import com.spring.rest.api.service.MailSenderService;
 import com.spring.rest.api.service.UserService;
 import com.spring.rest.api.util.PassportUtil;
-import com.spring.rest.api.util.tread.MailSenderThread;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
@@ -55,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findUser(Long userId) {
+    public ResponseEntity<?> findUser(UUID userId) {
 
         log.info("Finding user by id: {}", userId);
 
@@ -93,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findPassportByUserId(Long userId) {
+    public ResponseEntity<?> findPassportByUserId(UUID userId) {
 
         log.info("Finding passport by userId: {}", userId);
 
@@ -112,7 +111,8 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResponseEntity<?> createPassportForUser(Long userId, PassportDTO passportDTO) {
+    public ResponseEntity<?> createPassportForUser(UUID userId,
+                                                   PassportDTO passportDTO) {
 
         log.info("Creating new passport: {} for user with id: {}", passportDTO, userId);
 
@@ -135,7 +135,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> updateUsersPassport(Long userId, PassportDTO passportDTO) {
+    public ResponseEntity<?> updateUsersPassport(UUID userId,
+                                                 PassportDTO passportDTO) {
 
         log.info("Updating user's passport: {} by userId: {}", passportDTO, userId);
 
@@ -207,7 +208,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResponseEntity<?> blockUser(Long id) {
+    public ResponseEntity<?> blockUser(UUID id) {
 
         log.info("Blocking user with id: {}", id);
 
@@ -226,7 +227,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> unlockUser(Long id) {
+    public ResponseEntity<?> unlockUser(UUID id) {
 
         log.info("Unlocking user with id: {}", id);
 
@@ -246,7 +247,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
     @Override
-    public User findUserByIdOrThrowException(Long userId) {
+    public User findUserByIdOrThrowException(UUID userId) {
 
         log.info("Finding user by id: {}", userId);
 

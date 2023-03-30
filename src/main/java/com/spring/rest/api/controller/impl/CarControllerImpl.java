@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> findCar(Long carId) {
+    public ResponseEntity<?> findCar(UUID carId) {
 
         log.info("GET request to find cars with id: {}", carId);
 
@@ -51,7 +53,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> updateCar(Long carId,
+    public ResponseEntity<?> updateCar(UUID carId,
                                        UpdateCarRequestDTO updateCarRequestDTO) {
 
         log.info("PATCH request to update car: {} with id: {}", updateCarRequestDTO, carId);
@@ -60,7 +62,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> fixBrokenCar(Long carId) {
+    public ResponseEntity<?> fixBrokenCar(UUID carId) {
 
         log.info("PATCH request to fix broken car with id: {}", carId);
 
@@ -68,7 +70,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> setCarAsBroken(Long carId,
+    public ResponseEntity<?> setCarAsBroken(UUID carId,
                                             String damageStatus) {
 
         log.info("PATCH request to set the car as broken with car's id: {} and damage description: {}",
@@ -78,7 +80,7 @@ public class CarControllerImpl implements CarController {
     }
 
     @Override
-    public ResponseEntity<?> markCarAsDeleted(Long carId) {
+    public ResponseEntity<?> markCarAsDeleted(UUID carId) {
 
         log.info("PATCH request to mark car with id: {} as deleted ", carId);
 

@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -28,7 +30,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> findUserById(Long userId) {
+    public ResponseEntity<?> findUserById(UUID userId) {
 
         log.info("GET request to find user with id: {}", userId);
 
@@ -36,7 +38,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> blockUser(Long userId) {
+    public ResponseEntity<?> blockUser(UUID userId) {
 
         log.info("PATCH request to block user with id: {}", userId);
 
@@ -44,7 +46,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> unlockUser(Long userId) {
+    public ResponseEntity<?> unlockUser(UUID userId) {
 
         log.info("PATCH request to unlock user with id: {}", userId);
 
@@ -53,7 +55,7 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ResponseEntity<?> findUsersOrders(Pageable pageable,
-                                             Long userId) {
+                                             UUID userId) {
 
         log.info("GET request to find user's orders by userId: {}", userId);
 
@@ -61,7 +63,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> findUsersPassport(Long userId) {
+    public ResponseEntity<?> findUsersPassport(UUID userId) {
 
         log.info("GET request to find user's passport by userId: {}", userId);
 
@@ -69,7 +71,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> createPassportForUser(Long userId,
+    public ResponseEntity<?> createPassportForUser(UUID userId,
                                                    PassportDTO passportDTO) {
 
         log.info("POST request to create passport: {} for user with id: {}", passportDTO, userId);
@@ -78,7 +80,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<?> editUsersPassport(Long userId,
+    public ResponseEntity<?> editUsersPassport(UUID userId,
                                                PassportDTO passportDTO) {
 
         log.info("PATCH request to change passport: {} of user with userId: {}", passportDTO, userId);

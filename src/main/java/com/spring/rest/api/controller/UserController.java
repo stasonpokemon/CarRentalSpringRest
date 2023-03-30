@@ -17,6 +17,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RequestMapping("/users")
 @Tag(name = "User Controller", description = "User management controller")
 public interface UserController {
@@ -60,7 +62,7 @@ public interface UserController {
     })
     @GetMapping("/{id}")
     ResponseEntity<?> findUserById(
-            @PathVariable("id") Long userId);
+            @PathVariable("id") UUID userId);
 
     @Operation(
             summary = "Block user",
@@ -82,7 +84,7 @@ public interface UserController {
     })
     @PatchMapping("/{id}/block")
     ResponseEntity<?> blockUser(
-            @PathVariable("id") Long userId);
+            @PathVariable("id") UUID userId);
 
     @Operation(
             summary = "Unlock user",
@@ -104,7 +106,7 @@ public interface UserController {
     })
     @PatchMapping("/{id}/unlock")
     ResponseEntity<?> unlockUser(
-            @PathVariable("id") Long userId);
+            @PathVariable("id") UUID userId);
 
     @Operation(
             summary = "Find user's orders",
@@ -127,7 +129,7 @@ public interface UserController {
     @GetMapping("/{id}/orders")
     ResponseEntity<?> findUsersOrders(
             @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable,
-            @PathVariable("id") Long userId);
+            @PathVariable("id") UUID userId);
 
     @Operation(
             summary = "Find user's passport",
@@ -149,7 +151,7 @@ public interface UserController {
     })
     @GetMapping("/{id}/passport")
     ResponseEntity<?> findUsersPassport(
-            @PathVariable("id") Long userId);
+            @PathVariable("id") UUID userId);
 
     @Operation(
             summary = "Create passport for user",
@@ -171,7 +173,7 @@ public interface UserController {
     })
     @PostMapping("/{id}/passport")
     ResponseEntity<?> createPassportForUser(
-            @PathVariable("id") Long userId,
+            @PathVariable("id") UUID userId,
             @RequestBody @Valid PassportDTO passportDTO);
 
     @Operation(
@@ -194,7 +196,7 @@ public interface UserController {
     })
     @PatchMapping("/{id}/passport")
     ResponseEntity<?> editUsersPassport(
-            @PathVariable("id") Long userId,
+            @PathVariable("id") UUID userId,
             @RequestBody PassportDTO passportDTO);
 
 }

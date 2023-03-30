@@ -17,6 +17,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 
 @RequestMapping("/cars")
 @Tag(name = "Car Controller", description = "Car management controller")
@@ -80,7 +82,7 @@ public interface CarController {
     })
     @GetMapping("/{id}")
     ResponseEntity<?> findCar(
-            @PathVariable(name = "id") Long carId);
+            @PathVariable(name = "id") UUID carId);
 
     @Operation(
             summary = "Create new car",
@@ -121,7 +123,7 @@ public interface CarController {
     })
     @PatchMapping("/{id}")
     ResponseEntity<?> updateCar(
-            @PathVariable("id") Long carId,
+            @PathVariable("id") UUID carId,
             @RequestBody @Valid UpdateCarRequestDTO updateCarRequestDTO);
 
     @Operation(
@@ -144,7 +146,7 @@ public interface CarController {
     })
     @PatchMapping("/{id}/fix")
     ResponseEntity<?> fixBrokenCar(
-            @PathVariable("id") Long carId);
+            @PathVariable("id") UUID carId);
 
     @Operation(
             summary = "Set the car as broken",
@@ -166,7 +168,7 @@ public interface CarController {
     })
     @PatchMapping("/{id}/broke")
     ResponseEntity<?> setCarAsBroken(
-            @PathVariable("id") Long carId,
+            @PathVariable("id") UUID carId,
             @RequestParam(name = "damage") String damageStatus);
 
     @Operation(
@@ -189,5 +191,5 @@ public interface CarController {
     })
     @PatchMapping("/{id}/remove")
     ResponseEntity<?> markCarAsDeleted(
-            @PathVariable("id") Long carId);
+            @PathVariable("id") UUID carId);
 }

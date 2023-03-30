@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -26,7 +28,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<?> findById(Long orderId) {
+    public ResponseEntity<?> findById(UUID orderId) {
 
         log.info("GET request to find order with id: {}", orderId);
 
@@ -34,7 +36,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<?> findOrdersRefund(Long orderId) {
+    public ResponseEntity<?> findOrdersRefund(UUID orderId) {
 
         log.info("GET request to find order's refund with orderId: {}", orderId);
 
@@ -42,8 +44,8 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<?> createOrder(Long userId,
-                                         Long carId,
+    public ResponseEntity<?> createOrder(UUID userId,
+                                         UUID carId,
                                          CreateOrderRequestDTO createOrderRequestDTO) {
 
         log.info("POST request to create order: {} for car with id: {} for user with id: {}",
@@ -53,7 +55,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<?> acceptOrder(Long orderId) {
+    public ResponseEntity<?> acceptOrder(UUID orderId) {
 
         log.info("PATCH request to accept order with id: {}", orderId);
 
@@ -61,7 +63,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<?> cancelOrder(Long orderId) {
+    public ResponseEntity<?> cancelOrder(UUID orderId) {
 
         log.info("PATCH request to cancel order with id: {}", orderId);
 
@@ -69,7 +71,7 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<?> createOrdersRefund(Long orderId,
+    public ResponseEntity<?> createOrdersRefund(UUID orderId,
                                                 CreateRefundRequestDTO createRefundRequestDTO) {
 
         log.info("POST request to create refund: {} for order with id: {}", createRefundRequestDTO, orderId);

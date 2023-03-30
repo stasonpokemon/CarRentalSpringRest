@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -43,6 +44,8 @@ class OrderServiceImplTest {
     @Mock
     private CarService carService;
 
+    private UUID orderId;
+
     private Order firsrOrder;
 
     private Order secondOrder;
@@ -58,10 +61,10 @@ class OrderServiceImplTest {
     private Pageable pageRequest;
 
 
-
-
     @BeforeEach
     void init() {
+        orderId = UUID.randomUUID();
+
         firsrOrder = OrderTestDataFactory.buildNewOrder(UserTestDataFactory.buildUserWithPassport());
 
         secondOrder = OrderTestDataFactory.buildNewOrder(UserTestDataFactory.buildUserWithPassport());
@@ -85,10 +88,10 @@ class OrderServiceImplTest {
     @Test
     void findById_WhenOrderWithSpecifiedIdIsExist_ReturnOrderResponseDTO() {
         //given - precondition or setup
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(firsrOrder));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(firsrOrder));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = orderService.findById(1L);
+        ResponseEntity<?> response = orderService.findById(orderId);
         OrderResponseDTO responseBody = (OrderResponseDTO) response.getBody();
 
         //then - verify the output
@@ -97,23 +100,23 @@ class OrderServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(OrderTestDataFactory.buildOrderToOrderResponseDTO(firsrOrder), responseBody);
 
-        verify(orderRepository).findById(1L);
+        verify(orderRepository).findById(orderId);
     }
 
     @Test
     void findById_WhenOrderWithSpecifiedIdIsNorExist_ThrowsNotFoundException() {
         //given - precondition or setup
-        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> orderService.findById(1L));
+                = assertThrows(NotFoundException.class, () -> orderService.findById(orderId));
 
         //then - verify the output
         assertNotNull(notFoundException);
-        assertEquals("Not found Order with id: 1", notFoundException.getMessage());
+        assertEquals(String.format("Not found Order with id: %s", orderId), notFoundException.getMessage());
 
-        verify(orderRepository).findById(1L);
+        verify(orderRepository).findById(orderId);
     }
 
     @Test
