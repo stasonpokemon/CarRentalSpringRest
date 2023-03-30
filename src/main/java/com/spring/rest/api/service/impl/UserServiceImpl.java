@@ -3,19 +3,18 @@ package com.spring.rest.api.service.impl;
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.Role;
 import com.spring.rest.api.entity.User;
-import com.spring.rest.api.entity.dto.PassportDTO;
+import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
 import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
 import com.spring.rest.api.entity.dto.response.UserResponseDTO;
 import com.spring.rest.api.entity.mapper.PassportMapper;
 import com.spring.rest.api.entity.mapper.UserMapper;
-import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.exception.BadRequestException;
+import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.PassportRepository;
 import com.spring.rest.api.repo.UserRepository;
 import com.spring.rest.api.service.MailSenderService;
 import com.spring.rest.api.service.UserService;
 import com.spring.rest.api.util.PassportUtil;
-import com.spring.rest.api.util.tread.MailSenderThread;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
@@ -55,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findUser(Long userId) {
+    public ResponseEntity<?> findUser(UUID userId) {
 
         log.info("Finding user by id: {}", userId);
 
@@ -93,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findPassportByUserId(Long userId) {
+    public ResponseEntity<?> findPassportByUserId(UUID userId) {
 
         log.info("Finding passport by userId: {}", userId);
 
@@ -103,7 +102,7 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException(String.format("Passport not found for user with id = %s", userId));
         }
 
-        ResponseEntity<?> response = new ResponseEntity<>(passportMapper.passportToPassportDTO(passport), HttpStatus.OK);
+        ResponseEntity<?> response = new ResponseEntity<>(passportMapper.passportToPassportResponseDTO(passport), HttpStatus.OK);
 
         log.info("Find passport: {} by userId: {}", passport, userId);
 
@@ -112,9 +111,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResponseEntity<?> createPassportForUser(Long userId, PassportDTO passportDTO) {
+    public ResponseEntity<?> createPassportForUser(UUID userId,
+                                                   PassportRequestDTO passportRequestDTO) {
 
-        log.info("Creating new passport: {} for user with id: {}", passportDTO, userId);
+        log.info("Creating new passport: {} for user with id: {}", passportRequestDTO, userId);
 
         User user = findUserByIdOrThrowException(userId);
 
@@ -122,12 +122,12 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException(String.format("User with id = %s already has passport", userId));
         }
 
-        Passport passport = passportMapper.passportDTOtoPassport(passportDTO);
+        Passport passport = passportMapper.passportDTOtoPassport(passportRequestDTO);
         passport.setUser(user);
         passport = passportRepository.save(passport);
 
         ResponseEntity<?> response = new ResponseEntity<>(
-                passportMapper.passportToPassportDTO(passport), HttpStatus.OK);
+                passportMapper.passportToPassportResponseDTO(passport), HttpStatus.OK);
 
         log.info("Creat new passport: {} for user with id: {}", passport, userId);
 
@@ -135,13 +135,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> updateUsersPassport(Long userId, PassportDTO passportDTO) {
+    public ResponseEntity<?> updateUsersPassport(UUID userId,
+                                                 PassportRequestDTO passportRequestDTO) {
 
-        log.info("Updating user's passport: {} by userId: {}", passportDTO, userId);
+        log.info("Updating user's passport: {} by userId: {}", passportRequestDTO, userId);
 
         Passport passport = findPassportByUserOrThrowException(findUserByIdOrThrowException(userId));
-        PassportUtil.getInstance().copyNotNullFieldsFromPassportDTOToPassport(passportDTO, passport);
-        ResponseEntity<?> response = new ResponseEntity<>(passportMapper.passportToPassportDTO(passport), HttpStatus.OK);
+        PassportUtil.getInstance().copyNotNullFieldsFromPassportDTOToPassport(passportRequestDTO, passport);
+        ResponseEntity<?> response = new ResponseEntity<>(passportMapper.passportToPassportResponseDTO(passport), HttpStatus.OK);
 
         log.info("Update user's passport: {} by userId: {}", passport, userId);
 
@@ -207,7 +208,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResponseEntity<?> blockUser(Long id) {
+    public ResponseEntity<?> blockUser(UUID id) {
 
         log.info("Blocking user with id: {}", id);
 
@@ -226,7 +227,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> unlockUser(Long id) {
+    public ResponseEntity<?> unlockUser(UUID id) {
 
         log.info("Unlocking user with id: {}", id);
 
@@ -246,7 +247,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
     @Override
-    public User findUserByIdOrThrowException(Long userId) {
+    public User findUserByIdOrThrowException(UUID userId) {
 
         log.info("Finding user by id: {}", userId);
 

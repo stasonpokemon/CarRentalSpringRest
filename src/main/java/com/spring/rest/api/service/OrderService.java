@@ -5,24 +5,26 @@ import com.spring.rest.api.entity.dto.request.CreateRefundRequestDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
+import java.util.UUID;
+
 public interface OrderService {
     ResponseEntity<?> findAll(Pageable pageable);
 
-    ResponseEntity<?> findOrdersByUserId(Long userId,
+    ResponseEntity<?> findOrdersByUserId(UUID userId,
                                          Pageable pageable);
 
-    ResponseEntity<?> findById(Long orderId);
+    ResponseEntity<?> findById(UUID orderId);
 
     ResponseEntity<?> createOrder(CreateOrderRequestDTO createOrderRequestDTO,
-                                  Long userId,
-                                  Long carId);
+                                  UUID userId,
+                                  UUID carId);
 
-    ResponseEntity<?> acceptOrder(Long orderId);
+    ResponseEntity<?> acceptOrder(UUID orderId);
 
-    ResponseEntity<?> cancelOrder(Long orderId);
+    ResponseEntity<?> cancelOrder(UUID orderId);
 
-    ResponseEntity<?> createOrdersRefund(Long orderId,
+    ResponseEntity<?> createOrdersRefund(UUID orderId,
                                          CreateRefundRequestDTO createRefundRequestDTO);
 
-    ResponseEntity<?> findOrdersRefund(Long orderId);
+    ResponseEntity<?> findOrdersRefund(UUID orderId);
 }

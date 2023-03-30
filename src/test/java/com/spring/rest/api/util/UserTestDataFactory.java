@@ -3,8 +3,8 @@ package com.spring.rest.api.util;
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.Role;
 import com.spring.rest.api.entity.User;
-import com.spring.rest.api.entity.dto.PassportDTO;
 import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
+import com.spring.rest.api.entity.dto.response.PassportResponseDTO;
 import com.spring.rest.api.entity.dto.response.UserResponseDTO;
 import com.spring.rest.api.entity.mapper.PassportMapper;
 import com.spring.rest.api.entity.mapper.UserMapper;
@@ -46,15 +46,15 @@ public class UserTestDataFactory {
         return userMapper.userToUserResponseDTO(user);
     }
 
-    public static PassportDTO buildPassportDTOFromUser(User user) {
-        PassportDTO passportDTO = null;
+    public static PassportResponseDTO buildPassportResponseDTOFromUser(User user) {
+        PassportResponseDTO passportResponseDTO = null;
         try {
             Passport passport = user.getPassport();
-            passportDTO = passportMapper.passportToPassportDTO(passport);
+            passportResponseDTO = passportMapper.passportToPassportResponseDTO(passport);
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        return passportDTO;
+        return passportResponseDTO;
     }
 
     public static CreateUserRequestDTO buildCreateUserRequestDTO() {
@@ -81,4 +81,6 @@ public class UserTestDataFactory {
                 .roles(Set.of(Role.USER, Role.ADMIN))
                 .active(false).build();
     }
+
+
 }

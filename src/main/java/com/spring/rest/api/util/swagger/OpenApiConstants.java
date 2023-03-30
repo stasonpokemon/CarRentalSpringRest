@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OpenApiConstants {
 
+    public static final String CAR_UUID = "695fedf4-bd75-4b38-bfcc-5f498b333028";
+
     public static final String CAR_PRODUCER = "Mercedes";
 
     public static final String CAR_MODEL = "G63 AMG";
@@ -22,6 +24,8 @@ public class OpenApiConstants {
 
     public static final String CAR_BROKEN = "false";
 
+    public static final String PASSPORT_UUID = "0f01e315-590f-4b62-bf18-771847814aae";
+
     public static final String PASSPORT_NAME = "Andrei";
 
     public static final String PASSPORT_SURNAME = "Ivanov";
@@ -32,6 +36,8 @@ public class OpenApiConstants {
 
     public static final String PASSPORT_ADDRESS = "Minsk Mira 72/1 12";
 
+    public static final String REFUND_UUID = "247edcba-c6b0-499b-a2b7-c4e33675d870";
+
     public static final String REFUND_DAMAGED = "false";
 
     public static final String REFUND_DAMAGE_DESCRIPTION = "Without damage";
@@ -40,11 +46,22 @@ public class OpenApiConstants {
 
     public static final String REFUND_REFUND_DATE = "2023-03-03";
 
+    public static final String USER_UUID = "1ee7a912-dc39-46aa-bd7b-561b2e984bb5";
+
     public static final String USER_USERNAME = "username123";
 
     public static final String USER_PASSWORD = "password123";
 
     public static final String USER_EMAIL = "example_email@gmail.com";
+
+    public static final String ORDER_UUID = "df4b6bd2-b715-4835-b9c2-e251946090b9";
+
+    public static final String ORDER_PRICE = "450";
+
+    public static final String ORDER_ORDER_STATUS = "UNDER_CONSIDERATION";
+
+    public static final String ORDER_RENTAL_PERIOD = "3";
+
 
 
 }

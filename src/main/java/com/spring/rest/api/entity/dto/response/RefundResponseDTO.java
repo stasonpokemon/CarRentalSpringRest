@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
 import static com.spring.rest.api.util.swagger.OpenApiConstants.REFUND_PRICE;
@@ -16,6 +17,9 @@ import static com.spring.rest.api.util.swagger.OpenApiConstants.REFUND_PRICE;
 @NoArgsConstructor
 public class RefundResponseDTO {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(example = REFUND_UUID, description = REFUND_UUID)
+    private UUID id;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(example = REFUND_DAMAGED, description = REFUND_DAMAGED)
     private boolean damaged;

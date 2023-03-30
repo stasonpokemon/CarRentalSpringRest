@@ -18,6 +18,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RequestMapping("/orders")
 @Tag(name = "Order Controller", description = "Order management controller")
 public interface OrderController {
@@ -61,7 +63,7 @@ public interface OrderController {
     })
     @GetMapping("/{id}")
     ResponseEntity<?> findById(
-            @PathVariable("id") Long orderId);
+            @PathVariable("id") UUID orderId);
 
     @Operation(
             summary = "Find refund by id order's id",
@@ -83,7 +85,7 @@ public interface OrderController {
     })
     @GetMapping("/{id}/refund")
     ResponseEntity<?> findOrdersRefund(
-            @PathVariable("id") Long orderId);
+            @PathVariable("id") UUID orderId);
 
     @Operation(
             summary = "Create new order",
@@ -102,8 +104,8 @@ public interface OrderController {
     })
     @PostMapping("/{userId}/{carId}")
     ResponseEntity<?> createOrder(
-            @PathVariable("userId") Long userId,
-            @PathVariable("carId") Long carId,
+            @PathVariable("userId") UUID userId,
+            @PathVariable("carId") UUID carId,
             @RequestBody @Valid CreateOrderRequestDTO createOrderRequestDTO);
 
     @Operation(
@@ -126,7 +128,7 @@ public interface OrderController {
     })
     @PatchMapping("/{orderId}/accept")
     ResponseEntity<?> acceptOrder(
-            @PathVariable("orderId") Long orderId);
+            @PathVariable("orderId") UUID orderId);
 
     @Operation(
             summary = "Cancel order",
@@ -148,7 +150,7 @@ public interface OrderController {
     })
     @PatchMapping("/{orderId}/cancel")
     ResponseEntity<?> cancelOrder(
-            @PathVariable("orderId") Long orderId);
+            @PathVariable("orderId") UUID orderId);
 
     @Operation(
             summary = "Create refund",
@@ -170,6 +172,6 @@ public interface OrderController {
     })
     @PostMapping("/{orderId}/refund")
     ResponseEntity<?> createOrdersRefund
-            (@PathVariable("orderId") Long orderId,
+            (@PathVariable("orderId") UUID orderId,
              @RequestBody @Valid CreateRefundRequestDTO createRefundRequestDTO);
 }

@@ -1,12 +1,13 @@
 package com.spring.rest.api.entity.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.spring.rest.api.entity.dto.PassportDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
 import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_EMAIL;
@@ -16,6 +17,10 @@ import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_EMAIL;
 @NoArgsConstructor
 @Builder
 public class UserResponseDTO {
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(example = USER_UUID, description = USER_UUID)
+    private UUID id;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(example = USER_USERNAME, description = USER_USERNAME)
@@ -29,5 +34,6 @@ public class UserResponseDTO {
     @Schema(example = USER_EMAIL, description = USER_EMAIL)
     private String email;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private PassportDTO passport;
+    @Schema(example = PASSPORT_UUID, description = PASSPORT_UUID)
+    private UUID passportId;
 }

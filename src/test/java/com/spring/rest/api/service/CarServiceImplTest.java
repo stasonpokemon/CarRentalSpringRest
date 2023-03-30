@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -38,6 +39,8 @@ class CarServiceImplTest {
 
     @Mock
     private CarRepository carRepository;
+
+    private UUID carId;
 
     private Car firstCar;
 
@@ -72,6 +75,8 @@ class CarServiceImplTest {
 
     @BeforeEach
     void init() {
+        carId = UUID.randomUUID();
+
         firstCar = CarTestDataFactory.buildCar();
 
         secoundCar = CarTestDataFactory.buildCar();
@@ -109,10 +114,10 @@ class CarServiceImplTest {
     @Test
     void findById_WhenThereIsCarWithSpecifiedId_ReturnCar() {
         //given - precondition or setup
-        when(carRepository.findById(1L)).thenReturn(Optional.of(firstCar));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(firstCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.findById(1L);
+        ResponseEntity<?> response = carService.findById(carId);
         CarResponseDTO responseBody = (CarResponseDTO) response.getBody();
 
         //then - verify the output
@@ -121,22 +126,22 @@ class CarServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(firstCarResponseDTO, responseBody);
 
-        verify(carRepository).findById(1L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
     void findById_WhenThereIsNotCarWithSpecifiedId_ThrowsNotFoundException() {
         //given - precondition or setup
-        when(carRepository.findById(11L)).thenReturn(Optional.empty());
+        when(carRepository.findById(carId)).thenReturn(Optional.empty());
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> carService.findById(11L));
+                = assertThrows(NotFoundException.class, () -> carService.findById(carId));
 
         //then - verify the output
-        assertEquals("Not found Car with id: 11", notFoundException.getMessage());
+        assertEquals(String.format("Not found Car with id: %s", carId), notFoundException.getMessage());
 
-        verify(carRepository).findById(11L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
@@ -208,7 +213,7 @@ class CarServiceImplTest {
     @Test
     void findAllFreeNotMarkAsDeleted_WhenThereIsFreeNotMarkAsDeleted_ReturnPageOfCars() {
         //given - precondition or setup
-        when(carRepository.findAllByEmploymentStatusAndDeleted(true, false, pageRequest))
+        when(carRepository.findAllByBusyAndDeleted(false, false, pageRequest))
                 .thenReturn(List.of(firstCar, secoundCar));
 
         //when - action or the behaviour that we are going test
@@ -221,14 +226,14 @@ class CarServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(carDTOsPage, responseBody);
 
-        verify(carRepository).findAllByEmploymentStatusAndDeleted(true, false, pageRequest);
+        verify(carRepository).findAllByBusyAndDeleted(false, false, pageRequest);
 
     }
 
     @Test
     void findAllFreeNotMarkAsDeleted_WhenThereIsNotFreeNotMarkAsDeleted_ThrowsNotNullException() {
         //given - precondition or setup
-        when(carRepository.findAllByEmploymentStatusAndDeleted(true, false, pageRequest))
+        when(carRepository.findAllByBusyAndDeleted(false, false, pageRequest))
                 .thenReturn(Collections.emptyList());
 
         //when - action or the behaviour that we are going test
@@ -238,7 +243,7 @@ class CarServiceImplTest {
         //then - verify the output
         assertEquals("There isn't free cars not mark as deleted", notFoundException.getMessage());
 
-        verify(carRepository).findAllByEmploymentStatusAndDeleted(true, false, pageRequest);
+        verify(carRepository).findAllByBusyAndDeleted(false, false, pageRequest);
 
     }
 
@@ -263,10 +268,10 @@ class CarServiceImplTest {
     @Test
     void update_WhenCarWithSpecifiedIdExists_ReturnUpdatedCar() {
         //given - precondition or setup
-        when(carRepository.findById(2L)).thenReturn(Optional.of(secoundCar));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(secoundCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.update(2L, updateCarRequestDTO);
+        ResponseEntity<?> response = carService.update(carId, updateCarRequestDTO);
         Object responseBody = response.getBody();
 
         //then - verify the output
@@ -275,29 +280,29 @@ class CarServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(updatedCarResponseDTO, responseBody);
 
-        verify(carRepository).findById(2L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
     void update_WhenCarWithSpecifiedIdNotExists_ThrowsNotFoundException() {
         //given - precondition or setup
-        when(carRepository.findById(3L)).thenReturn(Optional.empty());
+        when(carRepository.findById(carId)).thenReturn(Optional.empty());
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> carService.update(3L, updateCarRequestDTO));
+                = assertThrows(NotFoundException.class, () -> carService.update(carId, updateCarRequestDTO));
 
         //then - verify the output
-        assertEquals("Not found Car with id: 3", notFoundException.getMessage());
+        assertEquals(String.format("Not found Car with id: %s", carId), notFoundException.getMessage());
     }
 
     @Test
     void fixBrokenCar_WhenCarBroken_ReturnFixedCar() {
         //given - precondition or setup
-        when(carRepository.findById(1L)).thenReturn(Optional.of(brokenCar));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(brokenCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.fixBrokenCar(1L);
+        ResponseEntity<?> response = carService.fixBrokenCar(carId);
         CarResponseDTO responseBody = (CarResponseDTO) response.getBody();
 
         //then - verify the output
@@ -306,66 +311,66 @@ class CarServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(fixedCarResponseDTO, responseBody);
 
-        verify(carRepository).findById(1L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
     void fixBrokenCar_WhenCarWithSpecifiedIdNotExists_ThrowsNotFoundException() {
         //given - precondition or setup
-        when(carRepository.findById(1L)).thenReturn(Optional.empty());
+        when(carRepository.findById(carId)).thenReturn(Optional.empty());
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> carService.fixBrokenCar(1L));
+                = assertThrows(NotFoundException.class, () -> carService.fixBrokenCar(carId));
 
         //then - verify the output
-        assertEquals("Not found Car with id: 1", notFoundException.getMessage());
+        assertEquals(String.format("Not found Car with id: %s", carId), notFoundException.getMessage());
 
-        verify(carRepository).findById(1L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
     void fixBrokenCar_WhenCarDoesNotBroken_ReturnStringMessage() {
         //given - precondition or setup
-        when(carRepository.findById(1L)).thenReturn(Optional.of(firstCar));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(firstCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.fixBrokenCar(1L);
+        ResponseEntity<?> response = carService.fixBrokenCar(carId);
         String responseBody = (String) response.getBody();
 
         //then - verify the output
         assertNotNull(response);
         assertNotNull(responseBody);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Unable to fix car. Car with id = 1 already fixed", responseBody);
+        assertEquals(String.format("Unable to fix car. Car with id = %s already fixed", carId), responseBody);
 
-        verify(carRepository).findById(1L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
     void fixBrokenCar_WhenCarMarkedAsDeleted_ReturnStringMessage() {
         //given - precondition or setup
-        when(carRepository.findById(1L)).thenReturn(Optional.of(deletedCar));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(deletedCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.fixBrokenCar(1L);
+        ResponseEntity<?> response = carService.fixBrokenCar(carId);
         String responseBody = (String) response.getBody();
 
         //then - verify the output
         assertNotNull(response);
         assertNotNull(responseBody);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Unable to fix car. Car with id = 1 is deleted", responseBody);
+        assertEquals(String.format("Unable to fix car. Car with id = %s is deleted", carId), responseBody);
 
-        verify(carRepository).findById(1L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
     void setCarAsBroken_WhenCarIdIsValid_ReturnBrokenCar() {
         String damageDescription = "With damage";
-        when(carRepository.findById(1L)).thenReturn(Optional.of(firstCar));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(firstCar));
 
-        ResponseEntity<?> response = carService.setCarAsBroken(1L, damageDescription);
+        ResponseEntity<?> response = carService.setCarAsBroken(carId, damageDescription);
         CarResponseDTO responseBody = (CarResponseDTO) response.getBody();
 
         assertNotNull(response);
@@ -373,72 +378,72 @@ class CarServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(brokenFirstCarResponseDTO, responseBody);
 
-        verify(carRepository).findById(1L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
     void setCarAsBroken_WhenCarIdIsValidAndCarIsBroken_ThrowsBadRequestException() {
         String damageDescription = "With damage";
-        when(carRepository.findById(1L)).thenReturn(Optional.of(brokenCar));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(brokenCar));
 
         BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> carService.setCarAsBroken(1L, damageDescription));
+                = assertThrows(BadRequestException.class, () -> carService.setCarAsBroken(carId, damageDescription));
 
         assertNotNull(badRequestException);
-        assertEquals("Car with id = 1 is already broken", badRequestException.getMessage());
+        assertEquals(String.format("Car with id = %s is already broken", carId), badRequestException.getMessage());
 
-        verify(carRepository).findById(1L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
     void setCarAsBroken_WhenCarIdIsValidAndCarIsBusy_ThrowsBadRequestException() {
         String damageDescription = "With damage";
-        when(carRepository.findById(1L)).thenReturn(Optional.of(busyCar));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(busyCar));
 
         BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> carService.setCarAsBroken(1L, damageDescription));
+                = assertThrows(BadRequestException.class, () -> carService.setCarAsBroken(carId, damageDescription));
 
         assertNotNull(badRequestException);
-        assertEquals("Car with id = 1 is busy now", badRequestException.getMessage());
+        assertEquals(String.format("Car with id = %s is busy now", carId), badRequestException.getMessage());
 
-        verify(carRepository).findById(1L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
     void setCarAsBroken_WhenCarIdIsValidAndCarIsDeleted_ThrowsBadRequestException() {
         String damageDescription = "With damage";
-        when(carRepository.findById(1L)).thenReturn(Optional.of(deletedCar));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(deletedCar));
 
         BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> carService.setCarAsBroken(1L, damageDescription));
+                = assertThrows(BadRequestException.class, () -> carService.setCarAsBroken(carId, damageDescription));
 
         assertNotNull(badRequestException);
-        assertEquals("Car with id = 1 is deleted", badRequestException.getMessage());
+        assertEquals(String.format("Car with id = %s is deleted", carId), badRequestException.getMessage());
 
-        verify(carRepository).findById(1L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
     void setCarAsBroken_WhenCarIdIsValidAndCarIsDeleted_ThrowsNotFoundException() {
         String damageDescription = "With damage";
-        when(carRepository.findById(1L)).thenReturn(Optional.empty());
+        when(carRepository.findById(carId)).thenReturn(Optional.empty());
 
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> carService.setCarAsBroken(1L, damageDescription));
+                = assertThrows(NotFoundException.class, () -> carService.setCarAsBroken(carId, damageDescription));
 
         assertNotNull(notFoundException);
-        assertEquals("Not found Car with id: 1", notFoundException.getMessage());
+        assertEquals(String.format("Not found Car with id: %s", carId), notFoundException.getMessage());
 
-        verify(carRepository).findById(1L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
     void markCarAsDeleted_WhenCarDoseNotMarkedAsDeleted_ReturnMarkedAsDeletedCar() {
         //given - precondition or setup
-        when(carRepository.findById(1L)).thenReturn(Optional.of(firstCar));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(firstCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.markCarAsDeleted(1L);
+        ResponseEntity<?> response = carService.markCarAsDeleted(carId);
         CarResponseDTO responseBody = (CarResponseDTO) response.getBody();
 
         //then - verify the output
@@ -447,24 +452,24 @@ class CarServiceImplTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(deletedFirstCarResponseDTO, responseBody);
 
-        verify(carRepository).findById(1L);
+        verify(carRepository).findById(carId);
     }
 
     @Test
     void markCarAsDeleted_WhenCarAlreadyMarkedAsDeleted_ReturnStringMessage() {
         //given - precondition or setup
-        when(carRepository.findById(1L)).thenReturn(Optional.of(deletedCar));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(deletedCar));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<?> response = carService.markCarAsDeleted(1L);
+        ResponseEntity<?> response = carService.markCarAsDeleted(carId);
         String responseBody = (String) response.getBody();
 
         //then - verify the output
         assertNotNull(response);
         assertNotNull(responseBody);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Car with id = 1 already marked as deleted", responseBody);
+        assertEquals(String.format("Car with id = %s already marked as deleted", carId), responseBody);
 
-        verify(carRepository).findById(1L);
+        verify(carRepository).findById(carId);
     }
 }
