@@ -13,9 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-/**
- * This annotation for connect jpa with postgres enum
- */
 public class Order extends BaseEntity {
 
     @Column(name = "price")

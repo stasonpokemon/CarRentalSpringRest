@@ -43,6 +43,26 @@ public class OrderTestDataFactory {
                 .user(user).build();
     }
 
+    public static Order buildAcceptedOrder(Order order) {
+        return Order.builder()
+                .orderDate(order.getOrderDate())
+                .user(order.getUser())
+                .car(order.getCar())
+                .price(order.getPrice())
+                .rentalPeriod(order.getRentalPeriod())
+                .orderStatus(OrderStatus.CONFIRMED).build();
+    }
+
+    public static Order buildCanceledOrder(Order order) {
+        return Order.builder()
+                .orderDate(order.getOrderDate())
+                .user(order.getUser())
+                .car(order.getCar())
+                .price(order.getPrice())
+                .rentalPeriod(order.getRentalPeriod())
+                .orderStatus(OrderStatus.REFUSAL).build();
+    }
+
     public static CreateOrderRequestDTO buildCreateOrderRequestDTO() {
         return CreateOrderRequestDTO.builder().rentalPeriod(3).build();
     }
@@ -58,5 +78,4 @@ public class OrderTestDataFactory {
 
         return new PageImpl<>(orderResponseDTOS);
     }
-
 }

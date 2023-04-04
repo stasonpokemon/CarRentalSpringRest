@@ -138,7 +138,6 @@ public class OrderServiceImpl implements OrderService {
                     String.format("The car with id = %s isn't free", carId));
         }
 
-
         car.setBusy(true);
 
         Order order = orderMapper.createOrderRequestDTOToOrder(createOrderRequestDTO);
@@ -239,7 +238,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<RefundResponseDTO> findOrdersRefund(UUID orderId) {
+    public ResponseEntity<RefundResponseDTO> findOrdersRefundByOrderId(UUID orderId) {
 
         log.info("Finding order's refund by orderId: {}", orderId);
 

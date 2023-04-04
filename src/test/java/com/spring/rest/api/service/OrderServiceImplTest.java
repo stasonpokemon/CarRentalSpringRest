@@ -4,6 +4,7 @@ import com.spring.rest.api.entity.Car;
 import com.spring.rest.api.entity.Order;
 import com.spring.rest.api.entity.User;
 import com.spring.rest.api.entity.dto.request.CreateOrderRequestDTO;
+import com.spring.rest.api.entity.dto.request.CreateRefundRequestDTO;
 import com.spring.rest.api.entity.dto.response.OrderResponseDTO;
 import com.spring.rest.api.exception.BadRequestException;
 import com.spring.rest.api.exception.NotFoundException;
@@ -11,6 +12,7 @@ import com.spring.rest.api.repo.OrderRepository;
 import com.spring.rest.api.service.impl.OrderServiceImpl;
 import com.spring.rest.api.util.CarTestDataFactory;
 import com.spring.rest.api.util.OrderTestDataFactory;
+import com.spring.rest.api.util.RefundTestDataFactory;
 import com.spring.rest.api.util.UserTestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,6 +67,10 @@ class OrderServiceImplTest {
 
     private Order secondOrder;
 
+    private Order acceptedFirstOrder;
+
+    private Order canceledFirstOrder;
+
     private Car freeNotBusyCar;
 
     private Car deletedCar;
@@ -78,6 +84,14 @@ class OrderServiceImplTest {
     private OrderResponseDTO firstOrderRequestDTO;
 
     private OrderResponseDTO secondOrderRequestDTO;
+
+    private OrderResponseDTO acceptedFirstOrderResponseDTO;
+
+    private OrderResponseDTO canceledFirstOrderResponseDTO;
+
+    private CreateRefundRequestDTO createRefundRequestDTOWithoutDamage;
+
+    private CreateRefundRequestDTO createRefundRequestDTOWithDamage;
 
     private Page<Order> orderPage;
 
@@ -112,13 +126,25 @@ class OrderServiceImplTest {
 
         busyCar = CarTestDataFactory.buildBusyCar();
 
-        firsrOrder = OrderTestDataFactory.buildOrder(UserTestDataFactory.buildUserWithPassport());
+        firsrOrder = OrderTestDataFactory.buildOrder(userWithPassportAndOrders);
 
-        secondOrder = OrderTestDataFactory.buildOrder(UserTestDataFactory.buildUserWithPassport());
+        secondOrder = OrderTestDataFactory.buildOrder(userWithPassportAndOrders);
+
+        acceptedFirstOrder = OrderTestDataFactory.buildAcceptedOrder(firsrOrder);
+
+        canceledFirstOrder = OrderTestDataFactory.buildCanceledOrder(firsrOrder);
 
         firstOrderRequestDTO = OrderTestDataFactory.buildOrderToOrderResponseDTO(firsrOrder);
 
         secondOrderRequestDTO = OrderTestDataFactory.buildOrderToOrderResponseDTO(secondOrder);
+
+        acceptedFirstOrderResponseDTO = OrderTestDataFactory.buildOrderToOrderResponseDTO(acceptedFirstOrder);
+
+        canceledFirstOrderResponseDTO = OrderTestDataFactory.buildOrderToOrderResponseDTO(canceledFirstOrder);
+
+        createRefundRequestDTOWithoutDamage = RefundTestDataFactory.buildCreateRefundRequestDTOWithoutDamage();
+
+        createRefundRequestDTOWithDamage = RefundTestDataFactory.buildCreateRefundRequestDTOWithDamage();
 
         createOrderRequestDTO = OrderTestDataFactory.buildCreateOrderRequestDTO();
 
@@ -412,7 +438,160 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void acceptOrder() {
+    void acceptOrder_WhenOrderIsExistsAndOrderStatusEqualsUNDER_CONSIDERATION_ReturnOrderResponseDTO() {
+        //given - precondition or setup
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(firsrOrder));
+
+        //when - action or the behaviour that we are going test
+        ResponseEntity<OrderResponseDTO> response = orderService.acceptOrder(orderId);
+        OrderResponseDTO responseBody = response.getBody();
+
+        //then - verify the output
+        assertNotNull(response);
+        assertNotNull(responseBody);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(acceptedFirstOrderResponseDTO, responseBody);
+
+        verify(orderRepository).findById(orderId);
+    }
+
+    @Test
+    void acceptOrder_WhenOrderIsExistsAndOrderStatusNotEqualsUNDER_CONSIDERATION_ThrowsBadRequestException() {
+        //given - precondition or setup
+        String expectedExceptionMessage = String.format("Order with id = %s already accepted or canceled", orderId);
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(acceptedFirstOrder));
+
+        //when - action or the behaviour that we are going test
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> orderService.acceptOrder(orderId));
+
+
+        //then - verify the output
+        assertNotNull(badRequestException);
+        assertEquals(expectedExceptionMessage, badRequestException.getMessage());
+
+        verify(orderRepository).findById(orderId);
+    }
+
+    @Test
+    void acceptOrder_WhenOrderIsNotExists_ThrowsNotFoundException() {
+        //given - precondition or setup
+        String expectedExceptionMessage = String.format("Not found Order with id: %s", orderId);
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+
+        //when - action or the behaviour that we are going test
+        NotFoundException badRequestException
+                = assertThrows(NotFoundException.class, () -> orderService.acceptOrder(orderId));
+
+
+        //then - verify the output
+        assertNotNull(badRequestException);
+        assertEquals(expectedExceptionMessage, badRequestException.getMessage());
+
+        verify(orderRepository).findById(orderId);
+    }
+
+    @Test
+    void cancelOrder_WhenOrderIsExistsAndOrderStatusEqualsUNDER_CONSIDERATION_ReturnOrderResponseDTO() {
+        //given - precondition or setup
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(firsrOrder));
+
+        //when - action or the behaviour that we are going test
+        ResponseEntity<OrderResponseDTO> response = orderService.cancelOrder(orderId);
+        OrderResponseDTO responseBody = response.getBody();
+
+        //then - verify the output
+        assertNotNull(response);
+        assertNotNull(responseBody);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(canceledFirstOrderResponseDTO, responseBody);
+
+        verify(orderRepository).findById(orderId);
+    }
+
+    @Test
+    void cancelOrder_WhenOrderIsExistsAndOrderStatusDoesNotEqualsUNDER_CONSIDERATION_ThrowsBadRequestException() {
+        //given - precondition or setup
+        String expectedExceptionMessage = String.format("Order with id = %s already accepted or canceled", orderId);
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(acceptedFirstOrder));
+
+        //when - action or the behaviour that we are going test
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> orderService.cancelOrder(orderId));
+
+
+        //then - verify the output
+        assertNotNull(badRequestException);
+        assertEquals(expectedExceptionMessage, badRequestException.getMessage());
+
+        verify(orderRepository).findById(orderId);
+    }
+
+    @Test
+    void cancelOrder_WhenOrderIsNotExists_ThrowsNotFoundException() {
+        //given - precondition or setup
+        String expectedExceptionMessage = String.format("Not found Order with id: %s", orderId);
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+
+        //when - action or the behaviour that we are going test
+        NotFoundException badRequestException
+                = assertThrows(NotFoundException.class, () -> orderService.cancelOrder(orderId));
+
+
+        //then - verify the output
+        assertNotNull(badRequestException);
+        assertEquals(expectedExceptionMessage, badRequestException.getMessage());
+
+        verify(orderRepository).findById(orderId);
+    }
+
+    @Test
+    void createOrdersRefund_WhenOrderIsExistsAndHasNotRefundAndRefundWithoutDamage_ReturnRefundResponseDTO() {
+        //given - precondition or setup
+//        Refund refund = RefundTestDataFactory
+//                .buildRefundWithoutDamage(createRefundRequestDTOWithoutDamage, acceptedFirstOrder);
+//        RefundResponseDTO expectedRefundResponseDTO = RefundTestDataFactory.buildRefundResponseDTO(refund);
+//        when(orderRepository.findById(orderId)).thenReturn(Optional.of(acceptedFirstOrder));
+//        when(orderRepository.save(acceptedFirstOrder)).thenReturn(refund.getOrder());
+//
+//        //when - action or the behaviour that we are going test
+//        ResponseEntity<RefundResponseDTO> response = orderService.createOrdersRefund(orderId, createRefundRequestDTOWithoutDamage);
+//        RefundResponseDTO responseBody = response.getBody();
+//
+//        //then - verify the output
+//
+//        assertNotNull(response);
+//        assertNotNull(responseBody);
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//
+//        verify(orderRepository).findById(orderId);
+//        verify(orderRepository).save(acceptedFirstOrder);
+    }
+
+    @Test
+    void createOrdersRefund_WhenOrderIsExistsAndHasNotRefundAndRefundWithDamage_ReturnRefundResponseDTO() {
+        //given - precondition or setup
+//        when(orderRepository.findById(orderId)).thenReturn(Optional.of(acceptedFirstOrder));
+
+
+        //when - action or the behaviour that we are going test
+
+        //then - verify the output
+    }
+
+    @Test
+    void createOrdersRefund_WhenOrderIsNotExists_ThrowsNotFoundException() {
+        //given - precondition or setup
+//        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+
+
+        //when - action or the behaviour that we are going test
+
+        //then - verify the output
+    }
+
+    @Test
+    void createOrdersRefund_WhenOrderIsExistsAndHasRefund_ThrowsBadRequestException() {
         //given - precondition or setup
 
 
@@ -422,7 +601,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void cancelOrder() {
+    void findOrdersRefund_WhenOrderIsExistsAndHasRefund_ReturnRefundResponseDTO() {
         //given - precondition or setup
 
 
@@ -432,32 +611,36 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void createOrdersRefund() {
+    void findOrdersRefund_WhenOrderIsNotExists_ThrowsNotFoundException() {
         //given - precondition or setup
-
+        String expectedExceptionMessage = String.format("Not found Order with id: %s", orderId);
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
 
         //when - action or the behaviour that we are going test
+        NotFoundException notFoundException
+                = assertThrows(NotFoundException.class, () -> orderService.findOrdersRefundByOrderId(orderId));
 
         //then - verify the output
+        assertNotNull(notFoundException);
+        assertEquals(expectedExceptionMessage, notFoundException.getMessage());
+
+        verify(orderRepository).findById(orderId);
     }
 
     @Test
-    void findOrdersRefund() {
+    void findOrdersRefund_WhenOrderIsExistsAndHasNotRefund_ThrowsBadRequestException() {
         //given - precondition or setup
-
+        String expectedExceptionMessage = String.format("Order with id = %s hasn't refund", orderId);
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(firsrOrder));
 
         //when - action or the behaviour that we are going test
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> orderService.findOrdersRefundByOrderId(orderId));
 
         //then - verify the output
-    }
+        assertNotNull(badRequestException);
+        assertEquals(expectedExceptionMessage, badRequestException.getMessage());
 
-    @Test
-    void findOrderByIdOrThrowException() {
-        //given - precondition or setup
-
-
-        //when - action or the behaviour that we are going test
-
-        //then - verify the output
+        verify(orderRepository).findById(orderId);
     }
 }

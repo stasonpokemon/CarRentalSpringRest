@@ -2,8 +2,7 @@ package com.spring.rest.api.entity;
 
 import jakarta.persistence.*;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +10,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "refunds")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Refund extends BaseEntity {
 
     @Column(name = "damage_status")
