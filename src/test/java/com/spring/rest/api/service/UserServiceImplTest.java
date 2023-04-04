@@ -91,7 +91,7 @@ class UserServiceImplTest {
 
         firstUserWithPassport = UserTestDataFactory.buildUserWithPassport();
 
-        secondUserWithoutPassport = UserTestDataFactory.buildUserWithOutPassport();
+        secondUserWithoutPassport = UserTestDataFactory.buildUserWithoutPassport();
 
         Passport passportForUpdate = PassportTestDataFactory.buildPassport();
 

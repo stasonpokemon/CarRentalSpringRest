@@ -51,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
 
         log.info("Finding order by id: {}", orderId);
 
-        OrderResponseDTO orderResponseDTO = orderMapper.orderToOrderDTO(findOrderByIdOrThrowException(orderId));
+        OrderResponseDTO orderResponseDTO = orderMapper.orderToOrderResponseDTO(findOrderByIdOrThrowException(orderId));
 
         ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderResponseDTO, HttpStatus.OK);
 
@@ -68,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
 
         Page<OrderResponseDTO> orderResponseDTOPage = new PageImpl<>(orderRepository.findAll(pageable)
                 .stream()
-                .map(orderMapper::orderToOrderDTO)
+                .map(orderMapper::orderToOrderResponseDTO)
                 .collect(Collectors.toList()));
 
         if (orderResponseDTOPage.isEmpty()) {
@@ -91,14 +91,9 @@ public class OrderServiceImpl implements OrderService {
 
         User user = userService.findUserByIdOrThrowException(userId);
 
-        if (user.getOrders().isEmpty()) {
-            throw new NotFoundException(
-                    String.format("User with id = %s hasn't orders", userId));
-        }
-
-        Page<OrderResponseDTO> orderResponseDTOPage = new PageImpl<>(orderRepository.findAllByUserId(userId, pageable)
+        Page<OrderResponseDTO> orderResponseDTOPage = new PageImpl<>(user.getOrders()
                 .stream()
-                .map(orderMapper::orderToOrderDTO)
+                .map(orderMapper::orderToOrderResponseDTO)
                 .collect(Collectors.toList()));
 
         ResponseEntity<Page<OrderResponseDTO>> response = new ResponseEntity<>(orderResponseDTOPage, HttpStatus.OK);
@@ -114,10 +109,13 @@ public class OrderServiceImpl implements OrderService {
                                                         UUID userId,
                                                         UUID carId) {
 
+        // переделать логику: поместить userId и carId в CreateOrderRequestDTO
+
         log.info("Creating new order: {} for car with id: {} for user with id: {}",
                 createOrderRequestDTO, carId, userId);
 
         Car car = carService.findCarByIdOrThrowException(carId);
+
         User user = userService.findUserByIdOrThrowException(userId);
 
         if (user.getPassport() == null) {
@@ -130,10 +128,16 @@ public class OrderServiceImpl implements OrderService {
                     String.format("The car with id = %s is deleted", carId));
         }
 
+        if (car.isBroken()) {
+            throw new BadRequestException(
+                    String.format("The car with id = %s is broken", carId));
+        }
+
         if (car.isBusy()) {
             throw new BadRequestException(
                     String.format("The car with id = %s isn't free", carId));
         }
+
 
         car.setBusy(true);
 
@@ -144,7 +148,7 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderDate(LocalDateTime.now());
         order.setPrice(((double) order.getRentalPeriod() * car.getPricePerDay()));
 
-        OrderResponseDTO orderResponseDTO = orderMapper.orderToOrderDTO(orderRepository.save(order));
+        OrderResponseDTO orderResponseDTO = orderMapper.orderToOrderResponseDTO(orderRepository.save(order));
 
         ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderResponseDTO, HttpStatus.OK);
 
@@ -166,7 +170,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setOrderStatus(OrderStatus.CONFIRMED);
-        ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderMapper.orderToOrderDTO(order), HttpStatus.OK);
+        ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderMapper.orderToOrderResponseDTO(order), HttpStatus.OK);
 
         log.info("Accept order with id: {}", orderId);
 
@@ -187,7 +191,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderStatus(OrderStatus.REFUSAL);
         order.getCar().setBusy(false);
-        ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderMapper.orderToOrderDTO(order), HttpStatus.OK);
+        ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderMapper.orderToOrderResponseDTO(order), HttpStatus.OK);
 
         log.info("Cancel order with id: {}", orderId);
 

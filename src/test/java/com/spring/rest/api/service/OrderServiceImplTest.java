@@ -1,10 +1,15 @@
 package com.spring.rest.api.service;
 
+import com.spring.rest.api.entity.Car;
 import com.spring.rest.api.entity.Order;
+import com.spring.rest.api.entity.User;
+import com.spring.rest.api.entity.dto.request.CreateOrderRequestDTO;
 import com.spring.rest.api.entity.dto.response.OrderResponseDTO;
+import com.spring.rest.api.exception.BadRequestException;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.OrderRepository;
 import com.spring.rest.api.service.impl.OrderServiceImpl;
+import com.spring.rest.api.util.CarTestDataFactory;
 import com.spring.rest.api.util.OrderTestDataFactory;
 import com.spring.rest.api.util.UserTestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,8 +31,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
@@ -46,9 +51,29 @@ class OrderServiceImplTest {
 
     private UUID orderId;
 
+    private UUID userId;
+
+    private UUID carId;
+
+    private User userWithPassportAndOrders;
+
+    private User userWithoutOrders;
+
+    private User userWithoutPassport;
+
     private Order firsrOrder;
 
     private Order secondOrder;
+
+    private Car freeNotBusyCar;
+
+    private Car deletedCar;
+
+    private Car brokenCar;
+
+    private Car busyCar;
+
+    private CreateOrderRequestDTO createOrderRequestDTO;
 
     private OrderResponseDTO firstOrderRequestDTO;
 
@@ -58,6 +83,8 @@ class OrderServiceImplTest {
 
     private Page<OrderResponseDTO> orderResponseDTOS;
 
+    private Page<OrderResponseDTO> orderResponseDTOPageFromUser;
+
     private Pageable pageRequest;
 
 
@@ -65,21 +92,41 @@ class OrderServiceImplTest {
     void init() {
         orderId = UUID.randomUUID();
 
-        firsrOrder = OrderTestDataFactory.buildNewOrder(UserTestDataFactory.buildUserWithPassport());
+        userId = UUID.randomUUID();
 
-        secondOrder = OrderTestDataFactory.buildNewOrder(UserTestDataFactory.buildUserWithPassport());
+        carId = UUID.randomUUID();
+
+        userWithPassportAndOrders = UserTestDataFactory.buildUserWithOrders();
+
+        userWithoutOrders = UserTestDataFactory.buildUserWithoutPassport();
+
+        userWithoutPassport = UserTestDataFactory.buildUserWithoutPassport();
+
+        orderResponseDTOPageFromUser = OrderTestDataFactory.buildOrderResponseDTOPageFromUser(userWithPassportAndOrders);
+
+        freeNotBusyCar = CarTestDataFactory.buildCar();
+
+        deletedCar = CarTestDataFactory.buildDeletedCar();
+
+        brokenCar = CarTestDataFactory.buildBrokenCar();
+
+        busyCar = CarTestDataFactory.buildBusyCar();
+
+        firsrOrder = OrderTestDataFactory.buildOrder(UserTestDataFactory.buildUserWithPassport());
+
+        secondOrder = OrderTestDataFactory.buildOrder(UserTestDataFactory.buildUserWithPassport());
 
         firstOrderRequestDTO = OrderTestDataFactory.buildOrderToOrderResponseDTO(firsrOrder);
 
         secondOrderRequestDTO = OrderTestDataFactory.buildOrderToOrderResponseDTO(secondOrder);
 
-        orderPage = new PageImpl<>(List.of(firsrOrder, secondOrder));
-
-        orderResponseDTOS = new PageImpl<>(List.of(firstOrderRequestDTO, secondOrderRequestDTO));
+        createOrderRequestDTO = OrderTestDataFactory.buildCreateOrderRequestDTO();
 
         orderPage = new PageImpl<>(List.of(firsrOrder, secondOrder));
 
         orderResponseDTOS = new PageImpl<>(List.of(firstOrderRequestDTO, secondOrderRequestDTO));
+
+        orderPage = new PageImpl<>(List.of(firsrOrder, secondOrder));
 
         pageRequest = PageRequest.of(0, 2);
 
@@ -152,33 +199,216 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void findOrdersByUserId_WhenOrderWithSpecifiedIdIsExists_ReturnOrderResponseDTO() {
+    void findOrdersByUserId_WhenUserIsExistsAndUserHasOrders_ReturnOrderResponseDTOPage() {
         //given - precondition or setup
-
+        Page<OrderResponseDTO> expectedOrderResponseDTOPage = orderResponseDTOPageFromUser;
+        when(userService.findUserByIdOrThrowException(userId)).thenReturn(userWithPassportAndOrders);
 
         //when - action or the behaviour that we are going test
+        ResponseEntity<Page<OrderResponseDTO>> response = orderService.findOrdersByUserId(userId, pageRequest);
+        Page<OrderResponseDTO> responseBody = response.getBody();
 
         //then - verify the output
+        assertNotNull(response);
+        assertNotNull(responseBody);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedOrderResponseDTOPage, responseBody);
+
+        verify(userService).findUserByIdOrThrowException(userId);
     }
 
     @Test
-    void findOrdersByUserId_WhenOrderWithSpecifiedIdIsNorExists_ReturnOrderResponseDTO() {
+    void findOrdersByUserId_WhenUserIsExistsAndUserHasNotOrders_ReturnEmptyOrderResponseDTOPage() {
         //given - precondition or setup
-
+        Page<OrderResponseDTO> expectedEmptyOrderResponseDTOPage = new PageImpl<>(Collections.emptyList());
+        when(userService.findUserByIdOrThrowException(userId)).thenReturn(userWithoutOrders);
 
         //when - action or the behaviour that we are going test
+        ResponseEntity<Page<OrderResponseDTO>> response = orderService.findOrdersByUserId(userId, pageRequest);
+        Page<OrderResponseDTO> responseBody = response.getBody();
 
         //then - verify the output
+        assertNotNull(response);
+        assertNotNull(responseBody);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedEmptyOrderResponseDTOPage, responseBody);
+
+        verify(userService).findUserByIdOrThrowException(userId);
     }
 
     @Test
-    void createOrder() {
+    void findOrdersByUserId_WhenOrderIsNotExists_ThrowsNotFoundException() {
         //given - precondition or setup
-
+        String expectedExceptionMessage = String.format("Not found User with id: %s", userId);
+        when(userService.findUserByIdOrThrowException(userId))
+                .thenThrow(new NotFoundException(User.class, userId));
 
         //when - action or the behaviour that we are going test
+        NotFoundException notFoundException =
+                assertThrows(NotFoundException.class, () -> orderService.findOrdersByUserId(userId, pageRequest));
 
         //then - verify the output
+        assertNotNull(notFoundException);
+        assertEquals(expectedExceptionMessage, notFoundException.getMessage());
+
+        verify(userService).findUserByIdOrThrowException(userId);
+    }
+
+    @Test
+    void createOrder_WhenCarIsExistsAndIsNotDeletedAndIsNotBusyAndIsNotBrokenAndUserIsExistsAndHasPassport_ReturnOrderResponseDTO() {
+        //given - precondition or setup
+        freeNotBusyCar.setId(carId);
+        userWithPassportAndOrders.setId(userId);
+
+        Order savedOrder = OrderTestDataFactory.buildOrder(createOrderRequestDTO, userWithPassportAndOrders, freeNotBusyCar);
+        savedOrder.setId(carId);
+
+        OrderResponseDTO expectedSavedOrderResponseDTO = OrderTestDataFactory.buildOrderToOrderResponseDTO(savedOrder);
+        expectedSavedOrderResponseDTO.setId(carId);
+
+        when(carService.findCarByIdOrThrowException(carId)).thenReturn(freeNotBusyCar);
+        when(userService.findUserByIdOrThrowException(userId)).thenReturn(userWithPassportAndOrders);
+        when(orderRepository.save(any(Order.class))).thenReturn(savedOrder);
+
+        //when - action or the behaviour that we are going test
+        ResponseEntity<OrderResponseDTO> response = orderService.createOrder(createOrderRequestDTO, userId, carId);
+        OrderResponseDTO responseBody = response.getBody();
+
+        //then - verify the output
+        assertNotNull(response);
+        assertNotNull(responseBody);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedSavedOrderResponseDTO, responseBody);
+
+        verify(carService).findCarByIdOrThrowException(carId);
+        verify(userService).findUserByIdOrThrowException(userId);
+        verify(orderRepository).save(any(Order.class));
+    }
+
+    @Test
+    void createOrder_WhenCarIsNotExists_ThrowsNotFoundException() {
+        //given - precondition or setup
+        String expectedExceptionMessage = String.format("Not found Car with id: %s", carId);
+        when(carService.findCarByIdOrThrowException(carId))
+                .thenThrow(new NotFoundException(Car.class, carId));
+
+        //when - action or the behaviour that we are going test
+        NotFoundException notFoundException
+                = assertThrows(NotFoundException.class, () -> orderService.createOrder(createOrderRequestDTO, userId, carId));
+
+        //then - verify the output
+        assertNotNull(notFoundException);
+        assertEquals(expectedExceptionMessage, notFoundException.getMessage());
+
+        verify(carService).findCarByIdOrThrowException(carId);
+        verify(userService, never()).findUserByIdOrThrowException(userId);
+        verify(orderRepository, never()).save(any(Order.class));
+    }
+
+    @Test
+    void createOrder_WhenCarIsExistsAndUserIsNotExists_ThrowsNotFoundException() {
+        //given - precondition or setup
+        String expectedExceptionMessage = String.format("Not found User with id: %s", userId);
+
+        when(carService.findCarByIdOrThrowException(carId)).thenReturn(freeNotBusyCar);
+        when(userService.findUserByIdOrThrowException(userId))
+                .thenThrow(new NotFoundException(User.class, userId));
+
+        //when - action or the behaviour that we are going test
+        NotFoundException notFoundException
+                = assertThrows(NotFoundException.class, () -> orderService.createOrder(createOrderRequestDTO, userId, carId));
+
+        //then - verify the output
+        assertNotNull(notFoundException);
+        assertEquals(expectedExceptionMessage, notFoundException.getMessage());
+
+        verify(carService).findCarByIdOrThrowException(carId);
+        verify(userService).findUserByIdOrThrowException(userId);
+        verify(orderRepository, never()).save(any(Order.class));
+    }
+
+    @Test
+    void createOrder_WhenCarIsExistsAndUserIsExistsAndHasNotPassport_ThrowsBadRequestException() {
+        //given - precondition or setup
+        String expectedExceptionMessage = "The user must have a passport to create a new order";
+
+        when(carService.findCarByIdOrThrowException(carId)).thenReturn(freeNotBusyCar);
+        when(userService.findUserByIdOrThrowException(userId)).thenReturn(userWithoutPassport);
+
+        //when - action or the behaviour that we are going test
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> orderService.createOrder(createOrderRequestDTO, userId, carId));
+
+        //then - verify the output
+        assertNotNull(badRequestException);
+        assertEquals(expectedExceptionMessage, badRequestException.getMessage());
+
+        verify(carService).findCarByIdOrThrowException(carId);
+        verify(userService).findUserByIdOrThrowException(userId);
+        verify(orderRepository, never()).save(any(Order.class));
+    }
+
+    @Test
+    void createOrder_WhenUserIsExistsAndHasPassportAndCarIsExistsAndIsDeleted_ThrowsBadRequestException() {
+        //given - precondition or setup
+        String expectedExceptionMessage = String.format("The car with id = %s is deleted", carId);
+
+        when(carService.findCarByIdOrThrowException(carId)).thenReturn(deletedCar);
+        when(userService.findUserByIdOrThrowException(userId)).thenReturn(userWithPassportAndOrders);
+
+        //when - action or the behaviour that we are going test
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> orderService.createOrder(createOrderRequestDTO, userId, carId));
+
+        //then - verify the output
+        assertNotNull(badRequestException);
+        assertEquals(expectedExceptionMessage, badRequestException.getMessage());
+
+        verify(carService).findCarByIdOrThrowException(carId);
+        verify(userService).findUserByIdOrThrowException(userId);
+        verify(orderRepository, never()).save(any(Order.class));
+    }
+
+    @Test
+    void createOrder_WhenUserIsExistsAndHasPassportAndCarIsExistsAndIsNotDeletedAndIsBusy_ThrowsBadRequestException() {
+        //given - precondition or setup
+        String expectedExceptionMessage = String.format("The car with id = %s isn't free", carId);
+
+        when(carService.findCarByIdOrThrowException(carId)).thenReturn(busyCar);
+        when(userService.findUserByIdOrThrowException(userId)).thenReturn(userWithPassportAndOrders);
+
+        //when - action or the behaviour that we are going test
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> orderService.createOrder(createOrderRequestDTO, userId, carId));
+
+        //then - verify the output
+        assertNotNull(badRequestException);
+        assertEquals(expectedExceptionMessage, badRequestException.getMessage());
+
+        verify(carService).findCarByIdOrThrowException(carId);
+        verify(userService).findUserByIdOrThrowException(userId);
+        verify(orderRepository, never()).save(any(Order.class));
+    }
+
+    @Test
+    void createOrder_WhenUserIsExistsAndHasPassportAndCarIsExistsAndIsNotDeletedAndIsNotBusyAndIsBroken_ThrowsBadRequestException() {
+        //given - precondition or setup
+        String expectedExceptionMessage = String.format("The car with id = %s is broken", carId);
+
+        when(carService.findCarByIdOrThrowException(carId)).thenReturn(brokenCar);
+        when(userService.findUserByIdOrThrowException(userId)).thenReturn(userWithPassportAndOrders);
+
+        //when - action or the behaviour that we are going test
+        BadRequestException badRequestException
+                = assertThrows(BadRequestException.class, () -> orderService.createOrder(createOrderRequestDTO, userId, carId));
+
+        //then - verify the output
+        assertNotNull(badRequestException);
+        assertEquals(expectedExceptionMessage, badRequestException.getMessage());
+
+        verify(carService).findCarByIdOrThrowException(carId);
+        verify(userService).findUserByIdOrThrowException(userId);
+        verify(orderRepository, never()).save(any(Order.class));
     }
 
     @Test
