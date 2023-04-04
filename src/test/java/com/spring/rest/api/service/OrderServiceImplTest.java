@@ -146,7 +146,7 @@ class OrderServiceImplTest {
 
         createRefundRequestDTOWithDamage = RefundTestDataFactory.buildCreateRefundRequestDTOWithDamage();
 
-        createOrderRequestDTO = OrderTestDataFactory.buildCreateOrderRequestDTO();
+        createOrderRequestDTO = OrderTestDataFactory.buildCreateOrderRequestDTO(carId, userId);
 
         orderPage = new PageImpl<>(List.of(firsrOrder, secondOrder));
 
@@ -297,7 +297,7 @@ class OrderServiceImplTest {
         when(orderRepository.save(any(Order.class))).thenReturn(savedOrder);
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<OrderResponseDTO> response = orderService.createOrder(createOrderRequestDTO, userId, carId);
+        ResponseEntity<OrderResponseDTO> response = orderService.createOrder(createOrderRequestDTO);
         OrderResponseDTO responseBody = response.getBody();
 
         //then - verify the output
@@ -320,7 +320,7 @@ class OrderServiceImplTest {
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> orderService.createOrder(createOrderRequestDTO, userId, carId));
+                = assertThrows(NotFoundException.class, () -> orderService.createOrder(createOrderRequestDTO));
 
         //then - verify the output
         assertNotNull(notFoundException);
@@ -335,14 +335,13 @@ class OrderServiceImplTest {
     void createOrder_WhenCarIsExistsAndUserIsNotExists_ThrowsNotFoundException() {
         //given - precondition or setup
         String expectedExceptionMessage = String.format("Not found User with id: %s", userId);
-
         when(carService.findCarByIdOrThrowException(carId)).thenReturn(freeNotBusyCar);
         when(userService.findUserByIdOrThrowException(userId))
                 .thenThrow(new NotFoundException(User.class, userId));
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> orderService.createOrder(createOrderRequestDTO, userId, carId));
+                = assertThrows(NotFoundException.class, () -> orderService.createOrder(createOrderRequestDTO));
 
         //then - verify the output
         assertNotNull(notFoundException);
@@ -357,13 +356,12 @@ class OrderServiceImplTest {
     void createOrder_WhenCarIsExistsAndUserIsExistsAndHasNotPassport_ThrowsBadRequestException() {
         //given - precondition or setup
         String expectedExceptionMessage = "The user must have a passport to create a new order";
-
         when(carService.findCarByIdOrThrowException(carId)).thenReturn(freeNotBusyCar);
         when(userService.findUserByIdOrThrowException(userId)).thenReturn(userWithoutPassport);
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> orderService.createOrder(createOrderRequestDTO, userId, carId));
+                = assertThrows(BadRequestException.class, () -> orderService.createOrder(createOrderRequestDTO));
 
         //then - verify the output
         assertNotNull(badRequestException);
@@ -378,13 +376,12 @@ class OrderServiceImplTest {
     void createOrder_WhenUserIsExistsAndHasPassportAndCarIsExistsAndIsDeleted_ThrowsBadRequestException() {
         //given - precondition or setup
         String expectedExceptionMessage = String.format("The car with id = %s is deleted", carId);
-
         when(carService.findCarByIdOrThrowException(carId)).thenReturn(deletedCar);
         when(userService.findUserByIdOrThrowException(userId)).thenReturn(userWithPassportAndOrders);
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> orderService.createOrder(createOrderRequestDTO, userId, carId));
+                = assertThrows(BadRequestException.class, () -> orderService.createOrder(createOrderRequestDTO));
 
         //then - verify the output
         assertNotNull(badRequestException);
@@ -405,7 +402,7 @@ class OrderServiceImplTest {
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> orderService.createOrder(createOrderRequestDTO, userId, carId));
+                = assertThrows(BadRequestException.class, () -> orderService.createOrder(createOrderRequestDTO));
 
         //then - verify the output
         assertNotNull(badRequestException);
@@ -426,7 +423,7 @@ class OrderServiceImplTest {
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> orderService.createOrder(createOrderRequestDTO, userId, carId));
+                = assertThrows(BadRequestException.class, () -> orderService.createOrder(createOrderRequestDTO));
 
         //then - verify the output
         assertNotNull(badRequestException);

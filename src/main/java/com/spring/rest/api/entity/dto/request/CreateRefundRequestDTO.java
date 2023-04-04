@@ -1,6 +1,8 @@
 package com.spring.rest.api.entity.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,5 +29,11 @@ public class CreateRefundRequestDTO {
     @Min(value = 0, message = "Price must be 0 or greater than 0")
     @Schema(example = REFUND_PRICE, description = REFUND_PRICE)
     private double price;
+
+    @Pattern(regexp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+            message = "Invalid order id")
+    @NotBlank(message = "Order id can't be null")
+    @Schema(example = ORDER_UUID, description = ORDER_UUID)
+    private String orderId;
 
 }

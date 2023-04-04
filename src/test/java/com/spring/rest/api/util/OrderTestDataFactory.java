@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrderTestDataFactory {
@@ -63,8 +64,11 @@ public class OrderTestDataFactory {
                 .orderStatus(OrderStatus.REFUSAL).build();
     }
 
-    public static CreateOrderRequestDTO buildCreateOrderRequestDTO() {
-        return CreateOrderRequestDTO.builder().rentalPeriod(3).build();
+    public static CreateOrderRequestDTO buildCreateOrderRequestDTO(UUID carId, UUID userId) {
+        return CreateOrderRequestDTO.builder()
+                .carId(carId.toString())
+                .userId(userId.toString())
+                .rentalPeriod(3).build();
     }
 
 

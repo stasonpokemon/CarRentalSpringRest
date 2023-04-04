@@ -18,16 +18,13 @@ public interface OrderService {
 
     ResponseEntity<OrderResponseDTO> findById(UUID orderId);
 
-    ResponseEntity<OrderResponseDTO> createOrder(CreateOrderRequestDTO createOrderRequestDTO,
-                                                 UUID userId,
-                                                 UUID carId);
+    ResponseEntity<OrderResponseDTO> createOrder(CreateOrderRequestDTO createOrderRequestDTO);
 
     ResponseEntity<OrderResponseDTO> acceptOrder(UUID orderId);
 
     ResponseEntity<OrderResponseDTO> cancelOrder(UUID orderId);
 
-    ResponseEntity<RefundResponseDTO> createOrdersRefund(UUID orderId,
-                                                         CreateRefundRequestDTO createRefundRequestDTO);
+    ResponseEntity<RefundResponseDTO> createOrdersRefund(CreateRefundRequestDTO createRefundRequestDTO);
 
     ResponseEntity<RefundResponseDTO> findOrdersRefundByOrderId(UUID orderId);
 }

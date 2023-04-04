@@ -99,14 +99,15 @@ public interface OrderController {
             @ApiResponse(responseCode = "400",
                     description = "Bad request",
                     content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "404",
+                    description = "Not found",
+                    content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500",
                     description = "Internal server error",
                     content = {@Content(schema = @Schema())})
     })
-    @PostMapping("/{userId}/{carId}")
+    @PostMapping()
     ResponseEntity<OrderResponseDTO> createOrder(
-            @PathVariable("userId") UUID userId,
-            @PathVariable("carId") UUID carId,
             @RequestBody @Valid CreateOrderRequestDTO createOrderRequestDTO);
 
     @Operation(
@@ -171,8 +172,7 @@ public interface OrderController {
                     description = "Internal server error",
                     content = {@Content(schema = @Schema())})
     })
-    @PostMapping("/{orderId}/refund")
+    @PostMapping("/refund")
     ResponseEntity<RefundResponseDTO> createOrdersRefund
-            (@PathVariable("orderId") UUID orderId,
-             @RequestBody @Valid CreateRefundRequestDTO createRefundRequestDTO);
+            (@RequestBody @Valid CreateRefundRequestDTO createRefundRequestDTO);
 }
