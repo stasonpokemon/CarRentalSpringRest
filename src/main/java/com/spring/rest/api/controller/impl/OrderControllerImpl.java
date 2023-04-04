@@ -47,14 +47,12 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<OrderResponseDTO> createOrder(UUID userId,
-                                         UUID carId,
-                                         CreateOrderRequestDTO createOrderRequestDTO) {
+    public ResponseEntity<OrderResponseDTO> createOrder(CreateOrderRequestDTO createOrderRequestDTO) {
 
-        log.info("POST request to create order: {} for car with id: {} for user with id: {}",
-                createOrderRequestDTO, carId, userId);
+        log.info("POST request to create order: {}",
+                createOrderRequestDTO);
 
-        return orderService.createOrder(createOrderRequestDTO, userId, carId);
+        return orderService.createOrder(createOrderRequestDTO);
     }
 
     @Override
@@ -74,12 +72,11 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public ResponseEntity<RefundResponseDTO> createOrdersRefund(UUID orderId,
-                                                                CreateRefundRequestDTO createRefundRequestDTO) {
+    public ResponseEntity<RefundResponseDTO> createOrdersRefund(CreateRefundRequestDTO createRefundRequestDTO) {
 
-        log.info("POST request to create refund: {} for order with id: {}", createRefundRequestDTO, orderId);
+        log.info("POST request to create refund: {}", createRefundRequestDTO);
 
-        return orderService.createOrdersRefund(orderId, createRefundRequestDTO);
+        return orderService.createOrdersRefund(createRefundRequestDTO);
     }
 
 

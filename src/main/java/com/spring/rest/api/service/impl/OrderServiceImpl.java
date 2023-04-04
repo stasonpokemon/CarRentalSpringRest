@@ -105,14 +105,13 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public ResponseEntity<OrderResponseDTO> createOrder(CreateOrderRequestDTO createOrderRequestDTO,
-                                                        UUID userId,
-                                                        UUID carId) {
+    public ResponseEntity<OrderResponseDTO> createOrder(CreateOrderRequestDTO createOrderRequestDTO) {
 
-        // переделать логику: поместить userId и carId в CreateOrderRequestDTO
 
-        log.info("Creating new order: {} for car with id: {} for user with id: {}",
-                createOrderRequestDTO, carId, userId);
+        log.info("Creating new order: {}", createOrderRequestDTO);
+
+        UUID carId = UUID.fromString(createOrderRequestDTO.getCarId());
+        UUID userId = UUID.fromString(createOrderRequestDTO.getUserId());
 
         Car car = carService.findCarByIdOrThrowException(carId);
 
@@ -198,10 +197,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<RefundResponseDTO> createOrdersRefund(UUID orderId,
-                                                                CreateRefundRequestDTO createRefundRequestDTO) {
+    public ResponseEntity<RefundResponseDTO> createOrdersRefund(CreateRefundRequestDTO createRefundRequestDTO) {
 
-        log.info("Creating refund: {} for order with id: {}", createRefundRequestDTO, orderId);
+        log.info("Creating refund: {}", createRefundRequestDTO);
+
+        UUID orderId = UUID.fromString(createRefundRequestDTO.getOrderId());
 
         Order order = findOrderByIdOrThrowException(orderId);
 
