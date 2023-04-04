@@ -1,5 +1,6 @@
 package com.spring.rest.api.util;
 
+import com.spring.rest.api.entity.Order;
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.Role;
 import com.spring.rest.api.entity.User;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -30,16 +32,27 @@ public class UserTestDataFactory {
                 .email("test@test.com")
                 .roles(Set.of(Role.USER, Role.ADMIN))
                 .active(true)
-                .passport(PassportTestDataFactory.buildPassport()).build();
+                .passport(PassportTestDataFactory.buildPassport())
+                .orders(List.of()).build();
     }
 
-    public static User buildUserWithOutPassport() {
+
+    public static User buildUserWithoutPassport() {
         return User.builder()
                 .username("testtest" + UUID.randomUUID())
                 .password("testtest")
                 .email("test@test.com")
                 .roles(Set.of(Role.USER, Role.ADMIN))
-                .active(true).build();
+                .active(true)
+                .orders(List.of()).build();
+    }
+
+    public static User buildUserWithOrders() {
+        User user = buildUserWithPassport();
+        Order order = OrderTestDataFactory.buildOrder(user);
+        Order order1 = OrderTestDataFactory.buildOrder(user);
+        user.setOrders(List.of(order, order1));
+        return user;
     }
 
     public static UserResponseDTO buildUserResponseDTO(User user) {
@@ -79,6 +92,7 @@ public class UserTestDataFactory {
                 .password("testtest")
                 .email("test@test.com")
                 .roles(Set.of(Role.USER, Role.ADMIN))
+                .orders(List.of())
                 .active(false).build();
     }
 
@@ -94,4 +108,6 @@ public class UserTestDataFactory {
         userResponseDTO.setActive(false);
         return userResponseDTO;
     }
+
+
 }

@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface UserMapper {
 
-    @Mapping(target = "passportId", source = "user.id")
+    @Mapping(target = "passportId", source = "passport.id")
     UserResponseDTO userToUserResponseDTO(User user);
 
     User createUserRequestDTOToUser(CreateUserRequestDTO createUserRequestDTO);

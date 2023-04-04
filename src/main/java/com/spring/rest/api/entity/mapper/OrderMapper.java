@@ -12,7 +12,7 @@ public interface OrderMapper {
     @Mapping(target = "carId", source = "car.id")
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "refundId", source = "refund.id")
-    OrderResponseDTO orderToOrderDTO(Order order);
+    OrderResponseDTO orderToOrderResponseDTO(Order order);
 
     Order createOrderRequestDTOToOrder(CreateOrderRequestDTO createOrderRequestDTO);
 }

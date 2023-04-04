@@ -29,5 +29,5 @@ public interface OrderService {
     ResponseEntity<RefundResponseDTO> createOrdersRefund(UUID orderId,
                                                          CreateRefundRequestDTO createRefundRequestDTO);
 
-    ResponseEntity<RefundResponseDTO> findOrdersRefund(UUID orderId);
+    ResponseEntity<RefundResponseDTO> findOrdersRefundByOrderId(UUID orderId);
 }

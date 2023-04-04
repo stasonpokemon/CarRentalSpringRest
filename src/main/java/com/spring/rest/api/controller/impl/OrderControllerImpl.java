@@ -43,7 +43,7 @@ public class OrderControllerImpl implements OrderController {
 
         log.info("GET request to find order's refund with orderId: {}", orderId);
 
-        return orderService.findOrdersRefund(orderId);
+        return orderService.findOrdersRefundByOrderId(orderId);
     }
 
     @Override
