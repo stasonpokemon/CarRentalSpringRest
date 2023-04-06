@@ -31,7 +31,7 @@ public interface UserService {
 
     ResponseEntity<UserResponseDTO> activateUser(String activateCode);
 
-    ResponseEntity<UserResponseDTO> findUser(UUID userId);
+    ResponseEntity<UserResponseDTO> findById(UUID userId);
 
     User findUserByIdOrThrowException(UUID userId);
 

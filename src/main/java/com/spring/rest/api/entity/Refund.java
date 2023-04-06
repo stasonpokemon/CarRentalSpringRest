@@ -1,8 +1,8 @@
 package com.spring.rest.api.entity;
 
 import jakarta.persistence.*;
-
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -10,9 +10,10 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "refunds")
 @Data
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class Refund extends BaseEntity {
 
     @Column(name = "damage_status")
@@ -28,5 +29,6 @@ public class Refund extends BaseEntity {
     private LocalDateTime refundDate;
 
     @OneToOne(mappedBy = "refund", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ToString.Exclude
     private Order order;
 }

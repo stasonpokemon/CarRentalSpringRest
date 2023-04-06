@@ -3,17 +3,18 @@ package com.spring.rest.api.entity;
 import lombok.*;
 
 import jakarta.persistence.*;
+import lombok.experimental.SuperBuilder;
+
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "passports")
 @Data
-//@ToString(of = {"name", "surname", "patronymic", "birthday", "address"})
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class Passport extends BaseEntity {
 
     @Column(name = "name", nullable = false)
@@ -33,5 +34,6 @@ public class Passport extends BaseEntity {
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
+    @ToString.Exclude
     private User user;
 }

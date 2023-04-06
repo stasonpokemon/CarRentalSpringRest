@@ -38,7 +38,7 @@ public class UserControllerImpl implements UserController {
 
         log.info("GET request to find user with id: {}", userId);
 
-        return userService.findUser(userId);
+        return userService.findById(userId);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.spring.rest.api.entity;
 
-import lombok.*;
-
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +12,10 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Data
-@ToString(of = {"username", "password", "email", "roles", "activationCode"})
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class User extends BaseEntity {
 
 
@@ -41,6 +41,7 @@ public class User extends BaseEntity {
     private Passport passport;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Order> orders = new ArrayList<>();
 
     @Column(name = "active")

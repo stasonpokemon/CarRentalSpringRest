@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<UserResponseDTO> findUser(UUID userId) {
+    public ResponseEntity<UserResponseDTO> findById(UUID userId) {
 
         log.info("Finding user by id: {}", userId);
 

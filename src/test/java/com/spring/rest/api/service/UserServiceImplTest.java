@@ -133,7 +133,7 @@ class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(firstUserWithPassport));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<UserResponseDTO> response = userService.findUser(userId);
+        ResponseEntity<UserResponseDTO> response = userService.findById(userId);
         UserResponseDTO responseBody = response.getBody();
 
         //then - verify the output
@@ -152,7 +152,7 @@ class UserServiceImplTest {
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> userService.findUser(userId));
+                = assertThrows(NotFoundException.class, () -> userService.findById(userId));
 
         //then - verify the output
         assertEquals(String.format("Not found User with id: %s", userId), notFoundException.getMessage());

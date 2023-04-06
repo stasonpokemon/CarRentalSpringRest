@@ -25,7 +25,7 @@ public interface CarService {
     ResponseEntity<CarResponseDTO> save(CreateCarRequestDTO createCarRequestDTO);
 
     ResponseEntity<CarResponseDTO> update(UUID carId,
-                             UpdateCarRequestDTO updateCarRequestDTO);
+                                          UpdateCarRequestDTO updateCarRequestDTO);
 
     ResponseEntity<CarResponseDTO> markCarAsDeleted(UUID carId);
 
@@ -33,6 +33,5 @@ public interface CarService {
 
     ResponseEntity<CarResponseDTO> fixBrokenCar(UUID carId);
 
-    ResponseEntity<CarResponseDTO> setCarAsBroken(UUID carId,
-                                     String damageStatus);
+    ResponseEntity<CarResponseDTO> setCarAsBroken(UUID carId, String damageStatus);
 }

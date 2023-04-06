@@ -2,10 +2,7 @@ package com.spring.rest.api.entity.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -15,6 +12,7 @@ import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class UserResponseDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
