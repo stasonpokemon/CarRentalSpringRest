@@ -1,7 +1,8 @@
 <h2>CarRentalApi</h2>
 This is RESTFull training pet project
+<br></br>
 
->### How to start the application:
+># How to start the application:
 > 1. You must clone this project from github: https://github.com/stasonpokemon/CarRentalSpringRest.git
 > 2. You must have docker on your computer. If you don't have docker on your device, you can download it here: https://www.docker.com/products/docker-desktop/
 > 3. You have to navigate to the application's root folder using the terminal and call the command: "**_docker-compose up_**".
@@ -9,3 +10,18 @@ This is RESTFull training pet project
 > 4. After that you can open swagger to manage application endpoints: http://localhost:8080/swagger-ui/index.html
 > 5. To close docker containers you can call the command: "**_docker-compose stop_**".
 > 6. To remove docker containers you can call the command: "**_docker-compose rm_**".
+
+
+># Stack:
+> - Java 17
+> - Maven 3.9.1
+> - Checkstyle
+> - Spring boot 3.0.0
+> - Spring Data JPA
+> - Spring Mail
+> - jpa/hibernate
+> - Postgres
+> - Flyway
+> - Swagger 3
+> - Docker-compose
+> - CI/CD
