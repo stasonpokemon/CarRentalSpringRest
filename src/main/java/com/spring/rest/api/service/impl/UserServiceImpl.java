@@ -34,6 +34,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation class for UserService.
+ */
 @Service
 @Transactional
 @Slf4j
@@ -41,7 +44,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     @Value("${server.port}")
-    private String SERVER_PORT;
+    private String serverPort;
     private final UserRepository userRepository;
 
     private final PassportRepository passportRepository;
@@ -103,7 +106,8 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException(String.format("Passport not found for user with id = %s", userId));
         }
 
-        ResponseEntity<PassportResponseDTO> response = new ResponseEntity<>(passportMapper.passportToPassportResponseDTO(passport), HttpStatus.OK);
+        ResponseEntity<PassportResponseDTO> response =
+                new ResponseEntity<>(passportMapper.passportToPassportResponseDTO(passport), HttpStatus.OK);
 
         log.info("Find passport: {} by userId: {}", passport, userId);
 
@@ -143,7 +147,8 @@ public class UserServiceImpl implements UserService {
 
         Passport passport = findPassportByUserOrThrowException(findUserByIdOrThrowException(userId));
         PassportUtil.getInstance().copyNotNullFieldsFromPassportDTOToPassport(passportRequestDTO, passport);
-        ResponseEntity<PassportResponseDTO> response = new ResponseEntity<>(passportMapper.passportToPassportResponseDTO(passport), HttpStatus.OK);
+        ResponseEntity<PassportResponseDTO> response =
+                new ResponseEntity<>(passportMapper.passportToPassportResponseDTO(passport), HttpStatus.OK);
 
         log.info("Update user's passport: {} by userId: {}", passport, userId);
 
@@ -174,14 +179,16 @@ public class UserServiceImpl implements UserService {
         user.setActivationCode(UUID.randomUUID().toString());
         user.setRoles(Collections.singleton(Role.USER));
 
-        ResponseEntity<UserResponseDTO> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(userRepository.save(user)), HttpStatus.OK);
+        ResponseEntity<UserResponseDTO> response =
+                new ResponseEntity<>(userMapper.userToUserResponseDTO(userRepository.save(user)), HttpStatus.OK);
 
         log.info("Save registered user: {}", user);
 
         // Send activation code to user email
-        String message = String.format("Hello, %s! \n Welcome to car rental website. Please, visit next link for activate your profile: http://localhost:%s/registration/activate/%s!",
+        String message = String.format("Hello, %s! \n Welcome to car rental website. Please, visit next link " +
+                        "for activate your profile: http://localhost:%s/registration/activate/%s!",
                 user.getUsername(),
-                SERVER_PORT,
+                serverPort,
                 user.getActivationCode()
         );
 
@@ -200,7 +207,8 @@ public class UserServiceImpl implements UserService {
         user.setActivationCode(null);
         user.setActive(true);
 
-        ResponseEntity<UserResponseDTO> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
+        ResponseEntity<UserResponseDTO> response =
+                new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
 
         log.info("Activate user: {}", user);
 
@@ -220,7 +228,8 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setActive(false);
-        ResponseEntity<UserResponseDTO> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
+        ResponseEntity<UserResponseDTO> response =
+                new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
 
         log.info("Block user: {}", user);
 
@@ -240,7 +249,8 @@ public class UserServiceImpl implements UserService {
 
         user.setActive(true);
 
-        ResponseEntity<UserResponseDTO> response = new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
+        ResponseEntity<UserResponseDTO> response =
+                new ResponseEntity<>(userMapper.userToUserResponseDTO(user), HttpStatus.OK);
 
         log.info("Unlock user: {}", user);
 

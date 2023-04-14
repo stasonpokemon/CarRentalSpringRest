@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 
 class CarControllerImplTest {
 
-
-
     @Test
     void findAll() {
     }

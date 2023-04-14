@@ -1,10 +1,4 @@
-package com.spring.rest.api.util.swagger;
-
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+package com.spring.rest.api.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -12,10 +6,30 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.servers.Server;
 
-import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CONFIG_CONTACT_EMAIL;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CONFIG_CONTACT_NAME;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CONFIG_CONTACT_WEBSITE;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CONFIG_INFO_DESCRIPTION;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CONFIG_INFO_TERMS_OF_SERVICE;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CONFIG_INFO_TITLE;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CONFIG_INFO_VERSION;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CONFIG_LICENSE_NAME;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CONFIG_LICENSE_WEBSITE;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CONFIG_SERVER_URL_DEV_DESCRIPTION;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CONFIG_SERVER_URL_PROD_DESCRIPTION;
+
+
+/**
+ * Swagger configuration class.
+ */
 @Configuration
-public class OpenAPIConfig {
+public class OpenAPIConfiguration {
 
     @Value("${openapi.dev-url}")
     private String devUrl;

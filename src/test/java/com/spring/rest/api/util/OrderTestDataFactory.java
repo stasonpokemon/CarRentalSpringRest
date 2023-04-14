@@ -17,10 +17,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * OrderTestDataFactory factory test class for create order entities and DTOs.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrderTestDataFactory {
 
-    private final static OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
+    private static final  OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
 
     public static Order buildOrder(User user) {
         return Order.builder()

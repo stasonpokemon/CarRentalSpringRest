@@ -10,8 +10,20 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_BROKEN;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_DAMAGE_STATUS;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_EMPLOYMENT_STATUS;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_IMAGE_LINK;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_MODEL;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_PRICE_PER_DAY;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_PRODUCER;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_RELEASE_DATE;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_UUID;
 
+
+/**
+ * This class presents a DTO, which is available via CarController endpoints.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

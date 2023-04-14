@@ -1,18 +1,26 @@
 package com.spring.rest.api.entity.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
-import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.PASSPORT_ADDRESS;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.PASSPORT_BIRTHDAY;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.PASSPORT_NAME;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.PASSPORT_PATRONYMIC;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.PASSPORT_SURNAME;
 
+
+/**
+ * This class presents a DTO, which is available via UserController endpoints.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

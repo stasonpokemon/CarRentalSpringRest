@@ -12,8 +12,18 @@ import org.hibernate.validator.constraints.Length;
 import java.util.Date;
 import java.util.UUID;
 
-import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.PASSPORT_ADDRESS;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.PASSPORT_BIRTHDAY;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.PASSPORT_NAME;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.PASSPORT_PATRONYMIC;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.PASSPORT_SURNAME;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.PASSPORT_UUID;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_UUID;
 
+
+/**
+ * This class presents a DTO, which is available via UserController endpoints.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

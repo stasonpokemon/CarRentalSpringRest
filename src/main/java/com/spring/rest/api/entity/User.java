@@ -1,13 +1,33 @@
 package com.spring.rest.api.entity;
 
-import lombok.*;
 
-import jakarta.persistence.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * This class presents an user's entity, which will be stored in the database.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "users")
@@ -46,3 +66,4 @@ public class User extends BaseEntity {
     @Column(name = "active")
     private boolean active;
 }
+

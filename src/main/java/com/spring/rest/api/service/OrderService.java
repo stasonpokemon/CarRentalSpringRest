@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
+/**
+ * The OrderService interface, which stores the business logic for working with an order.
+ */
 public interface OrderService {
     ResponseEntity<Page<OrderResponseDTO>> findAll(Pageable pageable);
 

@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
+/**
+ * JpaRepository, which works with Passport entity.
+ */
 @Repository
 public interface PassportRepository extends JpaRepository<Passport, UUID> {
 

@@ -11,6 +11,9 @@ import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDateTime;
 
+/**
+ * RefundTestDataFactory factory test class for create refund entities and DTOs.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RefundTestDataFactory {
 

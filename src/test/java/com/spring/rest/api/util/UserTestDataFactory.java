@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * UserTestDataFactory factory test class for create user entities and DTOs.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserTestDataFactory {
 
@@ -60,14 +63,8 @@ public class UserTestDataFactory {
     }
 
     public static PassportResponseDTO buildPassportResponseDTOFromUser(User user) {
-        PassportResponseDTO passportResponseDTO = null;
-        try {
-            Passport passport = user.getPassport();
-            passportResponseDTO = passportMapper.passportToPassportResponseDTO(passport);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        return passportResponseDTO;
+        Passport passport = user.getPassport();
+        return passportMapper.passportToPassportResponseDTO(passport);
     }
 
     public static CreateUserRequestDTO buildCreateUserRequestDTO() {
