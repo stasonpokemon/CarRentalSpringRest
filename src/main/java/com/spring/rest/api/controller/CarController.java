@@ -11,9 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,7 +50,7 @@ public interface CarController {
     })
     @GetMapping("/all")
     ResponseEntity<Page<CarResponseDTO>> findAll(
-            @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable);
+            @ParameterObject @PageableDefault Pageable pageable);
 
     @Operation(
             summary = "Find all cars not marked as deleted",
@@ -69,7 +69,7 @@ public interface CarController {
     })
     @GetMapping
     ResponseEntity<Page<CarResponseDTO>> findAllNotMarkedAsDeleted(
-            @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable);
+            @ParameterObject @PageableDefault Pageable pageable);
 
     @Operation(
             summary = "Find car by id",
