@@ -45,6 +45,7 @@ public class UserServiceImpl implements UserService {
 
     @Value("${server.port}")
     private String serverPort;
+
     private final UserRepository userRepository;
 
     private final PassportRepository passportRepository;
