@@ -22,6 +22,7 @@ This is RESTFull training pet project
 > - jpa/hibernate
 > - Postgres
 > - Flyway
+> - Junit 5, Mockito, TestContainers
 > - Swagger 3
 > - Docker-compose
 > - CI/CD
