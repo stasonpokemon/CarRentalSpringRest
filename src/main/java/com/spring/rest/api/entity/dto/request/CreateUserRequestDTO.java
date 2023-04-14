@@ -2,17 +2,22 @@ package com.spring.rest.api.entity.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_EMAIL;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_PASSWORD;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_USERNAME;
 
-import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
 
+/**
+ * This class presents a DTO, which is available via UserController endpoints.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,3 +38,4 @@ public class CreateUserRequestDTO {
     @Schema(example = USER_EMAIL, description = USER_EMAIL)
     private String email;
 }
+

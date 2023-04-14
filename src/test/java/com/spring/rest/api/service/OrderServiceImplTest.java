@@ -32,10 +32,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+/**
+ * OrderServiceImplTest test class for testing OrderService.
+ */
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
 
@@ -116,7 +123,8 @@ class OrderServiceImplTest {
 
         userWithoutPassport = UserTestDataFactory.buildUserWithoutPassport();
 
-        orderResponseDTOPageFromUser = OrderTestDataFactory.buildOrderResponseDTOPageFromUser(userWithPassportAndOrders);
+        orderResponseDTOPageFromUser =
+                OrderTestDataFactory.buildOrderResponseDTOPageFromUser(userWithPassportAndOrders);
 
         freeNotBusyCar = CarTestDataFactory.buildCar();
 
@@ -280,13 +288,18 @@ class OrderServiceImplTest {
         verify(userService).findUserByIdOrThrowException(userId);
     }
 
+    /**
+     * Return OrderResponseDTO.
+     * Test name did not fit into 120 characters.
+     */
     @Test
-    void createOrder_WhenCarIsExistsAndIsNotDeletedAndIsNotBusyAndIsNotBrokenAndUserIsExistsAndHasPassport_ReturnOrderResponseDTO() {
+    void createOrder_WhenCarIsExistsAndIsNotDeletedAndIsNotBusyAndIsNotBrokenAndUserIsExistsAndHasPassport_Return() {
         //given - precondition or setup
         freeNotBusyCar.setId(carId);
         userWithPassportAndOrders.setId(userId);
 
-        Order savedOrder = OrderTestDataFactory.buildOrder(createOrderRequestDTO, userWithPassportAndOrders, freeNotBusyCar);
+        Order savedOrder = OrderTestDataFactory.buildOrder(createOrderRequestDTO, userWithPassportAndOrders,
+                freeNotBusyCar);
         savedOrder.setId(carId);
 
         OrderResponseDTO expectedSavedOrderResponseDTO = OrderTestDataFactory.buildOrderToOrderResponseDTO(savedOrder);
@@ -413,8 +426,12 @@ class OrderServiceImplTest {
         verify(orderRepository, never()).save(any(Order.class));
     }
 
+    /**
+     * Throw ThrowsBadRequestException.
+     * Test name did not fit into 120 characters.
+     */
     @Test
-    void createOrder_WhenUserIsExistsAndHasPassportAndCarIsExistsAndIsNotDeletedAndIsNotBusyAndIsBroken_ThrowsBadRequestException() {
+    void createOrder_WhenUserIsExistsAndHasPassportAndCarIsExistsAndIsNotDeletedAndIsNotBusyAndIsBroken_ThrowsExc() {
         //given - precondition or setup
         String expectedExceptionMessage = String.format("The car with id = %s is broken", carId);
 
@@ -552,7 +569,8 @@ class OrderServiceImplTest {
 //        when(orderRepository.save(acceptedFirstOrder)).thenReturn(refund.getOrder());
 //
 //        //when - action or the behaviour that we are going test
-//        ResponseEntity<RefundResponseDTO> response = orderService.createOrdersRefund(orderId, createRefundRequestDTOWithoutDamage);
+//        ResponseEntity<RefundResponseDTO> response = orderService.createOrdersRefund(orderId,
+//        createRefundRequestDTOWithoutDamage);
 //        RefundResponseDTO responseBody = response.getBody();
 //
 //        //then - verify the output

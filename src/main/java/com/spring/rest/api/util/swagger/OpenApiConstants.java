@@ -3,6 +3,9 @@ package com.spring.rest.api.util.swagger;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+/**
+ * OpenApi constants class.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OpenApiConstants {
 
@@ -20,7 +23,8 @@ public class OpenApiConstants {
 
     public static final String CAR_DAMAGE_STATUS = "Without damage";
 
-    public static final String CAR_IMAGE_LINK = "https://avatars.mds.yandex.net/i?id=0bac73b924d94250d7b706741440193b0cfbd3b8-6661455-images-thumbs&n=13";
+    public static final String CAR_IMAGE_LINK = "https://avatars.mds.yandex.net/i?id=0bac73b924d94250" +
+            "d7b706741440193b0cfbd3b8-6661455-images-thumbs&n=13";
 
     public static final String CAR_BROKEN = "false";
 
@@ -87,6 +91,4 @@ public class OpenApiConstants {
     public static final String CONFIG_INFO_DESCRIPTION = "Description for Car rental Api";
 
     public static final String CONFIG_INFO_TERMS_OF_SERVICE = "https://github.com/stasonpokemon/CarRentalSpringRest";
-
-
 }

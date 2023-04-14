@@ -9,9 +9,16 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.ORDER_UUID;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.REFUND_DAMAGED;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.REFUND_DAMAGE_DESCRIPTION;
 import static com.spring.rest.api.util.swagger.OpenApiConstants.REFUND_PRICE;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.REFUND_REFUND_DATE;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.REFUND_UUID;
 
+/**
+ * This class presents a DTO, which is available via OrderController endpoints.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

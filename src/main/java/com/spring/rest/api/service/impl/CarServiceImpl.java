@@ -26,7 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
+/**
+ * Implementation class for CarService.
+ */
 @Service
 @Transactional
 @Slf4j
@@ -81,10 +83,11 @@ public class CarServiceImpl implements CarService {
 
         log.info("Finding all not mark as deleted cars");
 
-        Page<CarResponseDTO> carResponseDTOPage = new PageImpl<>(carRepository.findAllByDeleted(false, pageable)
-                .stream()
-                .map(carMapper::carToCarResponseDTO)
-                .collect(Collectors.toList()));
+        Page<CarResponseDTO> carResponseDTOPage =
+                new PageImpl<>(carRepository.findAllByDeleted(false, pageable)
+                        .stream()
+                        .map(carMapper::carToCarResponseDTO)
+                        .collect(Collectors.toList()));
 
         if (carResponseDTOPage.isEmpty()) {
             throw new NotFoundException("There isn't cars not mark as deleted");
@@ -103,10 +106,11 @@ public class CarServiceImpl implements CarService {
 
         log.info("Finding all free not mark as deleted cars");
 
-        Page<CarResponseDTO> carResponseDTOPage = new PageImpl<>(carRepository.findAllByBusyAndDeleted(false, false, pageable)
-                .stream()
-                .map(carMapper::carToCarResponseDTO)
-                .collect(Collectors.toList()));
+        Page<CarResponseDTO> carResponseDTOPage =
+                new PageImpl<>(carRepository.findAllByBusyAndDeleted(false, false, pageable)
+                        .stream()
+                        .map(carMapper::carToCarResponseDTO)
+                        .collect(Collectors.toList()));
 
         if (carResponseDTOPage.isEmpty()) {
             throw new NotFoundException("There isn't free cars not mark as deleted");
@@ -130,7 +134,8 @@ public class CarServiceImpl implements CarService {
         car.setDeleted(false);
         Car savedCar = carRepository.save(car);
 
-        ResponseEntity<CarResponseDTO> response = new ResponseEntity<>(carMapper.carToCarResponseDTO(savedCar), HttpStatus.OK);
+        ResponseEntity<CarResponseDTO> response =
+                new ResponseEntity<>(carMapper.carToCarResponseDTO(savedCar), HttpStatus.OK);
 
         log.info("Save car: {}", car);
 
@@ -146,7 +151,8 @@ public class CarServiceImpl implements CarService {
         Car car = findCarByIdOrThrowException(id);
         CarUtil.getInstance().copyNotNullFieldsFromUpdateCarDTOToCar(updateCarRequestDTO, car);
 
-        ResponseEntity<CarResponseDTO> response = new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
+        ResponseEntity<CarResponseDTO> response =
+                new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
 
         log.info("Update car: {} with id: {}", car, id);
 
@@ -172,7 +178,8 @@ public class CarServiceImpl implements CarService {
         car.setDamageStatus("Without damage");
         car.setBusy(false);
 
-        ResponseEntity<CarResponseDTO> response = new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
+        ResponseEntity<CarResponseDTO> response =
+                new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
 
         log.info("Fix broken car: {} with id: {}", car, carId);
 
@@ -203,7 +210,8 @@ public class CarServiceImpl implements CarService {
         car.setBroken(true);
         car.setDamageStatus(damageStatus);
 
-        ResponseEntity<CarResponseDTO> response = new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
+        ResponseEntity<CarResponseDTO> response =
+                new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
 
         log.info("Set the car: {} as broken with id: {}", car, carId);
         return response;
@@ -224,7 +232,8 @@ public class CarServiceImpl implements CarService {
         car.setDeleted(true);
         car.setBusy(true);
 
-        ResponseEntity<CarResponseDTO> response = new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
+        ResponseEntity<CarResponseDTO> response =
+                new ResponseEntity<>(carMapper.carToCarResponseDTO(car), HttpStatus.OK);
 
         log.info("Mark car: {} with id: {} as deleted", car, id);
 

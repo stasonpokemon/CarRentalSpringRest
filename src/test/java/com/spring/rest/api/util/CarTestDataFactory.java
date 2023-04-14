@@ -12,6 +12,9 @@ import org.mapstruct.factory.Mappers;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * CarTestDataFactory factory test class for create car entities and DTOs.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CarTestDataFactory {
 
@@ -43,7 +46,7 @@ public class CarTestDataFactory {
                 .broken(true).build();
     }
 
-    public static Car buildBusyCar(){
+    public static Car buildBusyCar() {
         return Car.builder()
                 .model("testModel" + UUID.randomUUID())
                 .producer("testProducer")
@@ -56,7 +59,7 @@ public class CarTestDataFactory {
                 .broken(false).build();
     }
 
-    public static CarResponseDTO buildBrokenCarResponseDTOFromCar(Car car){
+    public static CarResponseDTO buildBrokenCarResponseDTOFromCar(Car car) {
         CarResponseDTO carResponseDTO = carMapper.carToCarResponseDTO(car);
         carResponseDTO.setBroken(true);
         carResponseDTO.setDamageStatus("With damage");

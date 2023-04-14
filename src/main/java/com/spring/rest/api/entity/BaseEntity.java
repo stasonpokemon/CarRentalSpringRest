@@ -1,17 +1,24 @@
 package com.spring.rest.api.entity;
 
 
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * This class presents a base entity with common fields.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

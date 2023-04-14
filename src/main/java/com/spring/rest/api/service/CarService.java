@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
+/**
+ * The CarService interface, which stores the business logic for working with an car.
+ */
 public interface CarService {
 
 

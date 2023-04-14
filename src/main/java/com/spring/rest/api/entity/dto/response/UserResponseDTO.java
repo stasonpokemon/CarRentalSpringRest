@@ -9,8 +9,17 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.PASSPORT_UUID;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_ACTIVE;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_EMAIL;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_PASSWORD;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_USERNAME;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_UUID;
 
+
+/**
+ * This class presents a DTO, which is available via UserController and RegistrationController endpoints.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

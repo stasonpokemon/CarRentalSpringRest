@@ -13,6 +13,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * PassportTestDataFactory factory test class for create passport entities and DTOs.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PassportTestDataFactory {
 
@@ -39,7 +42,7 @@ public class PassportTestDataFactory {
                 .user(user).build();
     }
 
-    public static PassportRequestDTO buildPassportDTOFromPassport(Passport passport){
+    public static PassportRequestDTO buildPassportDTOFromPassport(Passport passport) {
         return passportMapper.passportToPassportDTO(passport);
     }
 

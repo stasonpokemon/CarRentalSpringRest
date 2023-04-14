@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
+/**
+ * The CommonExceptionHandler class for handling exceptions.
+ */
 @RestControllerAdvice
 @Slf4j
 public class CommonExceptionHandler {

@@ -3,6 +3,9 @@ package com.spring.rest.api.util;
 import com.spring.rest.api.entity.Car;
 import com.spring.rest.api.entity.dto.request.UpdateCarRequestDTO;
 
+/**
+ * CarUtil class.
+ */
 public class CarUtil {
 
     private static CarUtil instance;
@@ -10,7 +13,7 @@ public class CarUtil {
     private CarUtil() {
     }
 
-    public synchronized static CarUtil getInstance() {
+    public static synchronized  CarUtil getInstance() {
         if (instance == null) {
             instance = new CarUtil();
         }

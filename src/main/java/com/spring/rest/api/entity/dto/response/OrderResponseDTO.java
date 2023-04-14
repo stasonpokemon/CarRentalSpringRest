@@ -11,8 +11,19 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static com.spring.rest.api.util.swagger.OpenApiConstants.*;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_UUID;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.ORDER_ORDER_DATE;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.ORDER_ORDER_STATUS;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.ORDER_PRICE;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.ORDER_RENTAL_PERIOD;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.ORDER_UUID;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.REFUND_UUID;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_UUID;
 
+
+/**
+ * This class presents a DTO, which is available via OrderController endpoints.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
