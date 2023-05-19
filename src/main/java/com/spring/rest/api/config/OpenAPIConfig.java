@@ -1,4 +1,4 @@
-package com.spring.rest.api.util.swagger;
+package com.spring.rest.api.config;
 
 import java.util.List;
 

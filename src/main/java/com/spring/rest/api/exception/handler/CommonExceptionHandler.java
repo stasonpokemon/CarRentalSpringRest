@@ -7,11 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestControllerAdvice
 @Slf4j
@@ -21,47 +23,46 @@ public class CommonExceptionHandler {
     public ResponseEntity<ErrorTypeResponseDTO> notFoundExceptionHandler(
             NotFoundException notFoundException) {
 
-        log.warn(notFoundException.getMessage());
+        log.info("Caught NotFoundException: {}", notFoundException.getMessage());
 
         return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
                 .time(LocalDateTime.now())
-                .message(notFoundException.getMessage())
-                .status(HttpStatus.NOT_FOUND).build(), HttpStatus.NOT_FOUND);
+                .message(notFoundException.getMessage()).build(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorTypeResponseDTO> badRequestExceptionHandler(
             BadRequestException badRequestException) {
 
-        log.warn(badRequestException.getMessage());
+        log.info("Caught BadRequestException: {}", badRequestException.getMessage());
 
         return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
                 .time(LocalDateTime.now())
-                .message(badRequestException.getMessage())
-                .status(HttpStatus.BAD_REQUEST).build(), HttpStatus.BAD_REQUEST);
+                .message(badRequestException.getMessage()).build(), HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler
     public ResponseEntity<ErrorTypeResponseDTO> methodArgumentNotValidExceptionHandler(
             MethodArgumentNotValidException methodArgumentNotValidException) {
 
-        log.warn(methodArgumentNotValidException.getMessage());
+        List<String> errors = methodArgumentNotValidException.getBindingResult().getFieldErrors()
+                .stream().map(FieldError::getDefaultMessage).toList();
+
+        log.info("Caught MethodArgumentNotValidException: {}", errors);
 
         return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
                 .time(LocalDateTime.now())
-                .message(methodArgumentNotValidException.getMessage())
-                .status(HttpStatus.BAD_REQUEST).build(), HttpStatus.BAD_REQUEST);
+                .message(errors).build(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorTypeResponseDTO> propertyReferenceExceptionHandler(
             PropertyReferenceException propertyReferenceException) {
 
-        log.warn(propertyReferenceException.getMessage());
+        log.info("Caught PropertyReferenceException: {}", propertyReferenceException.getMessage());
 
         return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
                 .time(LocalDateTime.now())
-                .message(propertyReferenceException.getMessage())
-                .status(HttpStatus.BAD_REQUEST).build(), HttpStatus.BAD_REQUEST);
+                .message(propertyReferenceException.getMessage()).build(), HttpStatus.BAD_REQUEST);
     }
 
 }

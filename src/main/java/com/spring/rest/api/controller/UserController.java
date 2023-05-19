@@ -12,12 +12,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.UUID;
 
@@ -42,7 +47,7 @@ public interface UserController {
     })
     @GetMapping
     ResponseEntity<Page<UserResponseDTO>> findAll(
-            @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable);
+            @ParameterObject @PageableDefault Pageable pageable);
 
     @Operation(
             summary = "Find user by id",
@@ -130,7 +135,7 @@ public interface UserController {
     })
     @GetMapping("/{id}/orders")
     ResponseEntity<Page<OrderResponseDTO>> findUsersOrders(
-            @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable,
+            @ParameterObject @PageableDefault Pageable pageable,
             @PathVariable("id") UUID userId);
 
     @Operation(

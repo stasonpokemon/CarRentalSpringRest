@@ -1,14 +1,16 @@
 package com.spring.rest.api.service.impl;
 
-import com.spring.rest.api.entity.*;
+import com.spring.rest.api.entity.Car;
+import com.spring.rest.api.entity.Order;
+import com.spring.rest.api.entity.OrderStatus;
+import com.spring.rest.api.entity.Refund;
+import com.spring.rest.api.entity.User;
 import com.spring.rest.api.entity.dto.request.CreateOrderRequestDTO;
 import com.spring.rest.api.entity.dto.request.CreateRefundRequestDTO;
 import com.spring.rest.api.entity.dto.response.OrderResponseDTO;
 import com.spring.rest.api.entity.dto.response.RefundResponseDTO;
-import com.spring.rest.api.entity.mapper.CarMapper;
 import com.spring.rest.api.entity.mapper.OrderMapper;
 import com.spring.rest.api.entity.mapper.RefundMapper;
-import com.spring.rest.api.entity.mapper.UserMapper;
 import com.spring.rest.api.exception.BadRequestException;
 import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.OrderRepository;
@@ -46,10 +48,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
 
     private final RefundMapper refundMapper = Mappers.getMapper(RefundMapper.class);
-
-    private final CarMapper carMapper = Mappers.getMapper(CarMapper.class);
-
-    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @Override
     @Transactional(readOnly = true)
@@ -119,9 +117,9 @@ public class OrderServiceImpl implements OrderService {
         UUID carId = UUID.fromString(createOrderRequestDTO.getCarId());
         UUID userId = UUID.fromString(createOrderRequestDTO.getUserId());
 
-        Car car = carMapper.carResponseDTOToCar(carService.findById(carId).getBody());
+        Car car = carService.findCarByIdOrThrowException(carId);
 
-        User user = userMapper.userRequestDTOToUser(userService.findById(userId).getBody());
+        User user = userService.findUserByIdOrThrowException(userId);
 
         if (user.getPassport() == null) {
             throw new BadRequestException(
@@ -251,7 +249,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = findOrderByIdOrThrowException(orderId);
 
         if (order.getRefund() == null) {
-            throw new BadRequestException(
+            throw new NotFoundException(
                     String.format("Order with id = %s hasn't refund", orderId));
         }
 
