@@ -649,12 +649,12 @@ class OrderServiceImplTest {
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(firsrOrder));
 
         //when - action or the behaviour that we are going test
-        BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> orderService.findOrdersRefundByOrderId(orderId));
+        NotFoundException notFoundException
+                = assertThrows(NotFoundException.class, () -> orderService.findOrdersRefundByOrderId(orderId));
 
         //then - verify the output
-        assertNotNull(badRequestException);
-        assertEquals(expectedExceptionMessage, badRequestException.getMessage());
+        assertNotNull(notFoundException);
+        assertEquals(expectedExceptionMessage, notFoundException.getMessage());
 
         verify(orderRepository).findById(orderId);
     }

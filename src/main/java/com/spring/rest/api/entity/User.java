@@ -1,7 +1,6 @@
 package com.spring.rest.api.entity;
 
 
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -15,11 +14,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +31,10 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Data
-@ToString(of = {"username", "password", "email", "roles", "activationCode"})
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class User extends BaseEntity {
 
 
@@ -61,6 +60,7 @@ public class User extends BaseEntity {
     private Passport passport;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Order> orders = new ArrayList<>();
 
     @Column(name = "active")

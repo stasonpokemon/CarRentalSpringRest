@@ -16,4 +16,6 @@ public interface CarMapper {
     Car createCarRequestDTOToCar(CreateCarRequestDTO createCarRequestDTO);
 
     CreateCarRequestDTO carToCreateCarRequestDTO(Car car);
+
+    Car carResponseDTOToCar(CarResponseDTO carResponseDTO);
 }

@@ -256,7 +256,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = findOrderByIdOrThrowException(orderId);
 
         if (order.getRefund() == null) {
-            throw new BadRequestException(
+            throw new NotFoundException(
                     String.format("Order with id = %s hasn't refund", orderId));
         }
 
