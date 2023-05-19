@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * JpaRepository, which works with Car entity.
+ */
 @Repository
 public interface CarRepository extends JpaRepository<Car, UUID> {
 

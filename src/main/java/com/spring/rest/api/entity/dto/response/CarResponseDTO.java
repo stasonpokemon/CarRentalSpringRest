@@ -27,6 +27,9 @@ import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_RELEASE_DATE
 import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_UUID;
 
 
+/**
+ * This class presents a DTO, which is available via CarController endpoints.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

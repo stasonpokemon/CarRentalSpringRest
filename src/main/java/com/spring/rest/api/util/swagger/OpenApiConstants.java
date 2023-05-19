@@ -3,6 +3,9 @@ package com.spring.rest.api.util.swagger;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+/**
+ * OpenApi constants class.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OpenApiConstants {
 
@@ -147,6 +150,4 @@ public class OpenApiConstants {
     public static final String CONFIG_INFO_DESCRIPTION = "Description for Car rental Api";
 
     public static final String CONFIG_INFO_TERMS_OF_SERVICE = "https://github.com/stasonpokemon/CarRentalSpringRest";
-
-
 }

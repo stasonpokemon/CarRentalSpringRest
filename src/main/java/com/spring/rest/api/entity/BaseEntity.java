@@ -16,6 +16,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * This class presents a base entity with common fields.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

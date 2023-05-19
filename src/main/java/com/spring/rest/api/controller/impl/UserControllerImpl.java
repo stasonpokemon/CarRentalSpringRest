@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+/**
+ * Implementation class for UserController.
+ */
 @RestController
 @RequiredArgsConstructor
 @Slf4j

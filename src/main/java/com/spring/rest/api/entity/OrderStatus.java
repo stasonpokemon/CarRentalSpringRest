@@ -2,6 +2,9 @@ package com.spring.rest.api.entity;
 
 import java.util.stream.Stream;
 
+/**
+ * OrderStatus enum class for Order entity.
+ */
 public enum OrderStatus {
     UNDER_CONSIDERATION(0),
     REFUSAL(1),

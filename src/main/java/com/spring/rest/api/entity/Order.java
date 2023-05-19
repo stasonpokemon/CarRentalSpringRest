@@ -1,5 +1,6 @@
 package com.spring.rest.api.entity;
 
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,8 +15,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+
 import java.time.LocalDateTime;
 
+/**
+ * This class presents an order's entity, which will be stored in the database.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "orders")

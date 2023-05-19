@@ -27,10 +27,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * CarServiceImplTest test class for testing CarService.
+ */
 @ExtendWith(MockitoExtension.class)
 class CarServiceImplTest {
 
@@ -340,7 +345,8 @@ class CarServiceImplTest {
 
         //then - verify the output
         assertNotNull(badRequestException);
-        assertEquals(String.format("Unable to fix car. Car with id = %s already fixed", carId), badRequestException.getMessage());
+        assertEquals(String.format("Unable to fix car. Car with id = %s already fixed", carId),
+                badRequestException.getMessage());
 
         verify(carRepository).findById(carId);
     }
@@ -356,7 +362,8 @@ class CarServiceImplTest {
 
         //then - verify the output
         assertNotNull(badRequestException);
-        assertEquals(String.format("Unable to fix car. Car with id = %s is deleted", carId), badRequestException.getMessage());
+        assertEquals(String.format("Unable to fix car. Car with id = %s is deleted", carId),
+                badRequestException.getMessage());
 
         verify(carRepository).findById(carId);
     }
@@ -462,7 +469,8 @@ class CarServiceImplTest {
 
         //then - verify the output
         assertNotNull(badRequestException);
-        assertEquals(String.format("Car with id = %s already marked as deleted", carId), badRequestException.getMessage());
+        assertEquals(String.format("Car with id = %s already marked as deleted", carId),
+                badRequestException.getMessage());
 
         verify(carRepository).findById(carId);
     }

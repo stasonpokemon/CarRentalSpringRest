@@ -29,6 +29,9 @@ import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_UUID;
 import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_UUID_DESCRIPTION;
 
 
+/**
+ * This class presents a DTO, which is available via OrderController endpoints.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * The CommonExceptionHandler class for handling exceptions.
+ */
 @RestControllerAdvice
 @Slf4j
 public class CommonExceptionHandler {
@@ -40,6 +43,7 @@ public class CommonExceptionHandler {
                 .time(LocalDateTime.now())
                 .message(badRequestException.getMessage()).build(), HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler
     public ResponseEntity<ErrorTypeResponseDTO> methodArgumentNotValidExceptionHandler(
             MethodArgumentNotValidException methodArgumentNotValidException) {
@@ -48,6 +52,7 @@ public class CommonExceptionHandler {
                 .stream().map(FieldError::getDefaultMessage).toList();
 
         log.info("Caught MethodArgumentNotValidException: {}", errors);
+
 
         return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
                 .time(LocalDateTime.now())

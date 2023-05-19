@@ -4,6 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
+/**
+ * MailSenderThread class.
+ */
 @Slf4j
 public class MailSenderThread extends Thread {
 
@@ -19,6 +22,7 @@ public class MailSenderThread extends Thread {
     public void run() {
         mailSender.send(message);
 
-        log.info("Send email to: {} with subject: {} with message: {}",message.getTo(), message.getSubject(), message.getText());
+        log.info("Send email to: {} with subject: {} with message: {}",
+                message.getTo(), message.getSubject(), message.getText());
     }
 }

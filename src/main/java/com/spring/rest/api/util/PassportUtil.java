@@ -3,6 +3,9 @@ package com.spring.rest.api.util;
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
 
+/**
+ * PassportUtil class.
+ */
 public class PassportUtil {
 
     private static PassportUtil instance;
@@ -10,7 +13,7 @@ public class PassportUtil {
     private PassportUtil() {
     }
 
-    public synchronized static PassportUtil getInstance() {
+    public static synchronized PassportUtil getInstance() {
         if (instance == null) {
             instance = new PassportUtil();
         }

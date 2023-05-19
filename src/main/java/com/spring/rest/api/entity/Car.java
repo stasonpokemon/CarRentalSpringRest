@@ -10,8 +10,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+
 import java.time.LocalDate;
 
+
+/**
+ * This class presents an car's entity, which will be stored in the database.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "cars")

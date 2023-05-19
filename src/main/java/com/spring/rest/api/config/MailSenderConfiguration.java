@@ -8,10 +8,14 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
+/**
+ * MailSenderConfiguration configuration class.
+ */
 @Configuration
 public class MailSenderConfiguration {
 
     private static final String MAIL_TRANSPORT_PROTOCOL_PROPERTY = "mail.transport.protocol";
+
     private static final String MAIL_DEBUG_PROPERTY = "mail.debug";
 
     @Value("${spring.mail.host}")

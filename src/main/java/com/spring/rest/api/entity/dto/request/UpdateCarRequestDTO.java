@@ -1,6 +1,7 @@
 package com.spring.rest.api.entity.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,9 +25,13 @@ import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_PRICE_PER_DA
 import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_PRICE_PER_DAY_DESCRIPTION;
 import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_PRODUCER;
 import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_PRODUCER_DESCRIPTION;
+
 import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_RELEASE_DATE;
 import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_RELEASE_DATE_DESCRIPTION;
 
+/**
+ * This class presents a DTO, which is available via CarController endpoints.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -65,3 +70,4 @@ public class UpdateCarRequestDTO {
     @Schema(example = CAR_IMAGE_LINK, description = CAR_IMAGE_LINK_DESCRIPTION)
     private String imageLink;
 }
+

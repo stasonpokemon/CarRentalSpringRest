@@ -1,6 +1,7 @@
 package com.spring.rest.api.entity.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +18,13 @@ import static com.spring.rest.api.util.swagger.OpenApiConstants.ORDER_RENTAL_PER
 import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_UUID;
 import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_UUID_DESCRIPTION;
 
+import static com.spring.rest.api.util.swagger.OpenApiConstants.CAR_UUID;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.ORDER_RENTAL_PERIOD;
+import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_UUID;
+
+/**
+ * This class presents a DTO, which is available via OrderController endpoints.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,3 +49,4 @@ public class CreateOrderRequestDTO {
     private String userId;
 
 }
+

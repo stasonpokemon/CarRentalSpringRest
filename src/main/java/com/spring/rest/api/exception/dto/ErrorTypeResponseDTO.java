@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * This class presents a DTO, which is available via CommonExceptionHandler.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

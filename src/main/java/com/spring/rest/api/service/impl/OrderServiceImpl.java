@@ -33,6 +33,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation class for OrderService.
+ */
 @Service
 @Transactional
 @Slf4j
@@ -55,7 +58,8 @@ public class OrderServiceImpl implements OrderService {
 
         log.info("Finding order by id: {}", orderId);
 
-        OrderResponseDTO orderResponseDTO = orderMapper.orderToOrderResponseDTO(findOrderByIdOrThrowException(orderId));
+        OrderResponseDTO orderResponseDTO =
+                orderMapper.orderToOrderResponseDTO(findOrderByIdOrThrowException(orderId));
 
         ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderResponseDTO, HttpStatus.OK);
 
@@ -172,7 +176,8 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setOrderStatus(OrderStatus.CONFIRMED);
-        ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderMapper.orderToOrderResponseDTO(order), HttpStatus.OK);
+        ResponseEntity<OrderResponseDTO> response =
+                new ResponseEntity<>(orderMapper.orderToOrderResponseDTO(order), HttpStatus.OK);
 
         log.info("Accept order with id: {}", orderId);
 
@@ -193,7 +198,8 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderStatus(OrderStatus.REFUSAL);
         order.getCar().setBusy(false);
-        ResponseEntity<OrderResponseDTO> response = new ResponseEntity<>(orderMapper.orderToOrderResponseDTO(order), HttpStatus.OK);
+        ResponseEntity<OrderResponseDTO> response =
+                new ResponseEntity<>(orderMapper.orderToOrderResponseDTO(order), HttpStatus.OK);
 
         log.info("Cancel order with id: {}", orderId);
 
@@ -233,7 +239,8 @@ public class OrderServiceImpl implements OrderService {
 
         Refund savedRefund = orderRepository.save(order).getRefund();
 
-        ResponseEntity<RefundResponseDTO> response = new ResponseEntity<>(refundMapper.refundToRefundResponseDTO(savedRefund), HttpStatus.OK);
+        ResponseEntity<RefundResponseDTO> response =
+                new ResponseEntity<>(refundMapper.refundToRefundResponseDTO(savedRefund), HttpStatus.OK);
 
         log.info("Create refund: {} for order with id: {}", createRefundRequestDTO, orderId);
 

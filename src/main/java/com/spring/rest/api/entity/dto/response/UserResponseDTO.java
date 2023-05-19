@@ -24,6 +24,9 @@ import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_UUID;
 import static com.spring.rest.api.util.swagger.OpenApiConstants.USER_UUID_DESCRIPTION;
 
 
+/**
+ * This class presents a DTO, which is available via UserController and RegistrationController endpoints.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

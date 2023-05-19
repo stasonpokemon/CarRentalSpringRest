@@ -1,10 +1,13 @@
-package com.spring.rest.api.util;
+package com.spring.rest.api.entity.converter;
 
 import com.spring.rest.api.entity.OrderStatus;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+/**
+ * OrderStatusConverter class for convert OrderStatus enum to integer for database.
+ */
 @Converter(autoApply = true)
 public class OrderStatusConverter implements AttributeConverter<OrderStatus, Integer> {
     @Override

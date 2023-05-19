@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.UUID;
 
+/**
+ * Interface that presents basic endpoints for working with User entity.
+ */
 @RequestMapping("/users")
 @Tag(name = "User Controller", description = "User management controller")
 public interface UserController {

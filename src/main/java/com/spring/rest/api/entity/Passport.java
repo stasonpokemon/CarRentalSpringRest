@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,12 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
+
+
+
+/**
+ * This class presents an passport's entity, which will be stored in the database.
+ */
 
 @Entity
 @Table(name = "passports")

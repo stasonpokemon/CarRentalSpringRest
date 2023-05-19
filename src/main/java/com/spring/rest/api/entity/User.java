@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * This class presents an user's entity, which will be stored in the database.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "users")
@@ -60,3 +63,4 @@ public class User extends BaseEntity {
     @Column(name = "active")
     private boolean active;
 }
+

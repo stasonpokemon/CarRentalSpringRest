@@ -1,5 +1,8 @@
 package com.spring.rest.api.exception;
 
+/**
+ * Exception for NotFound actions.
+ */
 public class NotFoundException extends RuntimeException {
 
     public NotFoundException(String message) {

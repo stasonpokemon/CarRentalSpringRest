@@ -13,8 +13,12 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+
 import java.time.LocalDateTime;
 
+/**
+ * This class presents an refund's entity, which will be stored in the database.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "refunds")

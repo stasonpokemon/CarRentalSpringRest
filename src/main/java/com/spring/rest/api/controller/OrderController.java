@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.UUID;
 
+/**
+ * Interface that presents basic endpoints for working with Order entity.
+ */
 @RequestMapping("/orders")
 @Tag(name = "Order Controller", description = "Order management controller")
 public interface OrderController {

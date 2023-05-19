@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 
+/**
+ * Implementation class for CarController.
+ */
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -89,3 +92,4 @@ public class CarControllerImpl implements CarController {
         return carService.markCarAsDeleted(carId);
     }
 }
+

@@ -2,12 +2,12 @@ package com.spring.rest.api.service;
 
 import com.spring.rest.api.entity.Passport;
 import com.spring.rest.api.entity.User;
-import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
 import com.spring.rest.api.entity.dto.request.CreateUserRequestDTO;
+import com.spring.rest.api.entity.dto.request.PassportRequestDTO;
 import com.spring.rest.api.entity.dto.response.PassportResponseDTO;
 import com.spring.rest.api.entity.dto.response.UserResponseDTO;
-import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.exception.BadRequestException;
+import com.spring.rest.api.exception.NotFoundException;
 import com.spring.rest.api.repo.PassportRepository;
 import com.spring.rest.api.repo.UserRepository;
 import com.spring.rest.api.service.impl.UserServiceImpl;
@@ -31,10 +31,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+/**
+ * UserServiceImplTest test class for testing UserService.
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
@@ -101,7 +109,8 @@ class UserServiceImplTest {
 
         newPassportForSecondUser = PassportTestDataFactory.buildPassportOfUser(secondUserWithoutPassport);
 
-        newPassportRequestDTOForSecondUser = PassportTestDataFactory.buildPassportDTOFromPassport(newPassportForSecondUser);
+        newPassportRequestDTOForSecondUser =
+                PassportTestDataFactory.buildPassportDTOFromPassport(newPassportForSecondUser);
 
         updatedPassportRequestDTO = PassportTestDataFactory.buildPassportDTOFromPassport(passportForUpdate);
 
@@ -109,7 +118,8 @@ class UserServiceImplTest {
 
         firstUserPassportResponseDTO = UserTestDataFactory.buildPassportResponseDTOFromUser(firstUserWithPassport);
 
-        newPassportResponseDTOForSecondUser = PassportTestDataFactory.buildPassportResponseDTOFromPassport(newPassportForSecondUser);
+        newPassportResponseDTOForSecondUser =
+                PassportTestDataFactory.buildPassportResponseDTOFromPassport(newPassportForSecondUser);
 
         updatedPassportResponseDTO = PassportTestDataFactory.buildPassportResponseDTOFromPassport(passportForUpdate);
 
@@ -222,7 +232,8 @@ class UserServiceImplTest {
                 = assertThrows(NotFoundException.class, () -> userService.findPassportByUserId(userId));
 
         //then - verify the output
-        assertEquals(String.format("Passport not found for user with id = %s", userId), notFoundException.getMessage());
+        assertEquals(String.format("Passport not found for user with id = %s", userId),
+                notFoundException.getMessage());
 
         verify(userRepository).findById(userId);
     }
@@ -249,7 +260,8 @@ class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(secondUserWithoutPassport));
 
         //when - action or the behaviour that we are going test
-        ResponseEntity<PassportResponseDTO> response = userService.createPassportForUser(userId, newPassportRequestDTOForSecondUser);
+        ResponseEntity<PassportResponseDTO> response =
+                userService.createPassportForUser(userId, newPassportRequestDTOForSecondUser);
         PassportResponseDTO responseBody = response.getBody();
 
         //then - verify the output
@@ -268,11 +280,12 @@ class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(firstUserWithPassport));
 
         //when - action or the behaviour that we are going test
-        BadRequestException badRequestException
-                = assertThrows(BadRequestException.class, () -> userService.createPassportForUser(userId, newPassportRequestDTOForSecondUser));
+        BadRequestException badRequestException = assertThrows(BadRequestException.class,
+                () -> userService.createPassportForUser(userId, newPassportRequestDTOForSecondUser));
 
         //then - verify the output
-        assertEquals(String.format("User with id = %s already has passport", userId), badRequestException.getMessage());
+        assertEquals(String.format("User with id = %s already has passport", userId),
+                badRequestException.getMessage());
 
         verify(userRepository).findById(userId);
         verify(passportRepository, never()).save(any(Passport.class));
@@ -284,8 +297,8 @@ class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         //when - action or the behaviour that we are going test
-        NotFoundException notFoundException
-                = assertThrows(NotFoundException.class, () -> userService.createPassportForUser(userId, newPassportRequestDTOForSecondUser));
+        NotFoundException notFoundException = assertThrows(NotFoundException.class,
+                () -> userService.createPassportForUser(userId, newPassportRequestDTOForSecondUser));
 
         //then - verify the output
         assertEquals(String.format("Not found User with id: %s", userId), notFoundException.getMessage());
@@ -299,7 +312,8 @@ class UserServiceImplTest {
         //given - precondition or setup
         when(userRepository.findById(userId)).thenReturn(Optional.of(firstUserWithPassport));
         //when - action or the behaviour that we are going test
-        ResponseEntity<PassportResponseDTO> response = userService.updateUsersPassport(userId, updatedPassportRequestDTO);
+        ResponseEntity<PassportResponseDTO> response =
+                userService.updateUsersPassport(userId, updatedPassportRequestDTO);
         PassportResponseDTO responseBody = response.getBody();
 
         //then - verify the output
@@ -319,10 +333,12 @@ class UserServiceImplTest {
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException =
-                assertThrows(BadRequestException.class, () -> userService.updateUsersPassport(userId, updatedPassportRequestDTO));
+                assertThrows(BadRequestException.class,
+                        () -> userService.updateUsersPassport(userId, updatedPassportRequestDTO));
 
         //then - verify the output
-        assertEquals(String.format("Passport not found for user with id = %s", userId), badRequestException.getMessage());
+        assertEquals(String.format("Passport not found for user with id = %s", userId),
+                badRequestException.getMessage());
 
         verify(userRepository).findById(userId);
     }
@@ -334,7 +350,8 @@ class UserServiceImplTest {
 
         //when - action or the behaviour that we are going test
         NotFoundException notFoundException =
-                assertThrows(NotFoundException.class, () -> userService.updateUsersPassport(userId, updatedPassportRequestDTO));
+                assertThrows(NotFoundException.class,
+                        () -> userService.updateUsersPassport(userId, updatedPassportRequestDTO));
 
         //then - verify the output
         assertEquals(String.format("Not found User with id: %s", userId), notFoundException.getMessage());
@@ -375,7 +392,8 @@ class UserServiceImplTest {
     void saveRegisteredUser_WhenUserUsernameDoesNotExistsAndEmailExists_ThrowsBadRequestException() {
         //given - precondition or setup
         when(userRepository.findUserByUsername(createUserRequestDTO.getUsername())).thenReturn(Optional.empty());
-        when(userRepository.findUserByEmail(createUserRequestDTO.getEmail())).thenReturn(Optional.of(secondUserWithoutPassport));
+        when(userRepository.findUserByEmail(createUserRequestDTO.getEmail()))
+                .thenReturn(Optional.of(secondUserWithoutPassport));
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException
@@ -393,7 +411,8 @@ class UserServiceImplTest {
     @Test
     void saveRegisteredUser_WhenUserUsernameExists_ThrowsBadRequestException() {
         //given - precondition or setup
-        when(userRepository.findUserByUsername(createUserRequestDTO.getUsername())).thenReturn(Optional.of(secondUserWithoutPassport));
+        when(userRepository.findUserByUsername(createUserRequestDTO.getUsername()))
+                .thenReturn(Optional.of(secondUserWithoutPassport));
 
         //when - action or the behaviour that we are going test
         BadRequestException badRequestException
@@ -446,7 +465,8 @@ class UserServiceImplTest {
     @Test
     void blockUser_WhenUserIdIsValidAndUserIsNotBlocked_ReturnSuccessfulStringMessage() {
         //given - precondition or setup
-        UserResponseDTO expectedUserResponseDTO = UserTestDataFactory.buildBlockedUserResponseDTO(firstUserWithPassport);
+        UserResponseDTO expectedUserResponseDTO =
+                UserTestDataFactory.buildBlockedUserResponseDTO(firstUserWithPassport);
         when(userRepository.findById(userId)).thenReturn(Optional.of(firstUserWithPassport));
 
         //when - action or the behaviour that we are going test
@@ -553,5 +573,4 @@ class UserServiceImplTest {
 
         //then - verify the output
     }
-
 }

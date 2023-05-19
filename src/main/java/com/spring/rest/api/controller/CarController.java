@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
-
+/**
+ * Interface that presents basic endpoints for working with Car entity.
+ */
 @RequestMapping("/cars")
 @Tag(name = "Car Controller", description = "Car management controller")
 public interface CarController {
