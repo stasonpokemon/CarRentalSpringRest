@@ -37,7 +37,8 @@ public class OpenApiConstants {
 
     public static final String CAR_DAMAGE_STATUS_DESCRIPTION = "Car's damage status";
 
-    public static final String CAR_IMAGE_LINK = "https://avatars.mds.yandex.net/i?id=0bac73b924d94250d7b706741440193b0cfbd3b8-6661455-images-thumbs&n=13";
+    public static final String CAR_IMAGE_LINK = "https://avatars.mds.yandex.net/" +
+            "i?id=0bac73b924d94250d7b706741440193b0cfbd3b8-6661455-images-thumbs&n=13";
 
     public static final String CAR_IMAGE_LINK_DESCRIPTION = "Car's image link";
 
