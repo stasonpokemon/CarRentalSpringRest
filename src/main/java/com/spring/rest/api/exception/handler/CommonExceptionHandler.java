@@ -26,7 +26,7 @@ public class CommonExceptionHandler {
     public ResponseEntity<ErrorTypeResponseDTO> notFoundExceptionHandler(
             NotFoundException notFoundException) {
 
-        log.warn(notFoundException.getMessage());
+        log.info("Caught NotFoundException: {}", notFoundException.getMessage());
 
         return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
                 .time(LocalDateTime.now())
@@ -37,7 +37,7 @@ public class CommonExceptionHandler {
     public ResponseEntity<ErrorTypeResponseDTO> badRequestExceptionHandler(
             BadRequestException badRequestException) {
 
-        log.warn(badRequestException.getMessage());
+        log.info("Caught BadRequestException: {}", badRequestException.getMessage());
 
         return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
                 .time(LocalDateTime.now())
@@ -51,7 +51,7 @@ public class CommonExceptionHandler {
         List<String> errors = methodArgumentNotValidException.getBindingResult().getFieldErrors()
                 .stream().map(FieldError::getDefaultMessage).toList();
 
-        log.info("Handle MethodArgumentNotValidException: {}", errors);
+        log.info("Caught MethodArgumentNotValidException: {}", errors);
 
         return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
                 .time(LocalDateTime.now())
@@ -62,7 +62,7 @@ public class CommonExceptionHandler {
     public ResponseEntity<ErrorTypeResponseDTO> propertyReferenceExceptionHandler(
             PropertyReferenceException propertyReferenceException) {
 
-        log.warn(propertyReferenceException.getMessage());
+        log.info("Caught PropertyReferenceException: {}", propertyReferenceException.getMessage());
 
         return new ResponseEntity<>(ErrorTypeResponseDTO.builder()
                 .time(LocalDateTime.now())

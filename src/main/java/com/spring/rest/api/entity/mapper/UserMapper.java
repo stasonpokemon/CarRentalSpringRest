@@ -16,4 +16,7 @@ public interface UserMapper {
     UserResponseDTO userToUserResponseDTO(User user);
 
     User createUserRequestDTOToUser(CreateUserRequestDTO createUserRequestDTO);
+
+    @Mapping(target = "passport.id", source = "passportId")
+    User userRequestDTOToUser(UserResponseDTO userResponseDTO);
 }
